@@ -25,37 +25,34 @@ export function SeaRoutePattern({ className }: { className?: string }) {
         fill="none"
       >
         <defs>
-          <pattern id="khoobrooz-sea-grid" width="42" height="42" patternUnits="userSpaceOnUse">
-            <path d="M42 0H0V42" className="stroke-current" strokeWidth="0.8" opacity="0.18" />
-          </pattern>
-          <filter id="khoobrooz-route-glow" x="-8%" y="-8%" width="116%" height="116%">
-            <feGaussianBlur stdDeviation="2.2" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
+          <linearGradient id="khoobrooz-route-line" x1="84" y1="260" x2="1288" y2="132" gradientUnits="userSpaceOnUse">
+            <stop stopColor="currentColor" stopOpacity="0.18" />
+            <stop offset="0.48" stopColor="currentColor" stopOpacity="0.3" />
+            <stop offset="1" stopColor="currentColor" stopOpacity="0.16" />
+          </linearGradient>
+          <linearGradient id="khoobrooz-route-accent" x1="42" y1="420" x2="1324" y2="318" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#c88b2a" stopOpacity="0.12" />
+            <stop offset="0.52" stopColor="#c88b2a" stopOpacity="0.26" />
+            <stop offset="1" stopColor="#c88b2a" stopOpacity="0.1" />
+          </linearGradient>
         </defs>
 
-        <rect width="1360" height="680" fill="url(#khoobrooz-sea-grid)" opacity="0.22" />
-
-        <g className="stroke-current" strokeLinecap="round" strokeLinejoin="round" opacity="0.16">
-          <path d="M-20 168C180 96 360 96 540 154C716 210 870 232 1044 170C1168 126 1266 126 1380 174" strokeWidth="1.2" />
-          <path d="M-28 526C178 462 366 458 560 512C738 560 914 578 1100 518C1214 482 1292 474 1388 500" strokeWidth="1.2" />
-          <path d="M102 84C242 276 246 458 150 664" strokeWidth="0.9" />
-          <path d="M1230 52C1112 212 1098 408 1224 660" strokeWidth="0.9" />
+        <g className="stroke-current" strokeLinecap="round" strokeLinejoin="round" opacity="0.1">
+          <path d="M-20 168C180 96 360 96 540 154C716 210 870 232 1044 170C1168 126 1266 126 1380 174" strokeWidth="1" />
+          <path d="M-28 526C178 462 366 458 560 512C738 560 914 578 1100 518C1214 482 1292 474 1388 500" strokeWidth="1" />
+          <path d="M102 84C242 276 246 458 150 664" strokeWidth="0.8" />
+          <path d="M1230 52C1112 212 1098 408 1224 660" strokeWidth="0.8" />
         </g>
 
-        <g filter="url(#khoobrooz-route-glow)">
+        <g>
           {routes.map((route, index) => (
             <path
               key={route}
               d={route}
-              className={index % 2 === 0 ? "stroke-current" : "stroke-[#f4b23e]"}
-              strokeWidth={index % 2 === 0 ? 1.8 : 1.2}
+              stroke={index % 2 === 0 ? "url(#khoobrooz-route-line)" : "url(#khoobrooz-route-accent)"}
+              strokeWidth={index % 2 === 0 ? 1.55 : 1.25}
               strokeLinecap="round"
-              strokeDasharray={index % 2 === 0 ? "12 16" : "2 12"}
-              opacity={index % 2 === 0 ? 0.34 : 0.3}
+              opacity={index % 2 === 0 ? 1 : 0.9}
             />
           ))}
         </g>
@@ -63,8 +60,9 @@ export function SeaRoutePattern({ className }: { className?: string }) {
         <g>
           {ports.map((port) => (
             <g key={`${port.x}-${port.y}`} transform={`translate(${port.x} ${port.y})`}>
-              <circle r="11" fill="#f4b23e" opacity="0.1" />
-              <circle r="3.5" className="fill-current" opacity="0.54" />
+              <circle r="9" fill="#ffffff" opacity="0.72" />
+              <circle r="9" className="stroke-current" strokeWidth="1" fill="none" opacity="0.16" />
+              <circle r="2.7" className="fill-current" opacity="0.38" />
             </g>
           ))}
         </g>

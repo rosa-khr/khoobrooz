@@ -29,38 +29,38 @@ export function WorldTimeWidget() {
   }, []);
 
   return (
-    <section className="bg-white py-8 md:py-10">
+    <section className="bg-white py-6 md:py-8">
       <div className="container">
-        <div className="relative overflow-hidden rounded-khoobrooz border border-line bg-[#0a2138] p-5 text-white shadow-soft md:p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(244,178,62,0.13),transparent_34%),linear-gradient(90deg,rgba(10,33,56,0.96),rgba(12,45,70,0.84),rgba(8,26,44,0.95))]" aria-hidden="true" />
-          <WorldMapPattern className="z-0 text-[#d7e7f4] opacity-[0.36]" />
-          <div className="absolute inset-0 bg-gradient-to-l from-[#0a2138]/78 via-[#0a2138]/18 to-[#07172b]/88" aria-hidden="true" />
+        <div className="relative overflow-hidden rounded-khoobrooz border border-white/15 bg-[#07182b] p-4 text-white shadow-[0_18px_46px_rgba(7,24,43,0.13)] md:p-5">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(210,132,34,0.13),transparent_30%),radial-gradient(circle_at_82%_78%,rgba(15,118,110,0.1),transparent_34%),linear-gradient(90deg,rgba(7,24,43,0.98),rgba(10,34,55,0.9),rgba(6,20,36,0.98))]" aria-hidden="true" />
+          <WorldMapPattern className="z-0 text-[#eef3f7] opacity-[0.4]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,20,36,0.66),rgba(6,20,36,0.18),rgba(6,20,36,0.64))]" aria-hidden="true" />
 
           <div className="relative z-10 grid gap-3">
             <div className="flex flex-col justify-between gap-2 lg:flex-row lg:items-end">
               <div className="min-w-0">
                 <h2 className="inline-flex items-center gap-2 text-xl font-black text-white md:text-2xl">
-                  <Clock3 className="size-4 text-accent" aria-hidden="true" />
+                  <Clock3 className="size-4 text-[#d99a3c]" aria-hidden="true" />
                   ساعت بازارهای مهم تجارت بین‌المللی
                 </h2>
               </div>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
               {worldClockItems.map((item) => (
-                <div key={item.timeZone} className="min-w-0 rounded-khoobrooz border border-white/15 bg-white/10 p-2.5 backdrop-blur">
+                <div key={item.timeZone} className="min-w-0 rounded-khoobrooz border border-white/[0.075] bg-[#0b243a]/62 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.025),0_6px_16px_rgba(3,12,24,0.06)] backdrop-blur-[2px]">
                   <div className="flex justify-end">
                     <SevenSegmentTime value={formatDigitalTime(now, item.timeZone)} className="justify-self-end" />
                   </div>
                   <h3 className="mt-1.5 truncate text-sm font-black text-white">{item.city}</h3>
                   <div className="mt-1.5 flex items-center justify-between gap-2 border-t border-white/10 pt-1.5 text-xs">
-                    <span className="text-blue-200">{item.country}</span>
-                    <span className="inline-flex items-center gap-1 rounded-[4px] bg-white/10 px-1.5 py-0.5 font-mono font-black text-accent">
+                    <span className="text-slate-300">{item.country}</span>
+                    <span className="inline-flex items-center gap-1 rounded-[4px] bg-white/10 px-1.5 py-0.5 font-mono font-black text-[#d99a3c]">
                       <span className="text-[12px] leading-none" aria-hidden="true">{item.flag}</span>
                       {item.code}
                     </span>
                   </div>
-                  <p className="mt-1.5 truncate text-xs text-blue-100">{item.market}</p>
+                  <p className="mt-1.5 truncate text-xs text-slate-300">{item.market}</p>
                 </div>
               ))}
             </div>

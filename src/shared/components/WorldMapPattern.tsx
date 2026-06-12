@@ -27,7 +27,7 @@ export function WorldMapPattern({ className }: { className?: string }) {
           </filter>
         </defs>
 
-        <g className="stroke-current" strokeWidth="0.7" opacity="0.16">
+        <g className="stroke-current" strokeWidth="0.8" opacity="0.13">
           {[160, 280, 400, 520, 640, 760, 880, 1000, 1120].map((x) => (
             <path key={`lng-${x}`} d={`M${x} 76C${x - 26} 236 ${x - 24} 452 ${x} 620`} />
           ))}
@@ -36,25 +36,25 @@ export function WorldMapPattern({ className }: { className?: string }) {
           ))}
         </g>
 
-        <g className="fill-current" opacity="0.1" filter="url(#khoobrooz-soft-map)">
+        <g className="fill-current" opacity="0.13" filter="url(#khoobrooz-soft-map)">
           {landPaths.map((path) => (
             <path key={`fill-${path}`} d={path} />
           ))}
         </g>
 
-        <g fill="url(#khoobrooz-atlas-dots)" opacity="0.72" filter="url(#khoobrooz-soft-map)">
+        <g fill="url(#khoobrooz-atlas-dots)" opacity="0.5" filter="url(#khoobrooz-soft-map)">
           {landPaths.map((path) => (
             <path key={`dots-${path}`} d={path} />
           ))}
         </g>
 
-        <g className="stroke-current" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.6" opacity="0.34">
+        <g className="stroke-current" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.65" opacity="0.48">
           {landPaths.map((path) => (
             <path key={`outline-${path}`} d={path} />
           ))}
         </g>
 
-        <g className="stroke-current" strokeWidth="1" opacity="0.24">
+        <g className="stroke-current" strokeWidth="1.1" opacity="0.18">
           <path d="M96 242c210-58 430-62 660-6 158 38 318 34 480-14" />
           <path d="M100 474c202-48 406-45 612 10 155 42 310 37 466-13" />
           <path d="M176 126c156 42 320 45 492 9 156-32 314-20 475 35" />

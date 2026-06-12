@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { FloatingCta } from "@/shared/components/FloatingCta";
 import { Footer } from "@/shared/components/Footer";
 import { Header } from "@/shared/components/Header";
-import { isLocale, Locale } from "@/core/lib/site";
+import { isLocale, Locale, localeDirections } from "@/core/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://khoobrooz.ir"),
@@ -29,11 +29,11 @@ export default async function LocaleLayout({
   }
 
   return (
-    <>
+    <div lang={locale} dir={localeDirections[locale as Locale]}>
       <Header locale={locale as Locale} />
       {children}
       <Footer locale={locale as Locale} />
       <FloatingCta />
-    </>
+    </div>
   );
 }

@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
 import { Card } from "@/shared/components/Card";
 import { PageHero } from "@/shared/components/PageHero";
+import { Locale } from "@/core/lib/site";
+import { getDictionary } from "@/data/i18n";
 
-export const metadata: Metadata = {
-  title: "آموزش صادرات و واردات | خوبروز",
-  description: "آموزش صادرات و واردات در خوبروز برای آشنایی عملی با مسیر تجارت خارجی، اسناد، مذاکرات، ثبت سفارش و ترخیص کالا."
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const page = getDictionary(locale).pages.education;
+  return { title: page.title, description: page.description };
+}
 
-export default function EducationPage() {
+export default async function EducationPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const page = getDictionary(locale).pages.education;
+
   return (
     <main>
-      <PageHero eyebrow="آموزش تجارت" title="آموزش صادرات و واردات">
-        <p>آموزش‌ها برای جذب ورودی از گوگل و هدایت کاربر به خدمات، مشاوره یا فایل‌های تجاری طراحی می‌شوند.</p>
+      <PageHero eyebrow={page.eyebrow} title={page.heading}>
+        <p>{page.body}</p>
       </PageHero>
-      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4 md:grid-cols-3"><Card><h2 className="mb-2 text-xl font-black text-primary">آموزش واردات</h2><p className="text-muted">مراحل واردات کالا، ثبت سفارش، حمل و ترخیص.</p></Card><Card><h2 className="mb-2 text-xl font-black text-primary">آموزش صادرات</h2><p className="text-muted">انتخاب بازار هدف، مذاکره، قرارداد و اسناد صادراتی.</p></Card><Card><h2 className="mb-2 text-xl font-black text-primary">آموزش اسناد تجاری</h2><p className="text-muted">پروفرما، پکینگ لیست، اینویس و قراردادها.</p></Card></div></section>
+      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4 md:grid-cols-3">{page.cards.map((item) => <Card key={item.title}><h2 className="mb-2 text-xl font-black text-primary">{item.title}</h2><p className="text-muted">{item.description}</p></Card>)}</div></section>
     </main>
   );
 }

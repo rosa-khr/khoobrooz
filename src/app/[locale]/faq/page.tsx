@@ -3,21 +3,24 @@ import Link from "next/link";
 import { Card } from "@/shared/components/Card";
 import { PageHero } from "@/shared/components/PageHero";
 import { Locale, localizedPath } from "@/core/lib/site";
+import { getDictionary } from "@/data/i18n";
 
-export const metadata: Metadata = {
-  title: "سوالات متداول تجارت خارجی | خوبروز",
-  description: "پاسخ سوالات متداول درباره ترخیص کالا، واردات، صادرات، ثبت سفارش، کارگو چین، آموزش و فایل‌های تجاری خوبروز."
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const page = getDictionary(locale).pages.faq;
+  return { title: page.title, description: page.description };
+}
 
 export default async function FaqPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
+  const page = getDictionary(locale).pages.faq;
 
   return (
     <main>
-      <PageHero eyebrow="سوالات متداول" title="سوالات متداول">
-        <p>پاسخ‌ها باید کاربر را به صفحه خدمات، مقاله مرتبط یا مسیر تماس درست هدایت کنند.</p>
+      <PageHero eyebrow={page.eyebrow} title={page.heading}>
+        <p>{page.body}</p>
       </PageHero>
-      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4"><Card><h2 className="mb-2 text-xl font-black text-primary">برای ترخیص کالا از کجا شروع کنم؟</h2><p className="mb-4 text-muted">ابتدا نوع کالا، مدارک و گمرک مورد نظر باید بررسی شود. برای درخواست‌های ترخیص از مسیر تماس اختصاصی ترخیص استفاده کنید.</p><Link className="font-extrabold text-secondary" href={localizedPath(locale, "/services/customs-clearance")}>صفحه ترخیص کالا</Link></Card><Card><h2 className="mb-2 text-xl font-black text-primary">فروش فایل‌ها چه زمانی فعال می‌شود؟</h2><p className="text-muted">در فاز بعدی، فایل‌ها با صفحه محصول و اتصال به زرین‌پال آماده می‌شوند.</p></Card></div></section>
+      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4"><Card><h2 className="mb-2 text-xl font-black text-primary">{page.q1}</h2><p className="mb-4 text-muted">{page.a1}</p><Link className="font-extrabold text-secondary" href={localizedPath(locale, "/services/customs-clearance")}>{page.link}</Link></Card><Card><h2 className="mb-2 text-xl font-black text-primary">{page.q2}</h2><p className="text-muted">{page.a2}</p></Card></div></section>
     </main>
   );
 }

@@ -57,7 +57,7 @@ export function SevenSegmentTime({ value, className }: { value: string; classNam
   return (
     <span
       className={clsx(
-        "inline-flex max-w-full items-center gap-px rounded-[4px] border border-accent/35 bg-[#061325]/72 px-1.5 py-0.5 text-accent shadow-[inset_0_0_18px_rgba(244,178,62,0.08),0_0_18px_rgba(244,178,62,0.12)] max-[380px]:scale-90 max-[380px]:origin-right",
+        "inline-flex max-w-full items-center gap-px rounded-[4px] border border-[#b87725]/30 bg-[#061325]/80 px-1.5 py-0.5 text-[#d99a3c] shadow-[inset_0_0_14px_rgba(217,154,60,0.06)] max-[380px]:scale-90 max-[380px]:origin-right",
         className
       )}
       dir="ltr"
