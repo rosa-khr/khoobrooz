@@ -1,8 +1,8 @@
 export const currencyRateSource = {
   name: "TGJU",
   url: "https://www.tgju.org/currency",
-  updatedAt: "در انتظار اتصال ایجنت نرخ ارز",
-  note: "نمایش عدد زنده باید از مسیر کرالر/آپدیت‌کننده تأییدشده انجام شود."
+  updatedAt: "در انتظار تایید نرخ روز",
+  note: "نمایش نرخ زنده پس از بررسی منبع معتبر انجام می‌شود."
 };
 
 export const commonCurrencyRows = [

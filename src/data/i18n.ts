@@ -128,27 +128,27 @@ const fa: Dictionary = {
     { title: "اقدام بعدی", description: "مسیر تماس، ترخیص یا محتوای لازم مشخص می‌شود." }
   ] },
   pages: {
-    services: { title: "خدمات بازرگانی خوبروز | ترخیص، واردات، صادرات و کارگو", description: "صفحه خدمات خوبروز شامل ترخیص کالا، ثبت سفارش واردات، واردات کالا، واردات از چین، کارگو چین، صادرات و مشاوره امور گمرکی است.", eyebrow: "خدمات بازرگانی", heading: "خدمات بازرگانی خوبروز", body: "هر خدمت صفحه مستقل و قابل توسعه دارد تا مسیر مشاوره و تبدیل کاربر واضح باشد.", consult: "درخواست مشاوره", customs: "ترخیص کالا", view: "مشاهده" },
-    customs: { title: "ترخیص کالا | بررسی مدارک و مسیر گمرکی | خوبروز", description: "خدمات ترخیص کالا در خوبروز شامل بررسی مدارک، مراحل ترخیص، عوامل موثر بر هزینه و مسیر تماس اختصاصی برای درخواست‌های ترخیص است.", eyebrow: "ترخیص کالا", heading: "ترخیص کالا از گمرک", body: "درخواست‌های ترخیص کالا جدا از تماس عمومی بررسی می‌شوند تا اسناد، اطلاعات کالا و مسیر گمرکی دقیق‌تر مرور شود.", primary: "بررسی مسیر ترخیص", back: "بازگشت به خدمات", cardTitle: "مسیر اختصاصی ترخیص", cardBody: "شماره ترخیص فقط برای صفحات و دکمه‌های مرتبط با ترخیص استفاده می‌شود.", info: [
+    services: { title: "خدمات بازرگانی خوبروز | ترخیص، واردات، صادرات و کارگو", description: "صفحه خدمات خوبروز شامل ترخیص کالا، ثبت سفارش واردات، واردات کالا، واردات از چین، کارگو چین، صادرات و مشاوره امور گمرکی است.", eyebrow: "خدمات بازرگانی", heading: "خدمات بازرگانی خوبروز", body: "مسیرهای اصلی واردات، صادرات، حمل، ترخیص و اسناد تجاری در یک نگاه.", consult: "درخواست مشاوره", customs: "ترخیص کالا", view: "مشاهده" },
+    customs: { title: "ترخیص کالا | بررسی مدارک و مسیر گمرکی | خوبروز", description: "خدمات ترخیص کالا در خوبروز شامل بررسی مدارک، مراحل ترخیص، عوامل موثر بر هزینه و مسیر تماس اختصاصی برای درخواست‌های ترخیص است.", eyebrow: "ترخیص کالا", heading: "ترخیص کالا از گمرک", body: "بررسی مدارک، اطلاعات کالا و مسیر گمرکی برای شروع پیگیری ترخیص.", primary: "بررسی مسیر ترخیص", back: "بازگشت به خدمات", cardTitle: "مسیر اختصاصی ترخیص", cardBody: "برای درخواست‌های ترخیص، از شماره اختصاصی همین بخش استفاده کنید.", info: [
       { title: "ترخیص کالا چیست؟", description: "ترخیص کالا مجموعه اقداماتی است که برای خروج قانونی کالا از گمرک انجام می‌شود؛ از کنترل مدارک تا اظهار، پرداخت‌ها و پیگیری مجوزها." },
       { title: "مراحل قابل بررسی", description: "بررسی کالا و مدارک، کنترل مجوزها، عوامل موثر بر هزینه و پیگیری مسیر ترخیص." },
-      { title: "محتوای تکمیلی صفحه", description: "این صفحه می‌تواند با مدارک لازم، عوامل موثر بر هزینه، سوالات متداول و لینک به مقالات مرتبط کامل شود." }
+      { title: "مدارک و هزینه‌ها", description: "مدارک لازم، مجوزها و عوامل موثر بر هزینه قبل از اقدام مرور می‌شود." }
     ] },
-    about: { title: "درباره خوبروز | خدمات بازرگانی و آموزش تجارت خارجی", description: "خوبروز روی خدمات بازرگانی، آموزش صادرات و واردات، ترخیص کالا و فایل‌ها و اسناد تجاری تمرکز دارد.", eyebrow: "درباره خوبروز", heading: "درباره خوبروز", body: "خوبروز روی توضیح مسیرهای تجارت خارجی، بررسی درخواست‌های بازرگانی، ترخیص کالا و آموزش اسناد تجاری تمرکز دارد.", brandPosition: "جایگاه برند", brandBody: "مرکز سایت خدمات بازرگانی است؛ آموزش و فایل‌ها برای توضیح بهتر مسیرها و اسناد تکمیل‌کننده آن هستند.", valuesTitle: "ارزش‌ها", values: ["شفافیت در مسیر و مدارک", "دقت در محتوای تخصصی", "پرهیز از ادعاهای اغراق‌آمیز", "تفکیک روشن درخواست و اقدام بعدی"] },
-    contact: { title: "تماس با خوبروز | مشاوره تجارت خارجی و ترخیص کالا", description: "برای مشاوره خدمات بازرگانی، واردات، صادرات، فایل‌های تجاری و ترخیص کالا با خوبروز تماس بگیرید.", eyebrow: "تماس با خوبروز", heading: "تماس با خوبروز", body: "برای تماس عمومی از واتساپ شخصی خوبروز و برای درخواست‌های ترخیص از شماره اختصاصی ترخیص استفاده کنید.", methods: "مسیرهای تماس", generalWhatsapp: "واتساپ عمومی", customsLine: "مسیر اختصاصی ترخیص", social: "شبکه‌های اجتماعی خوبروز", formTitle: "درخواست مشاوره", name: "نام و نام خانوادگی", phone: "شماره تماس", type: "نوع درخواست", details: "توضیحات", submit: "ارسال در واتساپ", options: ["ترخیص کالا", "واردات کالا", "صادرات کالا", "خرید فایل", "آموزش"] },
-    documents: { title: "فایل‌ها و اسناد تجاری | خوبروز", description: "فروش فایل‌ها و اسناد تجاری خوبروز شامل نمونه پروفرما، پکینگ لیست، قرارداد صادراتی، چک‌لیست ترخیص و فایل‌های اکسل محاسباتی.", eyebrow: "اسناد تجاری", heading: "فایل‌ها و اسناد تجاری", body: "این بخش در فاز بعدی برای فروش فایل دیجیتال و اتصال به زرین‌پال آماده می‌شود." },
-    education: { title: "آموزش صادرات و واردات | خوبروز", description: "آموزش صادرات و واردات در خوبروز برای آشنایی با مفاهیم پایه تجارت خارجی، اسناد، ثبت سفارش، حمل و ترخیص کالا.", eyebrow: "آموزش تجارت", heading: "آموزش صادرات و واردات", body: "آموزش‌ها برای جذب ورودی جستجو و هدایت کاربر به خدمات، مشاوره یا فایل‌های تجاری طراحی می‌شوند.", cards: [
+    about: { title: "درباره خوبروز | خدمات بازرگانی و آموزش تجارت خارجی", description: "خوبروز روی خدمات بازرگانی، آموزش صادرات و واردات، ترخیص کالا و فایل‌ها و اسناد تجاری تمرکز دارد.", eyebrow: "درباره خوبروز", heading: "درباره خوبروز", body: "خوبروز در حوزه خدمات بازرگانی، ترخیص کالا و آموزش اسناد تجارت خارجی فعالیت می‌کند.", brandPosition: "جایگاه برند", brandBody: "خدمات بازرگانی محور اصلی خوبروز است؛ آموزش و فایل‌ها نقش پشتیبان دارند.", valuesTitle: "ارزش‌ها", values: ["شفافیت در مسیر و مدارک", "دقت در محتوای تخصصی", "پرهیز از ادعاهای اغراق‌آمیز", "تفکیک روشن درخواست و اقدام بعدی"] },
+    contact: { title: "تماس با خوبروز | مشاوره تجارت خارجی و ترخیص کالا", description: "برای مشاوره خدمات بازرگانی، واردات، صادرات، فایل‌های تجاری و ترخیص کالا با خوبروز تماس بگیرید.", eyebrow: "تماس با خوبروز", heading: "تماس با خوبروز", body: "برای مشاوره بازرگانی یا درخواست ترخیص، از مسیر تماس مناسب استفاده کنید.", methods: "مسیرهای تماس", generalWhatsapp: "واتساپ عمومی", customsLine: "مسیر اختصاصی ترخیص", social: "شبکه‌های اجتماعی خوبروز", formTitle: "درخواست مشاوره", name: "نام و نام خانوادگی", phone: "شماره تماس", type: "نوع درخواست", details: "توضیحات", submit: "ارسال در واتساپ", options: ["ترخیص کالا", "واردات کالا", "صادرات کالا", "خرید فایل", "آموزش"] },
+    documents: { title: "فایل‌ها و اسناد تجاری | خوبروز", description: "فروش فایل‌ها و اسناد تجاری خوبروز شامل نمونه پروفرما، پکینگ لیست، قرارداد صادراتی، چک‌لیست ترخیص و فایل‌های اکسل محاسباتی.", eyebrow: "اسناد تجاری", heading: "فایل‌ها و اسناد تجاری", body: "نمونه‌ها، چک‌لیست‌ها و فایل‌های کاربردی برای نظم دادن به اسناد تجارت خارجی." },
+    education: { title: "آموزش صادرات و واردات | خوبروز", description: "آموزش صادرات و واردات در خوبروز برای آشنایی با مفاهیم پایه تجارت خارجی، اسناد، ثبت سفارش، حمل و ترخیص کالا.", eyebrow: "آموزش تجارت", heading: "آموزش صادرات و واردات", body: "آموزش مفاهیم پایه، اسناد و مراحل رایج واردات و صادرات.", cards: [
       { title: "آموزش واردات", description: "مراحل واردات کالا، ثبت سفارش، حمل و ترخیص." },
       { title: "آموزش صادرات", description: "انتخاب بازار هدف، مذاکره، قرارداد و اسناد صادراتی." },
       { title: "آموزش اسناد تجاری", description: "پروفرما، پکینگ لیست، اینویس و قراردادها." }
     ] },
-    knowledge: { title: "دانشنامه تجارت | اصطلاحات واردات، صادرات و گمرک", description: "دانشنامه تجارت خوبروز شامل اصطلاحات گمرکی، واردات، صادرات، پروفرما، پکینگ لیست، بارنامه، HS Code و سامانه جامع تجارت.", eyebrow: "دانشنامه تجارت", heading: "دانشنامه تجارت", body: "محتوای دانشنامه برای جذب جستجوهای اطلاعاتی و لینک دادن به صفحات خدمات و فایل‌های تجاری ساخته می‌شود." },
-    news: { title: "بخشنامه‌ها و اخبار گمرکی | خوبروز", description: "بخشنامه‌ها و اخبار تجارت و گمرک در خوبروز با تمرکز بر قوانین واردات، صادرات، ثبت سفارش و ترخیص کالا.", eyebrow: "اخبار تجارت", heading: "بخشنامه‌ها و اخبار گمرکی", body: "این بخش برای محتوای زمان‌دار است و باید هنگام انتشار با تاریخ دقیق و منابع معتبر به‌روزرسانی شود.", cards: [
-      { title: "بخشنامه‌های گمرکی", description: "نیازمند بررسی تاریخ و منبع رسمی." },
-      { title: "اخبار ثبت سفارش", description: "اتصال محتوایی به خدمات ثبت سفارش واردات." },
-      { title: "تغییرات قوانین واردات و صادرات", description: "محتوای زمان‌دار با هشدار نیاز به اعتبارسنجی." }
+    knowledge: { title: "دانشنامه تجارت | اصطلاحات واردات، صادرات و گمرک", description: "دانشنامه تجارت خوبروز شامل اصطلاحات گمرکی، واردات، صادرات، پروفرما، پکینگ لیست، بارنامه، HS Code و سامانه جامع تجارت.", eyebrow: "دانشنامه تجارت", heading: "دانشنامه تجارت", body: "اصطلاحات و مفاهیم پرکاربرد واردات، صادرات، گمرک و اسناد تجاری." },
+    news: { title: "بخشنامه‌ها و اخبار گمرکی | خوبروز", description: "بخشنامه‌ها و اخبار تجارت و گمرک در خوبروز با تمرکز بر قوانین واردات، صادرات، ثبت سفارش و ترخیص کالا.", eyebrow: "اخبار تجارت", heading: "بخشنامه‌ها و اخبار گمرکی", body: "اخبار و بخشنامه‌های مرتبط با واردات، صادرات، ثبت سفارش و گمرک.", cards: [
+      { title: "بخشنامه‌های گمرکی", description: "تغییرات مهم مقررات و رویه‌های گمرکی." },
+      { title: "اخبار ثبت سفارش", description: "خبرهای مرتبط با ثبت سفارش و واردات رسمی." },
+      { title: "قوانین واردات و صادرات", description: "نکات مهم در مقررات تجارت خارجی." }
     ] },
-    faq: { title: "سوالات متداول تجارت خارجی | خوبروز", description: "پاسخ سوالات متداول درباره ترخیص کالا، واردات، صادرات، ثبت سفارش، کارگو چین، آموزش و فایل‌های تجاری خوبروز.", eyebrow: "سوالات متداول", heading: "سوالات متداول", body: "پاسخ‌ها باید کاربر را به صفحه خدمات، مقاله مرتبط یا مسیر تماس درست هدایت کنند.", q1: "برای ترخیص کالا از کجا شروع کنم؟", a1: "ابتدا نوع کالا، مدارک و گمرک مورد نظر باید بررسی شود. برای درخواست‌های ترخیص از مسیر تماس اختصاصی ترخیص استفاده کنید.", link: "صفحه ترخیص کالا", q2: "فروش فایل‌ها چه زمانی فعال می‌شود؟", a2: "در فاز بعدی، فایل‌ها با صفحه محصول و اتصال به زرین‌پال آماده می‌شوند." }
+    faq: { title: "سوالات متداول تجارت خارجی | خوبروز", description: "پاسخ سوالات متداول درباره ترخیص کالا، واردات، صادرات، ثبت سفارش، کارگو چین، آموزش و فایل‌های تجاری خوبروز.", eyebrow: "سوالات متداول", heading: "سوالات متداول", body: "پاسخ کوتاه به پرسش‌های رایج درباره خدمات بازرگانی و ترخیص.", q1: "برای ترخیص کالا از کجا شروع کنم؟", a1: "ابتدا نوع کالا، مدارک و گمرک مورد نظر بررسی می‌شود. برای درخواست ترخیص از شماره اختصاصی ترخیص استفاده کنید.", link: "صفحه ترخیص کالا", q2: "فایل‌های تجاری چه کاربردی دارند؟", a2: "برای کنترل مدارک، برآورد اولیه هزینه‌ها و آماده‌سازی اسناد واردات و صادرات استفاده می‌شوند." }
   }
 };
 
@@ -222,27 +222,27 @@ const en: Dictionary = {
   ] },
   pages: {
     ...fa.pages,
-    services: { title: "Khoobrooz trade services | Clearance, import, export and cargo", description: "Khoobrooz services include customs clearance, import registration, import services, China cargo, export, and customs consultation.", eyebrow: "Trade services", heading: "Khoobrooz trade services", body: "Each service has a dedicated path to keep consultation and conversion clear.", consult: "Request consultation", customs: "Customs clearance", view: "View" },
-    customs: { ...fa.pages.customs, title: "Customs clearance | Document and customs route review | Khoobrooz", description: "Khoobrooz clearance services include document review, clearance steps, cost factors, and a dedicated contact route.", eyebrow: "Customs clearance", heading: "Customs clearance", body: "Clearance requests are reviewed separately from general contact so documents, product data, and customs route are checked more carefully.", primary: "Review clearance path", back: "Back to services", cardTitle: "Dedicated clearance path", cardBody: "The clearance number is used only for clearance-related pages and buttons.", info: [
+    services: { title: "Khoobrooz trade services | Clearance, import, export and cargo", description: "Khoobrooz services include customs clearance, import registration, import services, China cargo, export, and customs consultation.", eyebrow: "Trade services", heading: "Khoobrooz trade services", body: "Import, export, shipping, clearance, and commercial documents at a glance.", consult: "Request consultation", customs: "Customs clearance", view: "View" },
+    customs: { ...fa.pages.customs, title: "Customs clearance | Document and customs route review | Khoobrooz", description: "Khoobrooz clearance services include document review, clearance steps, cost factors, and a dedicated contact route.", eyebrow: "Customs clearance", heading: "Customs clearance", body: "Document, product, and customs-route review before clearance follow-up.", primary: "Review clearance path", back: "Back to services", cardTitle: "Dedicated clearance path", cardBody: "Use the dedicated number for clearance requests.", info: [
       { title: "What is customs clearance?", description: "Clearance includes the legal steps required to release goods from customs, from document control to declaration, payments, and permit follow-up." },
       { title: "Reviewable steps", description: "Product and document review, permit checks, cost factors, and clearance follow-up." },
-      { title: "Additional content", description: "This page can be expanded with required documents, cost factors, FAQ, and related article links." }
+      { title: "Documents and costs", description: "Required documents, permits, and cost factors are reviewed before action." }
     ] },
-    about: { ...fa.pages.about, title: "About Khoobrooz | Trade services and foreign trade education", description: "Khoobrooz focuses on trade services, import-export education, customs clearance, and commercial documents.", eyebrow: "About Khoobrooz", heading: "About Khoobrooz", body: "Khoobrooz focuses on explaining foreign trade paths, reviewing trade requests, customs clearance, and commercial document education.", brandPosition: "Brand position", brandBody: "Services are the center of the website; education and files support better understanding of routes and documents.", valuesTitle: "Values", values: ["Clear routes and documents", "Accurate specialized content", "No exaggerated claims", "Clear request and next action"] },
-    contact: { ...fa.pages.contact, title: "Contact Khoobrooz | Foreign trade and customs consultation", description: "Contact Khoobrooz for trade services, import, export, commercial documents, and customs clearance.", eyebrow: "Contact Khoobrooz", heading: "Contact Khoobrooz", body: "Use general WhatsApp for general contact and the dedicated number for customs clearance requests.", methods: "Contact routes", generalWhatsapp: "General WhatsApp", customsLine: "Dedicated clearance route", social: "Khoobrooz social channels", formTitle: "Consultation request", name: "Full name", phone: "Phone number", type: "Request type", details: "Details", submit: "Send on WhatsApp", options: ["Customs clearance", "Import", "Export", "Document purchase", "Education"] },
-    documents: { ...fa.pages.documents, title: "Trade files and documents | Khoobrooz", description: "Khoobrooz commercial documents include proforma, packing list, export contract, clearance checklist, and calculation sheets.", eyebrow: "Commercial documents", heading: "Trade files and documents", body: "This section is prepared for future digital file sales and online payment integration." },
-    education: { ...fa.pages.education, title: "Import and export education | Khoobrooz", description: "Import and export education for basic foreign trade concepts, documents, registration, shipping, and clearance.", eyebrow: "Trade education", heading: "Import and export education", body: "Educational content brings search users to services, consultation, or trade files.", cards: [
+    about: { ...fa.pages.about, title: "About Khoobrooz | Trade services and foreign trade education", description: "Khoobrooz focuses on trade services, import-export education, customs clearance, and commercial documents.", eyebrow: "About Khoobrooz", heading: "About Khoobrooz", body: "Khoobrooz works across trade services, customs clearance, and foreign-trade document education.", brandPosition: "Brand position", brandBody: "Trade services are the core; education and files support the user’s decision.", valuesTitle: "Values", values: ["Clear routes and documents", "Accurate specialized content", "No exaggerated claims", "Clear request and next action"] },
+    contact: { ...fa.pages.contact, title: "Contact Khoobrooz | Foreign trade and customs consultation", description: "Contact Khoobrooz for trade services, import, export, commercial documents, and customs clearance.", eyebrow: "Contact Khoobrooz", heading: "Contact Khoobrooz", body: "Choose the right contact route for trade consultation or clearance requests.", methods: "Contact routes", generalWhatsapp: "General WhatsApp", customsLine: "Dedicated clearance route", social: "Khoobrooz social channels", formTitle: "Consultation request", name: "Full name", phone: "Phone number", type: "Request type", details: "Details", submit: "Send on WhatsApp", options: ["Customs clearance", "Import", "Export", "Document purchase", "Education"] },
+    documents: { ...fa.pages.documents, title: "Trade files and documents | Khoobrooz", description: "Khoobrooz commercial documents include proforma, packing list, export contract, clearance checklist, and calculation sheets.", eyebrow: "Commercial documents", heading: "Trade files and documents", body: "Templates, checklists, and practical files for organizing foreign-trade documents." },
+    education: { ...fa.pages.education, title: "Import and export education | Khoobrooz", description: "Import and export education for basic foreign trade concepts, documents, registration, shipping, and clearance.", eyebrow: "Trade education", heading: "Import and export education", body: "Core concepts, documents, and common steps in import and export.", cards: [
       { title: "Import education", description: "Import steps, registration, shipping, and clearance." },
       { title: "Export education", description: "Target market, negotiation, contracts, and export documents." },
       { title: "Commercial document education", description: "Proforma, packing list, invoice, and contracts." }
     ] },
-    knowledge: { ...fa.pages.knowledge, title: "Trade knowledge base | Import, export and customs terms", description: "Khoobrooz trade knowledge base includes customs, import, export, proforma, packing list, bill of lading, HS Code, and trade systems.", eyebrow: "Trade knowledge base", heading: "Trade knowledge base", body: "Knowledge content captures informational searches and connects users to services and document files." },
-    news: { ...fa.pages.news, title: "Customs and trade updates | Khoobrooz", description: "Trade and customs updates focused on import, export, registration, and customs clearance.", eyebrow: "Trade updates", heading: "Customs and trade updates", body: "This time-sensitive section should be updated with exact dates and reliable sources.", cards: [
-      { title: "Customs notices", description: "Requires date and official-source review." },
-      { title: "Registration updates", description: "Linked to import registration services." },
-      { title: "Import and export rule changes", description: "Time-sensitive content with source validation." }
+    knowledge: { ...fa.pages.knowledge, title: "Trade knowledge base | Import, export and customs terms", description: "Khoobrooz trade knowledge base includes customs, import, export, proforma, packing list, bill of lading, HS Code, and trade systems.", eyebrow: "Trade knowledge base", heading: "Trade knowledge base", body: "Common terms and concepts in import, export, customs, and trade documents." },
+    news: { ...fa.pages.news, title: "Customs and trade updates | Khoobrooz", description: "Trade and customs updates focused on import, export, registration, and customs clearance.", eyebrow: "Trade updates", heading: "Customs and trade updates", body: "Updates related to import, export, registration, and customs procedures.", cards: [
+      { title: "Customs notices", description: "Important changes in customs rules and procedures." },
+      { title: "Registration updates", description: "Updates related to import registration." },
+      { title: "Import and export rules", description: "Key points in foreign-trade regulations." }
     ] },
-    faq: { ...fa.pages.faq, title: "Foreign trade FAQ | Khoobrooz", description: "Answers to common questions about clearance, import, export, registration, China cargo, education, and trade files.", eyebrow: "FAQ", heading: "FAQ", body: "Answers should guide users to the right service page, article, or contact route.", q1: "Where should I start for customs clearance?", a1: "First, product type, documents, and target customs office should be reviewed. Clearance requests should use the dedicated clearance route.", link: "Customs clearance page", q2: "When will file sales be active?", a2: "In the next phase, files will be prepared with product pages and payment integration." }
+    faq: { ...fa.pages.faq, title: "Foreign trade FAQ | Khoobrooz", description: "Answers to common questions about clearance, import, export, registration, China cargo, education, and trade files.", eyebrow: "FAQ", heading: "FAQ", body: "Short answers to common questions about trade services and clearance.", q1: "Where should I start for customs clearance?", a1: "First, product type, documents, and target customs office are reviewed. Use the dedicated clearance number for clearance requests.", link: "Customs clearance page", q2: "What are trade files used for?", a2: "They help organize documents, estimate initial costs, and prepare import-export paperwork." }
   }
 };
 
@@ -287,14 +287,14 @@ function cloneWithLanguage(base: Dictionary, language: "ar" | "ru" | "zh" | "tr"
       docs: [["قائمة تحقق التخليص", "مراجعة المستندات قبل المتابعة."], ["نموذج فاتورة أولية", "هيكل المعلومات الأساسية للشراء."], ["ملف حساب تكلفة الاستيراد", "تقدير أولي لتكاليف الاستيراد."]],
       process: ["وصف الطلب", "تصنيف الطلب", "مراجعة المستندات والمسار", "الإجراء التالي", "نتيجة واضحة", ["استشارة تجارية", "مراجعة التخليص", "تعليم تجاري", "ملفات وقوائم تحقق"]],
       pages: {
-        services: ["خدمات خوبروز التجارية", "لكل خدمة مسار مستقل يوضح الاستشارة والخطوة التالية.", "طلب استشارة", "التخليص الجمركي", "عرض"],
-        about: ["عن خوبروز", "يركز خوبروز على توضيح مسارات التجارة الخارجية ومراجعة طلبات الأعمال والتخليص وتعليم المستندات.", "مكانة العلامة", "الخدمات التجارية هي مركز الموقع؛ التعليم والملفات يدعمان فهم المسارات والمستندات.", "القيم"],
+        services: ["خدمات خوبروز التجارية", "الاستيراد والتصدير والشحن والتخليص والمستندات التجارية في لمحة.", "طلب استشارة", "التخليص الجمركي", "عرض"],
+        about: ["عن خوبروز", "يعمل خوبروز في الخدمات التجارية والتخليص الجمركي وتعليم مستندات التجارة الخارجية.", "مكانة العلامة", "الخدمات التجارية هي المركز؛ التعليم والملفات يدعمان قرار المستخدم.", "القيم"],
         contact: ["التواصل مع خوبروز", "استخدم واتساب العام للتواصل العام والرقم المخصص لطلبات التخليص.", "مسارات التواصل", "واتساب عام", "مسار التخليص المخصص", "طلب استشارة"],
-        documents: ["ملفات ومستندات تجارية", "هذا القسم مهيأ لاحقاً لبيع الملفات الرقمية وربط الدفع الإلكتروني."],
-        education: ["تعليم الاستيراد والتصدير", "المحتوى التعليمي يشرح المفاهيم الأساسية والمستندات الشائعة وخطوات الاستيراد والتصدير."],
-        knowledge: ["قاعدة المعرفة التجارية", "محتوى معرفي لجذب البحث المعلوماتي وربطه بالخدمات والملفات."],
-        news: ["نشرات وأخبار الجمارك", "هذا القسم محتوى زمني ويجب تحديثه بتواريخ دقيقة ومصادر موثوقة."],
-        faq: ["الأسئلة الشائعة", "إجابات توجه المستخدم إلى الخدمة أو المقال أو قناة التواصل الصحيحة."]
+        documents: ["ملفات ومستندات تجارية", "نماذج وقوائم تحقق وملفات عملية لتنظيم مستندات التجارة الخارجية."],
+        education: ["تعليم الاستيراد والتصدير", "مفاهيم أساسية ومستندات وخطوات شائعة في الاستيراد والتصدير."],
+        knowledge: ["قاعدة المعرفة التجارية", "مصطلحات ومفاهيم شائعة في الاستيراد والتصدير والجمارك."],
+        news: ["نشرات وأخبار الجمارك", "أخبار ونشرات مرتبطة بالاستيراد والتصدير والتسجيل والجمارك."],
+        faq: ["الأسئلة الشائعة", "إجابات قصيرة على أسئلة الخدمات التجارية والتخليص."]
       }
     },
     ru: {
@@ -313,14 +313,14 @@ function cloneWithLanguage(base: Dictionary, language: "ar" | "ru" | "zh" | "tr"
       docs: [["Чек-лист оформления", "Проверка документов перед сопровождением."], ["Шаблон проформы", "Базовая структура данных закупки."], ["Расчет стоимости импорта", "Первичная оценка импортных расходов."]],
       process: ["Описание запроса", "Классификация", "Проверка документов", "Следующее действие", "Понятный результат", ["Торговая консультация", "Проверка оформления", "Обучение", "Файлы и чек-листы"]],
       pages: {
-        services: ["Торговые услуги Khoobrooz", "Каждая услуга имеет отдельный путь для понятной консультации.", "Запросить консультацию", "Таможенное оформление", "Смотреть"],
-        about: ["О Khoobrooz", "Khoobrooz объясняет маршруты внешней торговли, проверяет запросы и поддерживает обучение документам.", "Позиция бренда", "В центре сайта торговые услуги; обучение и файлы помогают понять документы.", "Ценности"],
+        services: ["Торговые услуги Khoobrooz", "Импорт, экспорт, логистика, оформление и коммерческие документы.", "Запросить консультацию", "Таможенное оформление", "Смотреть"],
+        about: ["О Khoobrooz", "Khoobrooz работает с торговыми услугами, таможенным оформлением и обучением документам.", "Позиция бренда", "Основой являются торговые услуги; обучение и файлы поддерживают решение клиента.", "Ценности"],
         contact: ["Связаться с Khoobrooz", "Для общих вопросов используйте WhatsApp, для таможни — отдельный номер.", "Каналы связи", "Общий WhatsApp", "Таможенный маршрут", "Запрос консультации"],
-        documents: ["Торговые файлы и документы", "Раздел подготовлен для будущей продажи цифровых файлов и онлайн-оплаты."],
+        documents: ["Торговые файлы и документы", "Шаблоны, чек-листы и практичные файлы для внешнеторговых документов."],
         education: ["Обучение импорту и экспорту", "Материалы объясняют базовые понятия, документы и общие этапы торговли."],
-        knowledge: ["База знаний по торговле", "Контент для информационного поиска и связи с услугами и файлами."],
-        news: ["Таможенные и торговые новости", "Раздел требует точных дат и надежных источников."],
-        faq: ["Частые вопросы", "Ответы направляют пользователя к услуге, статье или каналу связи."]
+        knowledge: ["База знаний по торговле", "Термины и понятия импорта, экспорта, таможни и документов."],
+        news: ["Таможенные и торговые новости", "Новости по импорту, экспорту, регистрации и таможенным процедурам."],
+        faq: ["Частые вопросы", "Короткие ответы о торговых услугах и таможенном оформлении."]
       }
     },
     zh: {
@@ -339,14 +339,14 @@ function cloneWithLanguage(base: Dictionary, language: "ar" | "ru" | "zh" | "tr"
       docs: [["清关清单", "跟进前检查文件。"], ["形式发票模板", "采购信息的基础结构。"], ["进口成本表", "进口成本初步估算。"]],
       process: ["需求说明", "需求分类", "文件与路径审核", "下一步", "明确结果", ["贸易咨询", "清关审核", "贸易学习", "文件与清单"]],
       pages: {
-        services: ["Khoobrooz 贸易服务", "每项服务都有清晰的咨询和转化路径。", "请求咨询", "清关服务", "查看"],
-        about: ["关于 Khoobrooz", "Khoobrooz 专注于解释外贸路径、审核贸易需求、清关和文件教育。", "品牌定位", "网站核心是贸易服务；教育和文件帮助理解路径。", "价值观"],
+        services: ["Khoobrooz 贸易服务", "进口、出口、运输、清关和商业文件概览。", "请求咨询", "清关服务", "查看"],
+        about: ["关于 Khoobrooz", "Khoobrooz 提供贸易服务、清关和外贸文件学习内容。", "品牌定位", "贸易服务是核心；学习和文件帮助用户判断。", "价值观"],
         contact: ["联系 Khoobrooz", "一般联系使用 WhatsApp，清关需求使用专线。", "联系方式", "通用 WhatsApp", "清关专线", "咨询请求"],
-        documents: ["贸易文件资料", "本部分为未来数字文件销售和在线支付做准备。"],
+        documents: ["贸易文件资料", "用于整理外贸文件的模板、清单和实用文件。"],
         education: ["进出口学习", "学习内容解释基础概念、常用文件和进出口步骤。"],
-        knowledge: ["贸易知识库", "知识内容用于信息搜索，并连接服务和文件。"],
-        news: ["海关与贸易动态", "此部分需要准确日期和可靠来源。"],
-        faq: ["常见问题", "答案会引导用户到合适的服务、文章或联系方式。"]
+        knowledge: ["贸易知识库", "进口、出口、海关和贸易文件中的常见术语。"],
+        news: ["海关与贸易动态", "与进口、出口、登记和海关流程相关的动态。"],
+        faq: ["常见问题", "关于贸易服务和清关的简短回答。"]
       }
     },
     tr: {
@@ -365,14 +365,14 @@ function cloneWithLanguage(base: Dictionary, language: "ar" | "ru" | "zh" | "tr"
       docs: [["Gümrükleme kontrol listesi", "Takipten önce belgeleri kontrol edin."], ["Proforma örneği", "Satın alma bilgilerinin temel yapısı."], ["İthalat maliyet tablosu", "İthalat maliyetleri için ilk tahmin."]],
       process: ["Talep özeti", "Talep sınıflandırma", "Belge ve rota incelemesi", "Sonraki adım", "Net çıktı", ["Ticaret danışmanlığı", "Gümrükleme incelemesi", "Ticaret eğitimi", "Dosya ve listeler"]],
       pages: {
-        services: ["Khoobrooz ticaret hizmetleri", "Her hizmet danışmanlık ve dönüşüm için net bir rotaya sahiptir.", "Danışmanlık iste", "Gümrükleme", "Gör"],
-        about: ["Khoobrooz hakkında", "Khoobrooz dış ticaret yollarını açıklamaya, ticari talepleri incelemeye ve belge eğitimine odaklanır.", "Marka konumu", "Sitenin merkezi ticaret hizmetleridir; eğitim ve dosyalar belgeleri anlamayı destekler.", "Değerler"],
+        services: ["Khoobrooz ticaret hizmetleri", "İthalat, ihracat, taşıma, gümrükleme ve ticari belgeler.", "Danışmanlık iste", "Gümrükleme", "Gör"],
+        about: ["Khoobrooz hakkında", "Khoobrooz ticaret hizmetleri, gümrükleme ve dış ticaret belgeleri alanında çalışır.", "Marka konumu", "Ticaret hizmetleri merkezde; eğitim ve dosyalar kararı destekler.", "Değerler"],
         contact: ["Khoobrooz ile iletişim", "Genel iletişim için WhatsApp, gümrükleme için özel numara kullanılır.", "İletişim yolları", "Genel WhatsApp", "Gümrükleme hattı", "Danışmanlık talebi"],
-        documents: ["Ticari dosyalar ve belgeler", "Bu bölüm dijital dosya satışı ve çevrim içi ödeme için hazırlanır."],
+        documents: ["Ticari dosyalar ve belgeler", "Dış ticaret belgelerini düzenlemek için şablonlar, listeler ve pratik dosyalar."],
         education: ["İthalat ve ihracat eğitimi", "İçerikler temel kavramları, belgeleri ve genel ithalat-ihracat adımlarını açıklar."],
-        knowledge: ["Ticaret bilgi bankası", "Bilgi içerikleri arama trafiğini hizmetlere ve dosyalara bağlar."],
-        news: ["Gümrük ve ticaret haberleri", "Bu bölüm kesin tarih ve güvenilir kaynaklarla güncellenmelidir."],
-        faq: ["Sık sorulan sorular", "Yanıtlar kullanıcıyı doğru hizmete, makaleye veya iletişim yoluna yönlendirir."]
+        knowledge: ["Ticaret bilgi bankası", "İthalat, ihracat, gümrük ve ticari belgelerde sık kullanılan terimler."],
+        news: ["Gümrük ve ticaret haberleri", "İthalat, ihracat, kayıt ve gümrük süreçleriyle ilgili haberler."],
+        faq: ["Sık sorulan sorular", "Ticaret hizmetleri ve gümrükleme hakkında kısa yanıtlar."]
       }
     }
   }[language];
