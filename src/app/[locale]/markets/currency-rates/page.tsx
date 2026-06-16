@@ -48,7 +48,7 @@ export default async function CurrencyRatesPage() {
                 <RateTable
                   key={group}
                   title={marketRateGroupLabels[group]}
-                  description={marketRateGroupDescriptions[group]}
+                  description={["market", "metal", "coin"].includes(group) ? "" : marketRateGroupDescriptions[group]}
                   rates={market.rates.filter((rate) => rate.group === group)}
                 />
               ))}
@@ -82,7 +82,7 @@ function RateTable({ title, description, rates }: { title: string; description: 
       <div className="flex flex-col justify-between gap-2 border-b border-line bg-[#f6f8fb] px-4 py-3 md:flex-row md:items-center">
         <div>
           <h2 className="text-lg font-black text-primary">{title}</h2>
-          <p className="mt-1 text-sm text-muted">{description}</p>
+          {description && <p className="mt-1 text-sm text-muted">{description}</p>}
         </div>
         <span className="text-xs font-bold text-muted">{rates.length} مورد</span>
       </div>

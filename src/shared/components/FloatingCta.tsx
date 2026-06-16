@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { FilePenLine, FileSpreadsheet, NotepadText, Plus, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import baleLogo from "@/assets/images/bale-logo.png";
+import whatsappLogo from "@/assets/images/whatsapp-logo-cgkok.webp";
 import { contact } from "@/core/lib/site";
 import { Button } from "@/shared/components/Button";
 
@@ -121,7 +122,7 @@ export function FloatingCta() {
     setDraftNote("");
   };
 
-  const handleNumber = (value: string) => {
+  const handleNumber = useCallback((value: string) => {
     if (value === "=") {
       const result = calculate(storedValue, calculatorDisplay, operator);
       setCalculatorDisplay(result);
@@ -147,9 +148,9 @@ export function FloatingCta() {
 
       return `${current}${value}`;
     });
-  };
+  }, [calculatorDisplay, operator, resetDisplay, storedValue]);
 
-  const handleOperator = (nextOperator: string) => {
+  const handleOperator = useCallback((nextOperator: string) => {
     if (operator && storedValue) {
       setStoredValue(calculate(storedValue, calculatorDisplay, operator));
     } else {
@@ -158,16 +159,16 @@ export function FloatingCta() {
 
     setOperator(nextOperator);
     setResetDisplay(true);
-  };
+  }, [calculatorDisplay, operator, storedValue]);
 
-  const clearCalculator = () => {
+  const clearCalculator = useCallback(() => {
     setCalculatorDisplay("0");
     setStoredValue("");
     setOperator(null);
     setResetDisplay(false);
-  };
+  }, []);
 
-  const backspaceCalculator = () => {
+  const backspaceCalculator = useCallback(() => {
     setCalculatorDisplay((current) => {
       if (resetDisplay || current.length <= 1) {
         setResetDisplay(false);
@@ -176,7 +177,7 @@ export function FloatingCta() {
 
       return current.slice(0, -1);
     });
-  };
+  }, [resetDisplay]);
 
   useEffect(() => {
     if (activeTool !== "calculator") {
@@ -228,7 +229,7 @@ export function FloatingCta() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTool, calculatorDisplay, operator, resetDisplay, storedValue]);
+  }, [activeTool, backspaceCalculator, clearCalculator, handleNumber, handleOperator]);
 
   return (
     <>
@@ -385,9 +386,9 @@ export function FloatingCta() {
           title="واتساپ خوبروز"
           target="_blank"
           rel="noreferrer"
-          className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
+          className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/86 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
         >
-          <img src="/whatsapp-logo.svg" alt="" className="size-full object-cover" />
+          <Image src={whatsappLogo} alt="" width={40} height={40} className="size-full object-cover" />
         </a>
       </div>
 

@@ -14,7 +14,17 @@ import { MarketRatesMarquee } from "@/shared/components/MarketRatesMarquee";
 import clearanceContainerCloseup from "@/assets/images/banner-library/container-clearance-closeup.jpg";
 import { fetchTgjuMarketRates, MarketRate } from "@/core/lib/tgju";
 
-const homeMarketRateKeys = ["price_dollar_rl", "price_eur", "price_aed", "price_cny", "price_try", "geram18", "geram24", "sekee", "nim", "rob", "gerami"];
+const homeMarketRateItems = [
+  { key: "bourse", title: "بورس" },
+  { key: "ons", title: "انس طلا" },
+  { key: "mesghal", title: "مثقال طلا" },
+  { key: "geram18", title: "طلا" },
+  { key: "sekee", title: "سکه" },
+  { key: "price_dollar_rl", title: "دلار" },
+  { key: "price_eur", title: "یورو" },
+  { key: "oil_brent", title: "نفت برنت" },
+  { key: "crypto-bitcoin", title: "بیت‌کوین" }
+];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -222,8 +232,12 @@ async function getHomeMarketRates(): Promise<{ rates: MarketRate[] }> {
   try {
     const market = await fetchTgjuMarketRates();
     return {
-      rates: homeMarketRateKeys
-        .map((key) => market.rates.find((rate) => rate.key === key))
+      rates: homeMarketRateItems
+        .map((item) => {
+          const rate = market.rates.find((marketRate) => marketRate.key === item.key);
+
+          return rate ? { ...rate, title: item.title } : undefined;
+        })
         .filter((rate): rate is MarketRate => Boolean(rate))
     };
   } catch {

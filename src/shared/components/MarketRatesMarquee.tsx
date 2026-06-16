@@ -90,11 +90,8 @@ export function MarketRatesMarquee({
         <div className="mb-2 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <h2 className="shrink-0 text-xs font-extrabold text-primary">
-              نرخ‌های مهم بازار
+              برد بازار
             </h2>
-            <a href="https://www.tgju.org" target="_blank" rel="noreferrer" className="text-[10px] font-bold text-muted underline-offset-4 hover:text-secondary hover:underline">
-              منبع: TGJU
-            </a>
           </div>
           <Link href={localizedPath(locale, "/markets/currency-rates")} className="inline-flex shrink-0 items-center gap-1 text-[10px] font-extrabold text-secondary">
             جدول کامل

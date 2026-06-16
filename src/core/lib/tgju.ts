@@ -2,7 +2,7 @@ export const TGJU_API_URL =
   process.env.TGJU_API_URL ??
   "https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM";
 
-export type MarketRateGroup = "official" | "commercialTransfer" | "commodityTransfer" | "market" | "metal" | "coin";
+export type MarketRateGroup = "official" | "commercialTransfer" | "commodityTransfer" | "market" | "metal" | "coin" | "board";
 
 export type MarketRateDefinition = {
   key?: string;
@@ -52,41 +52,47 @@ export const marketRateDefinitions: MarketRateDefinition[] = [
   { key: "ice_commodity_transfer_usd_sell", title: "حواله دلار کالای اساسی", symbol: "USD", unit: "ریال", group: "commodityTransfer" },
   { key: "ice_commodity_transfer_eur_sell", title: "حواله یورو کالای اساسی", symbol: "EUR", unit: "ریال", group: "commodityTransfer" },
   { key: "ice_commodity_transfer_aed_sell", title: "حواله درهم کالای اساسی", symbol: "AED", unit: "ریال", group: "commodityTransfer" },
-  { key: "price_dollar_rl", title: "دلار بازار", symbol: "USD", unit: "ریال", group: "market" },
-  { key: "price_eur", title: "یورو بازار", symbol: "EUR", unit: "ریال", group: "market" },
-  { key: "price_aed", title: "درهم بازار", symbol: "AED", unit: "ریال", group: "market" },
-  { key: "price_cny", title: "یوان بازار", symbol: "CNY", unit: "ریال", group: "market" },
-  { key: "price_try", title: "لیر بازار", symbol: "TRY", unit: "ریال", group: "market" },
-  { key: "price_rub", title: "روبل بازار", symbol: "RUB", unit: "ریال", group: "market" },
-  { key: "price_iqd", title: "دینار عراق بازار", symbol: "IQD", unit: "ریال", group: "market" },
+  { key: "price_dollar_rl", title: "دلار", symbol: "USD", unit: "ریال", group: "market" },
+  { key: "price_eur", title: "یورو", symbol: "EUR", unit: "ریال", group: "market" },
+  { key: "price_aed", title: "درهم", symbol: "AED", unit: "ریال", group: "market" },
+  { key: "price_cny", title: "یوان", symbol: "CNY", unit: "ریال", group: "market" },
+  { key: "price_try", title: "لیر", symbol: "TRY", unit: "ریال", group: "market" },
+  { key: "price_rub", title: "روبل", symbol: "RUB", unit: "ریال", group: "market" },
+  { key: "price_iqd", title: "دینار عراق", symbol: "IQD", unit: "ریال", group: "market" },
   { key: "geram18", title: "طلای ۱۸ عیار", symbol: "18K", unit: "ریال", group: "metal" },
   { key: "geram24", title: "طلای ۲۴ عیار", symbol: "24K", unit: "ریال", group: "metal" },
   { key: "mesghal", title: "مثقال طلا", symbol: "MITHQAL", unit: "ریال", group: "metal" },
+  { key: "ons", title: "انس جهانی طلا", symbol: "XAU", unit: "دلار", group: "metal" },
   { key: "silver_999", title: "نقره ۹۹۹", symbol: "XAG 999", unit: "ریال", group: "metal" },
   { key: "silver_925", title: "نقره ۹۲۵", symbol: "XAG 925", unit: "ریال", group: "metal" },
   { key: "sekee", title: "سکه امامی", symbol: "Emami", unit: "ریال", group: "coin" },
   { key: "sekeb", title: "سکه بهار آزادی", symbol: "Bahar", unit: "ریال", group: "coin" },
   { key: "nim", title: "نیم سکه", symbol: "1/2", unit: "ریال", group: "coin" },
   { key: "rob", title: "ربع سکه", symbol: "1/4", unit: "ریال", group: "coin" },
-  { key: "gerami", title: "سکه گرمی", symbol: "1g", unit: "ریال", group: "coin" }
+  { key: "gerami", title: "سکه گرمی", symbol: "1g", unit: "ریال", group: "coin" },
+  { key: "bourse", title: "بورس", symbol: "TSE", unit: "واحد", group: "board" },
+  { key: "oil_brent", title: "نفت برنت", symbol: "BRENT", unit: "دلار", group: "board" },
+  { key: "crypto-bitcoin", title: "بیت‌کوین", symbol: "BTC", unit: "دلار", group: "board" }
 ];
 
 export const marketRateGroupLabels: Record<MarketRateGroup, string> = {
   official: "نرخ رسمی بانک مرکزی",
   commercialTransfer: "نرخ حواله مرکز مبادله",
   commodityTransfer: "حواله کالای اساسی و دارو",
-  market: "نرخ بازار برای برآورد غیررسمی",
+  market: "نرخ ارز",
   metal: "طلا و فلزات",
-  coin: "سکه"
+  coin: "سکه",
+  board: "برد بازار"
 };
 
 export const marketRateGroupDescriptions: Record<MarketRateGroup, string> = {
   official: "برای نمایش نرخ رسمی ارز. اتصال مستقیم بانک مرکزی به منبع قابل اعتماد نیاز دارد.",
   commercialTransfer: "برای حواله‌های تجاری و برآورد پرداخت‌های مرتبط با واردات.",
   commodityTransfer: "برای کالاهای اساسی و دارو؛ کاربرد آن با نوع کالا و مقررات روز مشخص می‌شود.",
-  market: "برای برآورد عمومی بازار؛ مبنای محاسبات رسمی گمرک نیست.",
+  market: "نرخ روز ارزهای پرکاربرد بازار.",
   metal: "برای رصد طلا و فلزات پرکاربرد بازار.",
-  coin: "برای رصد سکه‌های رایج بازار."
+  coin: "برای رصد سکه‌های رایج بازار.",
+  board: "نمای کوتاه نرخ‌های مهم بازار."
 };
 
 export async function fetchTgjuMarketRates(): Promise<{ rates: MarketRate[]; fetchedAt: string; sourceName: string }> {

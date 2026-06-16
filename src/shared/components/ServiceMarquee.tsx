@@ -25,7 +25,10 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
       return;
     }
 
-    const step = 1;
+    let animationFrame = 0;
+    let previousTime = performance.now();
+    let hasPositioned = false;
+    const speed = 0.03;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -35,20 +38,34 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
     );
 
     observer.observe(scroller);
+    isVisible.current = true;
 
-    const timer = window.setInterval(() => {
+    const animate = (time: number) => {
+      const trackWidth = scroller.scrollWidth / 2;
+
+      if (!hasPositioned && trackWidth > 0) {
+        scroller.scrollLeft = trackWidth;
+        hasPositioned = true;
+      }
+
       if (isVisible.current && !document.hidden && !isPaused.current && !isDragging.current) {
-        scroller.scrollLeft += step;
+        const delta = Math.min(time - previousTime, 64);
+        scroller.scrollLeft -= delta * speed;
 
-        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
-          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        if (scroller.scrollLeft <= 0 && trackWidth > 0) {
+          scroller.scrollLeft += trackWidth;
         }
       }
-    }, 80);
+
+      previousTime = time;
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    animationFrame = window.requestAnimationFrame(animate);
 
     return () => {
       observer.disconnect();
-      window.clearInterval(timer);
+      window.cancelAnimationFrame(animationFrame);
     };
   }, []);
 
