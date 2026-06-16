@@ -43,6 +43,11 @@ export function WorldTimeWidget() {
                   <Clock3 className="size-4 text-[#d99a3c]" aria-hidden="true" />
                   ساعت بازارهای مهم تجارت بین‌المللی
                 </h2>
+                <p className="mt-1 text-xs font-bold text-slate-300">
+                  <a href="https://www.time.ir" target="_blank" rel="noreferrer" className="mr-1 text-[#d99a3c] underline-offset-4 hover:underline">
+                    منبع: time.ir
+                  </a>
+                </p>
               </div>
             </div>
 

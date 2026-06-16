@@ -167,6 +167,69 @@ export function FloatingCta() {
     setResetDisplay(false);
   };
 
+  const backspaceCalculator = () => {
+    setCalculatorDisplay((current) => {
+      if (resetDisplay || current.length <= 1) {
+        setResetDisplay(false);
+        return "0";
+      }
+
+      return current.slice(0, -1);
+    });
+  };
+
+  useEffect(() => {
+    if (activeTool !== "calculator") {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+        return;
+      }
+
+      if (/^\d$/.test(event.key)) {
+        event.preventDefault();
+        handleNumber(event.key);
+        return;
+      }
+
+      if (event.key === "." || event.key === "Decimal") {
+        event.preventDefault();
+        handleNumber(".");
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        handleNumber("=");
+        return;
+      }
+
+      if (["+", "-", "*", "/"].includes(event.key)) {
+        event.preventDefault();
+        handleOperator(event.key);
+        return;
+      }
+
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        backspaceCalculator();
+        return;
+      }
+
+      if (event.key === "Escape" || event.key === "Delete") {
+        event.preventDefault();
+        clearCalculator();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeTool, calculatorDisplay, operator, resetDisplay, storedValue]);
+
   return (
     <>
       {activeTool && (
@@ -315,6 +378,16 @@ export function FloatingCta() {
           className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/86 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
         >
           <Image src={baleLogo} alt="" width={40} height={40} className="size-full object-cover" />
+        </a>
+        <a
+          href={contact.generalWhatsappUrl}
+          aria-label="ارسال پیام در واتساپ"
+          title="واتساپ خوبروز"
+          target="_blank"
+          rel="noreferrer"
+          className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
+        >
+          <img src="/whatsapp-logo.svg" alt="" className="size-full object-cover" />
         </a>
       </div>
 

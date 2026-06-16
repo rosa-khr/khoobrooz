@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/shared/components/PageHero";
-import { Button } from "@/shared/components/Button";
-import { contact } from "@/core/lib/site";
 import { WorldMapPattern } from "@/shared/components/WorldMapPattern";
 import { fetchTgjuMarketRates, MarketRate, MarketRateGroup, marketRateGroupDescriptions, marketRateGroupLabels } from "@/core/lib/tgju";
 
@@ -12,7 +10,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 21600;
 
-const groups: MarketRateGroup[] = ["official", "commercialTransfer", "commodityTransfer", "market", "metal", "coin"];
+const groups: MarketRateGroup[] = ["market", "metal", "coin"];
 
 export default async function CurrencyRatesPage() {
   const market = await getMarketRates();
@@ -35,7 +33,9 @@ export default async function CurrencyRatesPage() {
                 آخرین دریافت به وقت ایران: {market.fetchedAt}
               </p>
             </div>
-            <span className="text-sm font-extrabold text-muted">منبع داده: مرکز مبادله، بازار و بانک مرکزی</span>
+            <a href="https://www.tgju.org" target="_blank" rel="noreferrer" className="text-sm font-extrabold text-muted underline-offset-4 hover:text-primary hover:underline">
+              منبع: TGJU
+            </a>
           </div>
 
           {market.hasError ? (
@@ -54,13 +54,6 @@ export default async function CurrencyRatesPage() {
               ))}
             </div>
           )}
-
-          <div className="relative mt-6 grid gap-4 rounded-khoobrooz border border-line bg-white/85 p-5 backdrop-blur md:grid-cols-[1fr_auto] md:items-center">
-            <p className="text-muted">
-              برای محاسبات رسمی گمرکی، نرخ نهایی باید با مقررات و منبع رسمی همان روز کنترل شود.
-            </p>
-            <Button href={contact.generalWhatsappUrl} variant="secondary">مشاوره محاسبه هزینه واردات</Button>
-          </div>
         </div>
       </section>
     </main>

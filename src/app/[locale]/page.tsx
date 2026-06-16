@@ -10,7 +10,11 @@ import tradePortHero from "@/assets/images/banner-library/trade-port-hero-dark-n
 import { WorldTimeWidget } from "@/shared/components/WorldTimeWidget";
 import { ProcessFlow } from "@/shared/components/ProcessFlow";
 import { ServiceMarquee } from "@/shared/components/ServiceMarquee";
+import { MarketRatesMarquee } from "@/shared/components/MarketRatesMarquee";
 import clearanceContainerCloseup from "@/assets/images/banner-library/container-clearance-closeup.jpg";
+import { fetchTgjuMarketRates, MarketRate } from "@/core/lib/tgju";
+
+const homeMarketRateKeys = ["price_dollar_rl", "price_eur", "price_aed", "price_cny", "price_try", "geram18", "geram24", "sekee", "nim", "rob", "gerami"];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -21,6 +25,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   const dictionary = getDictionary(locale);
   const { home } = dictionary;
+  const market = await getHomeMarketRates();
 
   return (
     <main className="overflow-hidden">
@@ -72,6 +77,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
           <ServiceMarquee locale={locale} services={dictionary.services} ariaLabel={home.services.aria} />
         </div>
       </section>
+
+      <MarketRatesMarquee locale={locale} rates={market.rates} />
 
       <WorldTimeWidget />
 
@@ -209,4 +216,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       </section>
     </main>
   );
+}
+
+async function getHomeMarketRates(): Promise<{ rates: MarketRate[] }> {
+  try {
+    const market = await fetchTgjuMarketRates();
+    return {
+      rates: homeMarketRateKeys
+        .map((key) => market.rates.find((rate) => rate.key === key))
+        .filter((rate): rate is MarketRate => Boolean(rate))
+    };
+  } catch {
+    return {
+      rates: []
+    };
+  }
 }
