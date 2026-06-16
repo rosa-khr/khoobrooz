@@ -1,0 +1,15 @@
+services:
+  khoobrooz-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: khoobrooz-web:latest
+    container_name: khoobrooz-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      TZ: Asia/Tehran
+      TGJU_API_URL: ${TGJU_API_URL:-https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM}
+    ports:
+      - "${APP_PORT:-3000}:3000"
