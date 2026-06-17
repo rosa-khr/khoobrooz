@@ -1,6 +1,21 @@
-# Docker deployment
+# مستند Docker و Deployment
 
-## Local production test
+این سند مسیر اجرای production پروژه با `Docker` را توضیح می‌دهد.
+
+## وضعیت فعلی
+
+- پروژه Frontend با `Next.js` داکرایز شده است.
+- فایل‌های اصلی:
+  - `Dockerfile`
+  - `docker-compose.yml`
+  - `.dockerignore`
+  - `.env.example`
+- خروجی Next.js روی حالت `standalone` تنظیم شده است.
+- Docker روی سیستم فعلی نصب نبود، پس تست کانتینری local انجام نشد.
+
+## تست production روی local
+
+اگر `Docker Desktop` نصب باشد:
 
 ```bash
 npm run typecheck
@@ -11,48 +26,101 @@ docker compose up -d
 docker compose ps
 ```
 
-Open:
+آدرس تست:
 
 ```text
 http://localhost:3000
 ```
 
-## Server deploy
-
-1. Install Docker and Docker Compose on the server.
-2. Clone or pull the repository.
-3. Copy `.env.example` to `.env` and set `APP_PORT` if needed.
-4. Run:
+برای دیدن logها:
 
 ```bash
+docker compose logs -f khoobrooz-web
+```
+
+برای توقف:
+
+```bash
+docker compose down
+```
+
+## متغیرهای محیطی
+
+نمونه فایل:
+
+```text
+.env.example
+```
+
+برای سرور باید از روی آن فایل `.env` ساخته شود:
+
+```bash
+cp .env.example .env
+```
+
+متغیرهای فعلی:
+
+```text
+APP_PORT=3000
+TGJU_API_URL=...
+```
+
+## Deployment روی VPS
+
+پیش‌نیازها:
+
+- Ubuntu یا Linux server
+- Docker
+- Docker Compose
+- Git
+- دسترسی SSH
+
+مراحل:
+
+```bash
+git clone https://github.com/rosa-khr/khoobrooz.git
+cd khoobrooz
+cp .env.example .env
 docker compose build
 docker compose up -d
 ```
 
-## Reverse proxy
+## Reverse Proxy
 
-Point Nginx or Caddy to the app container port:
+برای اتصال دامنه، `Nginx` یا `Caddy` باید requestها را به کانتینر بفرستد:
 
 ```text
 127.0.0.1:3000
 ```
 
-Then enable HTTPS for the domain.
+دامنه production:
 
-## Market rate warmup cron
-
-Run these jobs in Iran time, or convert to the server timezone:
-
-```cron
-0 9,15 * * * curl -fsS https://YOUR_DOMAIN.com/api/market-rates >/dev/null
+```text
+khoobrooz.com
 ```
 
-If the server runs on UTC:
+بعد از اتصال دامنه، SSL با `Let's Encrypt` فعال می‌شود.
+
+## Cron برای نرخ ارز
+
+اگر نرخ‌ها از API داخلی گرم شوند:
 
 ```cron
-30 5,11 * * * curl -fsS https://YOUR_DOMAIN.com/api/market-rates >/dev/null
+0 9,15 * * * curl -fsS https://khoobrooz.com/api/market-rates >/dev/null
+```
+
+اگر timezone سرور UTC باشد:
+
+```cron
+30 5,11 * * * curl -fsS https://khoobrooz.com/api/market-rates >/dev/null
 ```
 
 ## Branch flow
 
-Current work branch goes to `dev` first. After testing on `dev`, open the production pull request to the production branch. In this repository the production branch currently appears as `main`; if the remote has a `prod` branch, use `prod` instead.
+مسیر merge:
+
+```text
+feat -> dev -> main/prod
+```
+
+فعلاً branch اصلی production در GitHub برابر `main` است. اگر branch `prod` ساخته شود، workflow فعلی از آن هم پشتیبانی می‌کند.

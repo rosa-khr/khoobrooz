@@ -1,43 +1,80 @@
-# Backend architecture
+# معماری Backend و Database
 
-## Direction
+این سند مسیر تبدیل خوبروز از یک سایت Frontend محور به یک پلتفرم داینامیک با `Backend`, `Database`, `Admin Panel` و `REST API` را مشخص می‌کند.
 
-Khoobrooz should move from mostly file-based content to a dynamic service platform:
+## تصمیم معماری
 
-- Next.js remains the public frontend.
-- Laravel becomes the REST API and admin backend.
-- SQL Server stores dynamic content and market data.
-- Docker Compose runs frontend, backend, SQL Server, queue worker, and scheduler on VPS or cloud.
-- Metronic can be used for the admin UI style.
+- `Next.js` همچنان Frontend عمومی سایت باقی می‌ماند.
+- `Laravel` به عنوان `Backend`، `REST API` و پایه `Admin Panel` استفاده می‌شود.
+- `SQL Server` برای ذخیره داده‌های داینامیک استفاده می‌شود.
+- `Docker Compose` برای اجرای سرویس‌های `web`, `api`, `sqlserver`, `redis`, `queue` و `scheduler` در محیط VPS یا Cloud در نظر گرفته می‌شود.
+- پنل ادمین از نظر UI از سبک `Metronic` پیروی می‌کند.
 
-This setup is not suitable for a basic WordPress/cPanel host unless Node.js, PHP extensions, SQL Server drivers, workers, and long-running processes are supported. A VPS or container host is recommended.
+این معماری برای هاست WordPress/cPanel معمولی مناسب نیست، مگر اینکه هاست از `Node.js App`, `PHP Extensions`, `SQL Server Driver`, `Queue Worker` و processهای طولانی پشتیبانی کند. گزینه مناسب‌تر برای این مسیر، VPS یا Azure است.
 
-## Proposed repository shape
+## ساختار پیشنهادی Repository
+
+در همین Repository پیاده‌سازی می‌کنیم، اما فولدرها جدا و استاندارد می‌مانند:
 
 ```text
-apps/
-  web/          # current Next.js app, moved later if we convert to monorepo
-  api/          # Laravel REST API and admin
-infra/
-  docker/
-docs/
+khoobrooz/
+  src/                         # Frontend فعلی با Next.js
+  backend/                     # Laravel API و Admin Panel
+  database-design/             # مستندات ERD، SQL notes و seed plan
+  infra/
+    docker/                    # فایل‌های زیرساختی Docker/Nginx
+  src/docs/project/            # مستندات محصول و معماری
 ```
 
-For the current project, Laravel can first be added as `backend/` to avoid a risky move of the existing frontend.
+فعلاً Frontend را از `src/` جابه‌جا نمی‌کنیم تا ریسک شکستن پروژه کم بماند. اگر بعداً لازم شد، می‌توانیم پروژه را به شکل monorepo با `apps/web` و `apps/api` بازچینش کنیم.
 
-## Stack
+## Stack پیشنهادی
 
-- Frontend: Next.js 15, React 19, Tailwind
-- Backend: Laravel 11 or 12 REST API
-- Admin: Laravel + Metronic theme, preferably Blade/Inertia depending on license/assets
-- Database: SQL Server
-- Cache/queue: Redis when available
-- Auth: Laravel Sanctum for admin/session and API tokens
-- Scheduler: Laravel Scheduler for market rate sync
+- Frontend: `Next.js 15`, `React 19`, `Tailwind`
+- Backend: `Laravel 11/12`
+- Admin Auth: `Laravel Sanctum`
+- Admin UI: `Metronic`
+- Database: `SQL Server`
+- Cache/Queue: `Redis`
+- Scheduler: `Laravel Scheduler`
+- API Style: `REST API`
 
-## Core entities
+## استاندارد لایه‌های Backend
 
-### Users and access
+در Laravel فقط `Controller` سنگین نمی‌نویسیم. لایه‌ها باید جدا باشند:
+
+```text
+backend/app/
+  Http/
+    Controllers/
+    Requests/
+    Resources/
+  Models/
+  Services/
+  Repositories/
+  Actions/
+  DTOs/
+  Jobs/
+  Policies/
+  Support/
+```
+
+کار هر لایه:
+
+- `Controller`: دریافت request و برگرداندن response.
+- `FormRequest`: validation ورودی‌ها.
+- `Resource`: فرمت خروجی API.
+- `Service`: منطق اصلی business.
+- `Repository`: ارتباط خواندن/نوشتن با Database برای entityهای پیچیده.
+- `Action`: عملیات مشخص و کوچک مثل publish کردن مقاله یا sync نرخ ارز.
+- `Job`: کارهای async مثل sync بازار یا ساخت sitemap.
+- `Policy`: کنترل دسترسی admin.
+
+## موجودیت‌ها و جدول‌ها
+
+### کاربران و دسترسی‌ها
+
+جدول‌ها:
 
 - `users`
 - `roles`
@@ -45,133 +82,308 @@ For the current project, Laravel can first be added as `backend/` to avoid a ris
 - `role_user`
 - `permission_role`
 
-Purpose: admin login, editors, SEO/content roles.
+کاربرد:
 
-### Menus
+- ورود ادمین
+- نقش‌های مدیر، نویسنده، SEO و پشتیبان
+- محدود کردن دسترسی CRUDها
+
+### منوها
+
+جدول‌ها:
 
 - `menus`
 - `menu_items`
 
-Fields:
+فیلدهای اصلی `menus`:
 
-- `menus`: `id`, `key`, `title`, `locale`, `is_active`, timestamps
-- `menu_items`: `id`, `menu_id`, `parent_id`, `title`, `url`, `route_name`, `target`, `icon`, `sort_order`, `is_active`, timestamps
+- `id`
+- `key`
+- `title`
+- `locale`
+- `is_active`
+- `created_at`
+- `updated_at`
 
-Notes:
+فیلدهای اصلی `menu_items`:
 
-- Supports header, footer, mobile, and language-specific menus.
-- Nested menu items use `parent_id`.
+- `id`
+- `menu_id`
+- `parent_id`
+- `title`
+- `url`
+- `route_name`
+- `target`
+- `icon`
+- `sort_order`
+- `is_active`
+- `created_at`
+- `updated_at`
 
-### Pages
+نکته‌ها:
+
+- منوی header، footer و mobile هرکدام می‌توانند `key` جدا داشته باشند.
+- منوها چندسطحی هستند و با `parent_id` مدیریت می‌شوند.
+- زبان فارسی default است و در URL پیشوند `fa` نمی‌گیرد.
+
+### صفحه‌ها
+
+جدول:
 
 - `pages`
 
-Fields:
+فیلدها:
 
-- `id`, `locale`, `slug`, `title`, `summary`, `body`, `status`, `seo_title`, `seo_description`, `canonical_url`, `published_at`, timestamps
+- `id`
+- `locale`
+- `slug`
+- `title`
+- `summary`
+- `body`
+- `status`
+- `seo_title`
+- `seo_description`
+- `canonical_url`
+- `published_at`
+- `created_at`
+- `updated_at`
 
-Purpose: static-like dynamic pages such as about, services landing, contact text blocks.
+کاربرد:
 
-### Articles and knowledge
+- درباره ما
+- تماس
+- صفحه‌های ثابت خدمات
+- متن‌های قابل مدیریت توسط admin
+
+### مقاله‌ها و دانشنامه
+
+جدول‌ها:
 
 - `articles`
-- `article_translations` if multilingual content becomes more complex
 - `categories`
 - `tags`
 - `article_tag`
 
-Fields:
+فیلدهای اصلی `articles`:
 
-- `articles`: `id`, `locale`, `category_id`, `slug`, `title`, `excerpt`, `body`, `cover_image_id`, `status`, `seo_title`, `seo_description`, `published_at`, timestamps
-- `categories`: `id`, `type`, `locale`, `slug`, `title`, `sort_order`, `is_active`, timestamps
-- `tags`: `id`, `locale`, `slug`, `title`, timestamps
+- `id`
+- `locale`
+- `category_id`
+- `slug`
+- `title`
+- `excerpt`
+- `body`
+- `cover_image_id`
+- `status`
+- `seo_title`
+- `seo_description`
+- `published_at`
+- `created_at`
+- `updated_at`
 
-Purpose: blog, encyclopedia, trade education.
+کاربرد:
 
-### News
+- بلاگ
+- دانشنامه تجاری
+- آموزش واردات و صادرات
+- محتوای SEO محور
+
+### خبرها
+
+جدول‌ها:
 
 - `news`
 - `news_tag`
 
-Fields:
+فیلدهای اصلی:
 
-- `id`, `locale`, `slug`, `title`, `summary`, `body`, `source_name`, `source_url`, `status`, `seo_title`, `seo_description`, `published_at`, timestamps
+- `id`
+- `locale`
+- `slug`
+- `title`
+- `summary`
+- `body`
+- `source_name`
+- `source_url`
+- `status`
+- `seo_title`
+- `seo_description`
+- `published_at`
+- `created_at`
+- `updated_at`
 
-Notes:
+نکته SEO:
 
-- Keep `source_url` optional and avoid public outbound links unless needed.
+- `source_url` اختیاری است.
+- لینک خارجی در صفحه عمومی فقط وقتی نمایش داده می‌شود که ارزش محتوایی داشته باشد.
 
-### Services
+### خدمات
+
+جدول:
 
 - `services`
 
-Fields:
+فیلدها:
 
-- `id`, `locale`, `slug`, `title`, `short_title`, `summary`, `body`, `icon`, `sort_order`, `is_featured`, `status`, `seo_title`, `seo_description`, timestamps
+- `id`
+- `locale`
+- `slug`
+- `title`
+- `short_title`
+- `summary`
+- `body`
+- `icon`
+- `sort_order`
+- `is_featured`
+- `status`
+- `seo_title`
+- `seo_description`
+- `created_at`
+- `updated_at`
 
-Purpose: dynamic service pages, homepage service marquee, service menu.
+کاربرد:
 
-### Documents and files
+- صفحه خدمات
+- کارت‌های خدمات صفحه اول
+- منوی خدمات
+
+### فایل‌ها و اسناد تجاری
+
+جدول‌ها:
 
 - `documents`
 - `media_files`
 
-Fields:
+فیلدهای اصلی `documents`:
 
-- `documents`: `id`, `locale`, `slug`, `title`, `description`, `file_id`, `status`, `price`, `is_free`, `seo_title`, `seo_description`, timestamps
-- `media_files`: `id`, `disk`, `path`, `mime_type`, `size`, `alt`, `caption`, timestamps
+- `id`
+- `locale`
+- `slug`
+- `title`
+- `description`
+- `file_id`
+- `status`
+- `price`
+- `is_free`
+- `seo_title`
+- `seo_description`
+- `created_at`
+- `updated_at`
 
-Purpose: trade templates, downloadable files, future paid content.
+کاربرد:
 
-### Market rates
+- فایل‌های آموزشی
+- فرم‌ها و قالب‌های تجاری
+- فایل‌های قابل دانلود یا قابل فروش در آینده
+
+### نرخ ارز و بازار
+
+جدول‌ها:
 
 - `market_rate_sources`
 - `market_rate_instruments`
 - `market_rate_snapshots`
 - `market_rate_sync_logs`
 
-Fields:
+فیلدهای اصلی `market_rate_sources`:
 
-- `market_rate_sources`: `id`, `key`, `name`, `base_url`, `is_active`, timestamps
-- `market_rate_instruments`: `id`, `source_id`, `key`, `group`, `title`, `symbol`, `unit`, `sort_order`, `is_active`, timestamps
-- `market_rate_snapshots`: `id`, `instrument_id`, `price`, `high`, `low`, `change`, `change_percent`, `direction`, `source_updated_at`, `fetched_at`, timestamps
-- `market_rate_sync_logs`: `id`, `source_id`, `status`, `message`, `started_at`, `finished_at`
+- `id`
+- `key`
+- `name`
+- `base_url`
+- `is_active`
+- `created_at`
+- `updated_at`
 
-Purpose:
+فیلدهای اصلی `market_rate_instruments`:
 
-- Dynamic currency page
-- Homepage market board
-- Scheduled fetch at 09:00 and 15:00 Iran time
-- Historical snapshots if needed later
+- `id`
+- `source_id`
+- `key`
+- `group`
+- `title`
+- `symbol`
+- `unit`
+- `sort_order`
+- `is_active`
+- `created_at`
+- `updated_at`
 
-### Leads and contact
+فیلدهای اصلی `market_rate_snapshots`:
+
+- `id`
+- `instrument_id`
+- `price`
+- `high`
+- `low`
+- `change`
+- `change_percent`
+- `direction`
+- `source_updated_at`
+- `fetched_at`
+- `created_at`
+- `updated_at`
+
+کاربرد:
+
+- صفحه قیمت ارزها
+- برد بازار صفحه اول
+- نگهداری snapshotهای نرخ‌ها
+- sync زمان‌بندی شده ساعت ۹ و ۱۵ به وقت ایران
+
+### درخواست‌های تماس
+
+جدول:
 
 - `contact_requests`
 
-Fields:
+فیلدها:
 
-- `id`, `type`, `name`, `phone`, `email`, `company`, `message`, `metadata`, `status`, timestamps
+- `id`
+- `type`
+- `name`
+- `phone`
+- `email`
+- `company`
+- `message`
+- `metadata`
+- `status`
+- `created_at`
+- `updated_at`
 
-Types:
+نوع‌های اولیه:
 
 - `general`
 - `customs_clearance`
 - `document_request`
 - `consultation`
 
-### Site settings
+### تنظیمات سایت
+
+جدول:
 
 - `settings`
 
-Fields:
+فیلدها:
 
-- `id`, `group`, `key`, `value`, `type`, `locale`, timestamps
+- `id`
+- `group`
+- `key`
+- `value`
+- `type`
+- `locale`
+- `created_at`
+- `updated_at`
 
-Purpose: phone numbers, WhatsApp/Bale links, SEO defaults, social links, footer data.
+کاربرد:
 
-## REST API draft
+- شماره تماس
+- لینک WhatsApp و Bale
+- تنظیمات footer
+- مقدارهای SEO عمومی
+- تنظیمات social
 
-Public frontend API:
+## REST API عمومی
 
 ```text
 GET /api/v1/menus/{key}?locale=fa
@@ -189,7 +401,7 @@ GET /api/v1/settings/public?locale=fa
 POST /api/v1/contact-requests
 ```
 
-Admin API:
+## REST API ادمین
 
 ```text
 POST /api/admin/login
@@ -211,95 +423,101 @@ POST /api/admin/market-rates/sync
 GET/PATCH /api/admin/settings
 ```
 
-## Laravel jobs and scheduler
+## Scheduler و Jobها
 
-Jobs:
+Jobهای اولیه:
 
 - `SyncMarketRatesJob`
 - `GenerateSitemapJob`
 - `ClearFrontendCacheJob`
 
-Scheduler:
+نمونه Scheduler:
 
 ```php
 $schedule->job(new SyncMarketRatesJob())->timezone('Asia/Tehran')->dailyAt('09:00');
 $schedule->job(new SyncMarketRatesJob())->timezone('Asia/Tehran')->dailyAt('15:00');
 ```
 
-## Frontend migration steps
+## پنل ادمین با Metronic
 
-1. Keep current file-based data as fallback.
-2. Add API client layer in Next.js.
-3. Replace menus with `/api/v1/menus/header`.
-4. Replace services with `/api/v1/services`.
-5. Replace articles, news, knowledge, documents page by page.
-6. Replace market rates with Laravel endpoint.
-7. Add cache/revalidate strategy.
-
-## Admin panel with Metronic
-
-Admin sections:
+بخش‌های ادمین:
 
 - Dashboard
-- Menu builder
+- Menu Builder
 - Pages
 - Services
 - Articles
 - News
-- Categories and tags
-- Documents and media
-- Market rates
-- Contact requests
+- Categories
+- Tags
+- Documents
+- Media
+- Market Rates
+- Contact Requests
 - Settings
-- Users and roles
+- Users and Roles
 
-Metronic should be used as a visual system, but its license/assets must be available before committing it into the repository.
+نکته:
 
-## Implementation phases
+- قبل از commit کردن assetهای `Metronic` باید لایسنس و فایل‌های اصلی آن در دسترس باشد.
+- اگر assetهای Metronic را مستقیم وارد نکنیم، UI را با الهام از سبک آن پیاده می‌کنیم.
 
-### Phase 1: Backend foundation
+## برنامه مهاجرت Frontend به API
 
-- Add Laravel app
-- Configure SQL Server
-- Add auth
-- Add migrations for users, settings, menus
-- Add Docker services for API and SQL Server
+1. داده‌های فعلی file-based به عنوان fallback باقی می‌مانند.
+2. یک `API Client Layer` در Next.js اضافه می‌شود.
+3. منوها از `/api/v1/menus/header` خوانده می‌شوند.
+4. خدمات از `/api/v1/services` خوانده می‌شوند.
+5. مقاله‌ها و خبرها صفحه به صفحه داینامیک می‌شوند.
+6. نرخ ارز از Laravel API خوانده می‌شود.
+7. strategy مربوط به cache و revalidate تنظیم می‌شود.
 
-### Phase 2: Content API
+## فازهای اجرا
+
+### فاز ۱: پایه Backend
+
+- ساخت Laravel app در فولدر `backend/`
+- تنظیم SQL Server
+- تنظیم Docker برای API و SQL Server
+- ساخت Auth اولیه
+- ساخت migrationهای users، settings و menus
+
+### فاز ۲: Content API
 
 - Pages
 - Services
 - Articles
 - News
-- Tags/categories
+- Categories
+- Tags
 - Media
 
-### Phase 3: Market data
+### فاز ۳: Market Data
 
 - Sources
 - Instruments
 - Snapshots
-- Sync job
-- Public API for board and currency page
+- Sync Job
+- Public API برای صفحه ارز و برد بازار
 
-### Phase 4: Admin panel
+### فاز ۴: Admin Panel
 
-- Metronic layout
-- CRUD screens
-- Role permissions
-- Upload/media manager
+- Layout بر اساس Metronic
+- CRUD صفحه‌ها
+- مدیریت نقش‌ها
+- مدیریت فایل‌ها
 
-### Phase 5: Frontend integration
+### فاز ۵: اتصال Frontend
 
-- Dynamic menus
-- Dynamic home sections
-- Dynamic articles/news
-- Dynamic market rates
+- منوی داینامیک
+- خدمات داینامیک
+- مقاله و خبر داینامیک
+- نرخ ارز داینامیک
 
-### Phase 6: Deployment
+### فاز ۶: Deployment
 
-- VPS or cloud container host
+- VPS یا Azure
 - Docker Compose production
-- Nginx/Caddy reverse proxy
-- SSL for `khoobrooz.com`
-- GitHub Actions deploy after merge to production
+- Nginx یا Caddy
+- SSL برای `khoobrooz.com`
+- GitHub Actions deploy بعد از merge به production
