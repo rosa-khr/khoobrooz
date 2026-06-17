@@ -71,7 +71,11 @@ backend/app/
   - `id`
   - `created_at`
   - `updated_at`
-  - `deleted_at` برای entityهایی که soft delete نیاز دارند
+  - `created_by`
+  - `modified_at`
+  - `modified_by`
+  - `accuracy`
+- حذف منطقی با `accuracy = TRASHED` انجام می‌شود و حذف فیزیکی پیش‌فرض نیست.
 - entityهای content باید فیلدهای SEO داشته باشند:
   - `seo_title`
   - `seo_description`

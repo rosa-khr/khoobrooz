@@ -12,6 +12,12 @@
 
 این معماری برای هاست WordPress/cPanel معمولی مناسب نیست، مگر اینکه هاست از `Node.js App`, `PHP Extensions`, `SQL Server Driver`, `Queue Worker` و processهای طولانی پشتیبانی کند. گزینه مناسب‌تر برای این مسیر، VPS یا Azure است.
 
+جزئیات عملیاتی موجودیت‌ها، فیلدهای مشترک، `accuracy`، workflow تایید/انتشار و استاندارد جدول‌های ادمین در سند زیر تکمیل شده است:
+
+```text
+src/docs/project/backend-domain-model.md
+```
+
 ## ساختار پیشنهادی Repository
 
 در همین Repository پیاده‌سازی می‌کنیم، اما فولدرها جدا و استاندارد می‌مانند:
@@ -382,6 +388,29 @@ backend/app/
 - تنظیمات footer
 - مقدارهای SEO عمومی
 - تنظیمات social
+
+### کشورها
+
+جدول:
+
+- `countries`
+
+کاربرد:
+
+- داده static کشورها برای dropdownها
+- استفاده در World Clock، فرم‌ها، آدرس‌ها و اطلاعات تجاری
+- حذف logical با `accuracy = TRASHED`
+
+### شبکه‌های اجتماعی
+
+جدول:
+
+- `social_links`
+
+کاربرد:
+
+- مدیریت لینک‌های Social Media برای Home Page، Footer و Contact
+- نمایش فقط برای رکوردهای `ACCEPTED` و `is_published`
 
 ## REST API عمومی
 
