@@ -4,8 +4,10 @@
 
 - Feature work: `feat`
 - Test branch: `dev`
-- Production branch: `main`
-- If a remote `prod` branch is created later, the pipeline already supports it.
+- Current production branch: `main`
+- Future production branch if created: `prod`
+- Production domain: `https://khoobrooz.com`
+- Suggested staging domain: `https://dev.khoobrooz.com`
 
 ## Pull requests
 
@@ -15,6 +17,15 @@ Create pull requests in this order:
 2. `dev` -> `main` or `prod`
 
 The CI pipeline runs on pull requests to `dev`, `main`, and `prod`.
+
+The pipeline resolves a branch environment:
+
+| Branch/base | Environment | URL |
+| --- | --- | --- |
+| `feat` | feature | `http://localhost:3000` |
+| `dev` | staging | `https://dev.khoobrooz.com` |
+| `main` | production | `https://khoobrooz.com` |
+| `prod` | production | `https://khoobrooz.com` |
 
 ## Checks
 

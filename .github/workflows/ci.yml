@@ -19,9 +19,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  branch-context:
+    name: Branch context
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.context.outputs.environment }}
+      app_url: ${{ steps.context.outputs.app_url }}
+
+    steps:
+      - name: Resolve environment
+        id: context
+        shell: bash
+        run: |
+          BRANCH="${GITHUB_BASE_REF:-${GITHUB_REF_NAME}}"
+
+          if [ "$BRANCH" = "prod" ] || [ "$BRANCH" = "main" ]; then
+            echo "environment=production" >> "$GITHUB_OUTPUT"
+            echo "app_url=https://khoobrooz.com" >> "$GITHUB_OUTPUT"
+          elif [ "$BRANCH" = "dev" ]; then
+            echo "environment=staging" >> "$GITHUB_OUTPUT"
+            echo "app_url=https://dev.khoobrooz.com" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=feature" >> "$GITHUB_OUTPUT"
+            echo "app_url=http://localhost:3000" >> "$GITHUB_OUTPUT"
+          fi
+
   quality:
     name: Typecheck, lint and build
     runs-on: ubuntu-latest
+    needs: branch-context
+    env:
+      APP_ENVIRONMENT: ${{ needs.branch-context.outputs.environment }}
+      APP_URL: ${{ needs.branch-context.outputs.app_url }}
 
     steps:
       - name: Checkout
@@ -48,7 +77,12 @@ jobs:
   docker:
     name: Docker build
     runs-on: ubuntu-latest
-    needs: quality
+    needs:
+      - branch-context
+      - quality
+    env:
+      APP_ENVIRONMENT: ${{ needs.branch-context.outputs.environment }}
+      APP_URL: ${{ needs.branch-context.outputs.app_url }}
 
     steps:
       - name: Checkout
