@@ -248,7 +248,7 @@ Current decisions:
 - Core helpers: `src/core/lib`
 - Content/navigation data: `src/data`
 - Project images: `src/assets/images`
-- Project docs and agents: `src/docs/project`
+- Project docs and agents: `docs/project`
 
 Still to decide:
 

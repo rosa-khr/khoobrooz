@@ -34,13 +34,13 @@ Primary site goals:
 
 Use these files when relevant:
 
-- `src/docs/project/skils/business-info.md`
-- `src/docs/project/skils/menu.md`
-- `src/docs/project/skils/pillar-cluster.md`
-- `src/docs/project/skils/sources.md`
-- `src/docs/project/skils/tech-stack-i18n.md`
-- `src/docs/project/skils/currency-rates.md`
-- `src/docs/project/skils/world-time-calendar.md`
+- `docs/project/skils/business-info.md`
+- `docs/project/skils/menu.md`
+- `docs/project/skils/pillar-cluster.md`
+- `docs/project/skils/sources.md`
+- `docs/project/skils/tech-stack-i18n.md`
+- `docs/project/skils/currency-rates.md`
+- `docs/project/skils/world-time-calendar.md`
 
 ## Working Rules
 

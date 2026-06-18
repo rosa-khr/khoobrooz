@@ -15,7 +15,7 @@
 جزئیات عملیاتی موجودیت‌ها، فیلدهای مشترک، `accuracy`، workflow تایید/انتشار و استاندارد جدول‌های ادمین در سند زیر تکمیل شده است:
 
 ```text
-src/docs/project/backend-domain-model.md
+docs/project/backend-domain-model.md
 ```
 
 ## ساختار پیشنهادی Repository
@@ -29,7 +29,7 @@ khoobrooz/
   database-design/             # مستندات ERD، SQL notes و seed plan
   infra/
     docker/                    # فایل‌های زیرساختی Docker/Nginx
-  src/docs/project/            # مستندات محصول و معماری
+  docs/project/            # مستندات محصول و معماری
 ```
 
 فعلاً Frontend را از `src/` جابه‌جا نمی‌کنیم تا ریسک شکستن پروژه کم بماند. اگر بعداً لازم شد، می‌توانیم پروژه را به شکل monorepo با `apps/web` و `apps/api` بازچینش کنیم.

@@ -21,7 +21,7 @@ khoobrooz/
   public/                      # فایل‌های public
   Dockerfile                   # Docker frontend
   docker-compose.yml           # Compose فعلی frontend
-  src/docs/project/            # مستندات پروژه
+  docs/project/            # مستندات پروژه
 ```
 
 ساختار هدف بعد از شروع Backend:
@@ -34,7 +34,7 @@ khoobrooz/
   infra/
     docker/
     nginx/
-  src/docs/project/
+  docs/project/
     frontend/
     backend/
     database/
@@ -46,7 +46,7 @@ khoobrooz/
 مرزهای اصلی پروژه در سند زیر تعریف شده‌اند:
 
 ```text
-src/docs/project/module-boundaries.md
+docs/project/module-boundaries.md
 ```
 
 قانون اصلی:
@@ -209,7 +209,7 @@ npm run build
 محل پیشنهادی:
 
 ```text
-src/docs/project/integrations/
+docs/project/integrations/
 ```
 
 ## استاندارد داکیومنت برای هر مرحله
@@ -228,7 +228,7 @@ src/docs/project/integrations/
 محل ثبت:
 
 ```text
-src/docs/project/
+docs/project/
 ```
 
 ## استاندارد Commit و Branch

@@ -23,7 +23,7 @@ Shared content/navigation data belongs in:
 
 Project docs and planning artifacts belong in:
 
-- `src/docs/project`
+- `docs/project`
 
 Do not create SEO pages, article drafts, or data files at the project root.
 

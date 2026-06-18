@@ -288,7 +288,7 @@ Use these files together when needed:
 
 Current project docs live under:
 
-- `src/docs/project`
+- `docs/project`
 
 If business information is converted into implementation data, place it under:
 

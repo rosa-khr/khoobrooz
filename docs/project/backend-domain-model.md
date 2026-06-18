@@ -166,7 +166,7 @@ Frontend:
 نمونه فایل داکیومنت:
 
 ```text
-src/docs/project/integrations/market-rate-sync.md
+docs/project/integrations/market-rate-sync.md
 ```
 
 ## استاندارد جدول‌های پنل ادمین

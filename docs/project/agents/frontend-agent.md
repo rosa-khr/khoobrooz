@@ -23,15 +23,15 @@ Implement Khoobrooz pages and components with clean, responsive, accessible, SEO
 
 Use:
 
-- `src/docs/project/skils/menu.md`
-- `src/docs/project/skils/business-info.md`
-- `src/docs/project/skils/pillar-cluster.md`
-- `src/docs/project/skils/tech-stack-i18n.md`
+- `docs/project/skils/menu.md`
+- `docs/project/skils/business-info.md`
+- `docs/project/skils/pillar-cluster.md`
+- `docs/project/skils/tech-stack-i18n.md`
 
 Coordinate with:
 
-- `src/docs/project/agents/ui-ux-agent.md`
-- `src/docs/project/agents/seo-content-agent.md`
+- `docs/project/agents/ui-ux-agent.md`
+- `docs/project/agents/seo-content-agent.md`
 
 ## Implementation Rules
 

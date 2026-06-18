@@ -23,14 +23,14 @@ Plan and support the digital document shop and future Zarinpal payment flow for 
 
 Use:
 
-- `src/docs/project/skils/menu.md`
-- `src/docs/project/skils/business-info.md`
-- `src/docs/project/skils/pillar-cluster.md`
+- `docs/project/skils/menu.md`
+- `docs/project/skils/business-info.md`
+- `docs/project/skils/pillar-cluster.md`
 
 Coordinate with:
 
-- `src/docs/project/agents/frontend-agent.md`
-- `src/docs/project/agents/ui-ux-agent.md`
+- `docs/project/agents/frontend-agent.md`
+- `docs/project/agents/ui-ux-agent.md`
 
 Use current implementation folders:
 

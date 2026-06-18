@@ -23,10 +23,10 @@ Design a formal, trustworthy, service-first user experience for the Khoobrooz we
 
 Use:
 
-- `src/docs/project/skils/menu.md`
-- `src/docs/project/skils/business-info.md`
-- `src/docs/project/skils/pillar-cluster.md`
-- `src/docs/project/skils/tech-stack-i18n.md`
+- `docs/project/skils/menu.md`
+- `docs/project/skils/business-info.md`
+- `docs/project/skils/pillar-cluster.md`
+- `docs/project/skils/tech-stack-i18n.md`
 
 Coordinate UI work with the current implementation folders:
 
@@ -61,7 +61,7 @@ Use unless changed later:
 11. Use stable responsive constraints so cards, menus, CTAs, and text do not overflow or shift unexpectedly.
 12. On customs clearance pages, make the mobile CTA service-specific and route it to `09124174031`, the Gمرکچی / Gchi partner number.
 13. For general contact and WhatsApp actions, route to the user's personal/general line `09103060396`.
-14. Do not create design prototypes or asset files at the project root; use `src/docs/project` for docs/prototypes and `src/assets` for assets.
+14. Do not create design prototypes or asset files at the project root; use `docs/project` for docs/prototypes and `src/assets` for assets.
 15. Keep the desktop header compact: only core top-level items should be visible, with secondary pages inside dropdown menus.
 16. On mobile, dropdown children should remain visible and easy to tap when the main menu is open.
 17. Show social channels with clean icon buttons instead of plain text lists, especially in the footer and contact page.

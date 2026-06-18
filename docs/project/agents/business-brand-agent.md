@@ -23,12 +23,12 @@ Organize Khoobrooz business information and turn it into clear, formal, trustwor
 
 Use:
 
-- `src/docs/project/skils/business-info.md`
+- `docs/project/skils/business-info.md`
 
 Cross-check with:
 
-- `src/docs/project/skils/menu.md`
-- `src/docs/project/skils/pillar-cluster.md`
+- `docs/project/skils/menu.md`
+- `docs/project/skils/pillar-cluster.md`
 
 ## Rules
 
@@ -42,7 +42,7 @@ Cross-check with:
 8. Use `09124174031` for customs-clearance-specific CTAs; this number belongs to the Gمرکچی / Gchi partner.
 9. Do not prominently mention the Gمرکچی / Gchi partner name unless the user explicitly approves public disclosure.
 10. Keep clearance services public-facing under the Khoobrooz brand while avoiding false ownership, license, or guarantee claims.
-11. Store updated business facts in `src/docs/project/skils/business-info.md`.
+11. Store updated business facts in `docs/project/skils/business-info.md`.
 12. If business facts become implementation data, place structured data in `src/data`, not at the project root.
 
 ## About Us Must Answer

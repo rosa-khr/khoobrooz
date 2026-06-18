@@ -52,7 +52,7 @@ backend/
 
 ```text
 database-design/
-src/docs/project/database/
+docs/project/database/
 ```
 
 مسئولیت:

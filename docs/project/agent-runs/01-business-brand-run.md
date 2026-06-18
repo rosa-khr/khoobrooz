@@ -135,4 +135,4 @@ Avoid:
 
 ## Next Action
 
-Ask the user for the missing business details, then update `src/docs/project/skils/business-info.md` and write final drafts for About Us, Contact Us, footer, and homepage intro.
+Ask the user for the missing business details, then update `docs/project/skils/business-info.md` and write final drafts for About Us, Contact Us, footer, and homepage intro.
