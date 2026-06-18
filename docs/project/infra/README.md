@@ -45,3 +45,11 @@ composer install
 php artisan test
 php artisan migrate --pretend
 ```
+
+## SQL Server لوکال
+
+برای اجرای SQL Server روی local و نکات مربوط به macOS 12، این سند مرجع است:
+
+```text
+database-design/sqlserver-local.md
+```

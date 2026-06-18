@@ -42,16 +42,27 @@ backend/app/
 
 ## وضعیت فعلی
 
-این فولدر فعلاً فقط مرز Backend را مشخص می‌کند. پیاده‌سازی Laravel در فاز بعدی و بعد از تایید انجام می‌شود.
+این فولدر شامل اسکلت اولیه `Laravel-compatible` است:
 
-در محیط فعلی local، دستورهای زیر در دسترس نبودند:
+- `Models`
+- `Services`
+- `Routes`
+- `Migrations`
+- `Seeders`
+- `Schema Contract Test`
+
+در محیط فعلی local، نصب ابزارهای زیر به خاطر محدودیت شبکه/نسخه macOS کامل نشد:
 
 ```text
 php
 composer
 ```
 
-برای scaffold واقعی Laravel باید PHP و Composer نصب شود یا محیط Docker/VPS آماده باشد.
+برای scaffold واقعی Laravel باید PHP و Composer نصب شود یا محیط Docker/VPS آماده باشد. تا آن زمان، قرارداد دیتابیس با تست سبک Node کنترل می‌شود:
+
+```bash
+npm run test:backend-contracts
+```
 
 ## مستندات اجرایی
 
