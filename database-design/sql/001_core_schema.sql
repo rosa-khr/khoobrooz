@@ -11,6 +11,15 @@
   - This SQL design will later be translated into Laravel migrations.
 */
 
+IF DB_ID(N'khoobrooz') IS NULL
+BEGIN
+    CREATE DATABASE khoobrooz;
+END
+GO
+
+USE khoobrooz;
+GO
+
 CREATE TABLE dbo.users (
     id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     name NVARCHAR(150) NOT NULL,

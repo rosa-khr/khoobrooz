@@ -26,3 +26,17 @@ docker-compose.yml
 - `scheduler`
 
 هر سرویس باید healthcheck و env مستقل داشته باشد.
+
+## SQL Server local
+
+برای اجرای SQL Server روی local فایل زیر اضافه شده است:
+
+```text
+infra/docker/docker-compose.sqlserver.yml
+```
+
+راهنمای کامل:
+
+```text
+database-design/sqlserver-local.md
+```

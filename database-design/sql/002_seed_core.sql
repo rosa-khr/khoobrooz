@@ -3,6 +3,9 @@
   Target: SQL Server
 */
 
+USE khoobrooz;
+GO
+
 INSERT INTO dbo.roles (name, [key], description, accuracy)
 VALUES
   (N'مدیر کل', N'super_admin', N'دسترسی کامل به پنل ادمین', 1),
