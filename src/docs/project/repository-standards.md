@@ -15,6 +15,9 @@
 ```text
 khoobrooz/
   src/                         # Next.js frontend
+  backend/                     # مرز Laravel backend، پیاده‌سازی در فاز بعد
+  database-design/             # مستندات Database و ERD
+  infra/                       # مستندات و فایل‌های زیرساخت
   public/                      # فایل‌های public
   Dockerfile                   # Docker frontend
   docker-compose.yml           # Compose فعلی frontend
@@ -32,7 +35,27 @@ khoobrooz/
     docker/
     nginx/
   src/docs/project/
+    frontend/
+    backend/
+    database/
+    infra/
 ```
+
+## مرزبندی ماژول‌ها
+
+مرزهای اصلی پروژه در سند زیر تعریف شده‌اند:
+
+```text
+src/docs/project/module-boundaries.md
+```
+
+قانون اصلی:
+
+```text
+Frontend -> Backend API -> Database
+```
+
+Frontend نباید مستقیم به Database وصل شود و Backend تنها مرجع business logic است.
 
 ## استاندارد Backend
 

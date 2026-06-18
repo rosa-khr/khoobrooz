@@ -10,6 +10,10 @@
   - `docker-compose.yml`
   - `.dockerignore`
   - `.env.example`
+- مرز مستندات infra:
+  - `infra/README.md`
+  - `infra/docker/README.md`
+  - `infra/nginx/README.md`
 - خروجی Next.js روی حالت `standalone` تنظیم شده است.
 - Docker روی سیستم فعلی نصب نبود، پس تست کانتینری local انجام نشد.
 
@@ -124,3 +128,14 @@ feat -> dev -> main/prod
 ```
 
 فعلاً branch اصلی production در GitHub برابر `main` است. اگر branch `prod` ساخته شود، workflow فعلی از آن هم پشتیبانی می‌کند.
+
+## جداسازی بعدی
+
+بعد از اضافه شدن Laravel و SQL Server، فایل‌های زیرساختی باید مرحله‌ای تفکیک شوند:
+
+```text
+infra/docker/
+infra/nginx/
+```
+
+تا قبل از آن، `Dockerfile` و `docker-compose.yml` در root باقی می‌مانند تا build فعلی Frontend نشکند.
