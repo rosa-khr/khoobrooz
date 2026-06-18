@@ -19,6 +19,8 @@ SQL Server
 - مستندات `Indexes`
 - مستندات `Foreign Keys`
 - تصمیم‌های مربوط به performance و گزارش‌گیری
+- اسکریپت‌های SQL Server در `database-design/sql`
+- برنامه seed کامل کشورها در `database-design/countries-seed-plan.md`
 
 ## قوانین مشترک جدول‌ها
 
@@ -67,3 +69,18 @@ Seedهای پایه که باید در فاز پیاده‌سازی آماده �
 - `settings`
 - `market_rate_sources`
 - `market_rate_instruments`
+
+## SQL Scripts
+
+نسخه طراحی‌شده schema و seed در مسیر زیر قرار دارد:
+
+```text
+database-design/sql/
+```
+
+ترتیب اجرا:
+
+```text
+001_core_schema.sql
+002_seed_core.sql
+```

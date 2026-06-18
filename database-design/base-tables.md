@@ -17,6 +17,12 @@ countries
 social_links
 ```
 
+نسخه SQL Server این جدول‌ها و جدول‌های وابسته در مسیر زیر پیاده‌سازی شده است:
+
+```text
+database-design/sql/001_core_schema.sql
+```
+
 ## جدول users
 
 فیلدهای اصلی:
