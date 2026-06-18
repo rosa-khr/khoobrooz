@@ -43,3 +43,25 @@ backend/app/
 ## وضعیت فعلی
 
 این فولدر فعلاً فقط مرز Backend را مشخص می‌کند. پیاده‌سازی Laravel در فاز بعدی و بعد از تایید انجام می‌شود.
+
+در محیط فعلی local، دستورهای زیر در دسترس نبودند:
+
+```text
+php
+composer
+```
+
+برای scaffold واقعی Laravel باید PHP و Composer نصب شود یا محیط Docker/VPS آماده باشد.
+
+## مستندات اجرایی
+
+```text
+backend/docs/
+```
+
+مهم‌ترین فایل‌ها:
+
+- `backend/docs/laravel-scaffold.md`
+- `backend/docs/foundation-checklist.md`
+- `backend/docs/database-contracts.md`
+- `backend/docs/testing-standard.md`
