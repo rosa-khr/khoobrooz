@@ -126,6 +126,69 @@ backend/app/
   5. market rates
   6. settings
 
+## استاندارد تست برای Crawler و سرویس‌های بیرونی
+
+هر بخشی که از بیرون داده می‌گیرد یا داده را crawl/sync می‌کند، باید تست و داکیومنت داشته باشد.
+
+موارد شامل:
+
+- `Crawler`
+- `External API Client`
+- `Market Rate Sync`
+- `Scheduler`
+- `Queue Job`
+- `Webhook`
+- `Import/Export Service`
+
+قانون‌ها:
+
+- هیچ `Crawler` یا `External Service` بدون تست merge نمی‌شود.
+- تست‌ها نباید به اینترنت واقعی وابسته باشند.
+- response سرویس بیرونی باید با `Mock`, `Fake` یا fixture ثابت تست شود.
+- برای هر سرویس بیرونی باید حالت خطا هم تست شود:
+  - timeout
+  - response نامعتبر
+  - status code ناموفق
+  - داده ناقص
+- هر sync باید log قابل بررسی داشته باشد.
+- هر job زمان‌بندی شده باید تست جدا داشته باشد.
+
+برای Backend:
+
+```bash
+php artisan test
+```
+
+برای Frontend:
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
+
+اگر برای Frontend تست واحد یا integration اضافه شد، دستور test هم باید وارد pipeline شود.
+
+## استاندارد داکیومنت سرویس‌های بیرونی
+
+برای هر `Crawler` یا `External Service` باید یک سند کوتاه نوشته شود:
+
+- هدف سرویس
+- منبع داده
+- endpoint یا صفحه مورد استفاده
+- زمان‌بندی اجرا
+- ساختار داده دریافتی
+- mapping به جدول‌های داخلی
+- خطاهای قابل انتظار
+- تست‌های نوشته شده
+- محدودیت‌های SEO یا حقوقی در صورت وجود
+
+محل پیشنهادی:
+
+```text
+src/docs/project/integrations/
+```
+
 ## استاندارد داکیومنت برای هر مرحله
 
 برای هر feature مهم باید این موارد ثبت شود:
@@ -135,6 +198,7 @@ backend/app/
 - migrationها
 - endpointها
 - تست‌ها
+- سرویس‌های بیرونی و نحوه تست آن‌ها
 - تصمیم‌های مهم
 - کارهای باقی‌مانده
 
