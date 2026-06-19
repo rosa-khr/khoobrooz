@@ -1,6 +1,6 @@
 "use client";
 
-import { dashboardContentFlow, dashboardPublishStatus } from "@/admin/data/adminMockData";
+import { dashboardContentFlow, dashboardPublishStatus, dashboardSeoMetrics } from "@/admin/data/adminMockData";
 
 export function AdminDashboardCharts() {
   const maxFlow = Math.max(...dashboardContentFlow.flatMap((item) => [item.articles, item.news]));
@@ -12,8 +12,8 @@ export function AdminDashboardCharts() {
       <article className="admin-chart-card admin-chart-card-wide">
         <div className="admin-card-heading">
           <span>Content Flow</span>
-          <h2>روند تولید محتوا</h2>
-          <p>نمای خلاصه از مقاله‌ها و خبرهای آماده انتشار.</p>
+          <h2>تولید محتوا به تفکیک ماه</h2>
+          <p>مقایسه تعداد مقاله‌ها و خبرهای منتشر شده در هر ماه.</p>
         </div>
 
         <div className="admin-bar-chart" aria-label="نمودار تولید محتوا">
@@ -77,6 +77,24 @@ export function AdminDashboardCharts() {
             <div key={item.label}>
               <span><i style={{ background: item.color }} /> {item.label}</span>
               <strong>{item.value}</strong>
+            </div>
+          ))}
+        </div>
+      </article>
+
+      <article className="admin-chart-card admin-seo-card">
+        <div className="admin-card-heading">
+          <span>SEO Signals</span>
+          <h2>گزارش‌های استراتژی SEO</h2>
+          <p>شاخص‌هایی که برای برنامه‌ریزی محتوا و اولویت‌بندی صفحات استفاده می‌شوند.</p>
+        </div>
+
+        <div className="admin-seo-metrics">
+          {dashboardSeoMetrics.map((item) => (
+            <div key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.detail}</small>
             </div>
           ))}
         </div>

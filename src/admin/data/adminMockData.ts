@@ -64,8 +64,8 @@ export const adminSidebar: AdminSidebarItem[] = [
 export const adminStats = [
   { label: "مقاله‌های منتشر شده", value: "۳۸", detail: "محتوای فعال سایت", tone: "navy" },
   { label: "خبرهای منتشر شده", value: "۲۶", detail: "خبرهای قابل نمایش", tone: "amber" },
-  { label: "کل بازدیدها", value: "۱۲.۴K", detail: "نمای کلی ترافیک", tone: "gray" },
-  { label: "در انتظار انتشار", value: "۷", detail: "مقاله و خبر", tone: "steel" }
+  { label: "مقاله‌های منتشر نشده", value: "۱۲", detail: "نیازمند بررسی SEO", tone: "gray" },
+  { label: "خبرهای منتشر نشده", value: "۷", detail: "در انتظار انتشار", tone: "steel" }
 ];
 
 export const adminQuickActions = [
@@ -87,6 +87,13 @@ export const dashboardPublishStatus = [
   { label: "منتشر شده", value: 64, color: "#07172b" },
   { label: "پیش‌نویس", value: 22, color: "#8a95a3" },
   { label: "زمان‌بندی شده", value: 8, color: "#f4b23e" }
+];
+
+export const dashboardSeoMetrics = [
+  { label: "کل بازدیدها", value: "۱۲.۴K", detail: "۳۰ روز اخیر" },
+  { label: "کلیک سرچ", value: "۳.۸K", detail: "Google Search" },
+  { label: "CTR", value: "۴.۶٪", detail: "میانگین ورودی ارگانیک" },
+  { label: "صفحات نیازمند محتوا", value: "۹", detail: "فرصت تولید مقاله" }
 ];
 
 export const menuRows: AdminMenuItem[] = [
