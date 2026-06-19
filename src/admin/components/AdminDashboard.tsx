@@ -1,6 +1,7 @@
 "use client";
 
 import { Database, Plus } from "lucide-react";
+import { AdminDashboardCharts } from "@/admin/components/AdminDashboardCharts";
 import { AdminDataGrid } from "@/admin/components/AdminDataGrid";
 import { AdminShell } from "@/admin/components/AdminShell";
 import { adminQuickActions, adminStats, articleRows, menuRows } from "@/admin/data/adminMockData";
@@ -12,8 +13,8 @@ export default function AdminDashboard() {
         <section className="admin-hero">
           <div>
             <span>Khoobrooz Admin</span>
-            <h1>مدیریت محتوای تجاری خوبروز</h1>
-            <p>ساختار اولیه پنل بر اساس موجودیت‌های دیتابیس آماده شده و در فاز بعد به API لاراول وصل می‌شود.</p>
+            <h1>داشبوردهای مدیریت خوبروز</h1>
+            <p>نمای عملیاتی برای مدیریت منوها، محتوا، نرخ‌ها و داده‌های پایه سایت.</p>
           </div>
           <div className="admin-db-status">
             <Database size={18} />
@@ -31,6 +32,8 @@ export default function AdminDashboard() {
             </article>
           ))}
         </section>
+
+        <AdminDashboardCharts />
 
         <section className="admin-quick-actions" aria-label="اقدام سریع">
           {adminQuickActions.map((action) => {

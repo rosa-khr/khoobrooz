@@ -1,6 +1,8 @@
 import {
   BadgeCheck,
   BookOpenText,
+  ChartColumnIncreasing,
+  Clock3,
   FileText,
   Globe2,
   LayoutDashboard,
@@ -47,27 +49,44 @@ export type AdminSidebarItem = {
 };
 
 export const adminSidebar: AdminSidebarItem[] = [
-  { label: "داشبورد", href: "/admin", icon: LayoutDashboard, active: true },
-  { label: "منوها", href: "/admin#menus", icon: Link2 },
-  { label: "مقالات", href: "/admin#articles", icon: BookOpenText },
-  { label: "خبرها", href: "/admin#news", icon: Newspaper },
-  { label: "تگ‌ها", href: "/admin#tags", icon: Tags },
-  { label: "کاربران", href: "/admin#users", icon: Users },
-  { label: "کشورها", href: "/admin#countries", icon: Globe2 },
-  { label: "تنظیمات", href: "/admin#settings", icon: ShieldCheck }
+  { label: "داشبوردها", href: "/admin", icon: LayoutDashboard, active: true },
+  { label: "منوها", href: "/admin/menus/list", icon: Link2 },
+  { label: "مقالات", href: "/admin/articles/list", icon: BookOpenText },
+  { label: "خبرها", href: "/admin/news/list", icon: Newspaper },
+  { label: "تگ‌ها", href: "/admin/tags/list", icon: Tags },
+  { label: "کاربران", href: "/admin/users/list", icon: Users },
+  { label: "کشورها", href: "/admin/countries/list", icon: Globe2 },
+  { label: "ساعت جهانی", href: "/admin/world-clocks/list", icon: Clock3 },
+  { label: "گزارش‌ها", href: "/admin/reports/list", icon: ChartColumnIncreasing },
+  { label: "تنظیمات", href: "/admin/settings/list", icon: ShieldCheck }
 ];
 
 export const adminStats = [
-  { label: "منوهای فعال", value: "۱۲", detail: "۳ سطح قابل مدیریت", tone: "teal" },
+  { label: "منوهای فعال", value: "۱۲", detail: "۳ سطح قابل مدیریت", tone: "navy" },
   { label: "محتوای در انتظار", value: "۷", detail: "مقاله و خبر برای تایید", tone: "amber" },
-  { label: "جدول‌های دیتابیس", value: "۳۵", detail: "SQL Server آماده اتصال", tone: "steel" },
-  { label: "کشورهای پایه", value: "۱۰", detail: "seed اولیه تجارت", tone: "slate" }
+  { label: "جدول‌های دیتابیس", value: "۳۵", detail: "SQL Server آماده اتصال", tone: "gray" },
+  { label: "کشورهای پایه", value: "۱۰", detail: "داده پایه برای تجارت", tone: "steel" }
 ];
 
 export const adminQuickActions = [
   { label: "مقاله جدید", icon: FileText },
   { label: "تایید محتوا", icon: BadgeCheck },
   { label: "تنظیم SEO", icon: ShieldCheck }
+];
+
+export const dashboardContentFlow = [
+  { label: "فروردین", articles: 14, news: 6 },
+  { label: "اردیبهشت", articles: 18, news: 8 },
+  { label: "خرداد", articles: 24, news: 11 },
+  { label: "تیر", articles: 20, news: 9 },
+  { label: "مرداد", articles: 28, news: 13 },
+  { label: "شهریور", articles: 31, news: 12 }
+];
+
+export const dashboardEntityStatus = [
+  { label: "منتشر شده", value: 64, color: "#07172b" },
+  { label: "در انتظار", value: 22, color: "#f4b23e" },
+  { label: "حذف منطقی", value: 8, color: "#8a95a3" }
 ];
 
 export const menuRows: AdminMenuItem[] = [
