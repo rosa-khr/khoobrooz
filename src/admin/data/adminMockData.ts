@@ -83,10 +83,10 @@ export const dashboardContentFlow = [
   { label: "شهریور", articles: 31, news: 12 }
 ];
 
-export const dashboardEntityStatus = [
+export const dashboardPublishStatus = [
   { label: "منتشر شده", value: 64, color: "#07172b" },
-  { label: "در انتظار", value: 22, color: "#f4b23e" },
-  { label: "حذف منطقی", value: 8, color: "#8a95a3" }
+  { label: "پیش‌نویس", value: 22, color: "#8a95a3" },
+  { label: "زمان‌بندی شده", value: 8, color: "#f4b23e" }
 ];
 
 export const menuRows: AdminMenuItem[] = [

@@ -1,10 +1,10 @@
 "use client";
 
-import { dashboardContentFlow, dashboardEntityStatus } from "@/admin/data/adminMockData";
+import { dashboardContentFlow, dashboardPublishStatus } from "@/admin/data/adminMockData";
 
 export function AdminDashboardCharts() {
   const maxFlow = Math.max(...dashboardContentFlow.flatMap((item) => [item.articles, item.news]));
-  const totalStatus = dashboardEntityStatus.reduce((sum, item) => sum + item.value, 0);
+  const totalStatus = dashboardPublishStatus.reduce((sum, item) => sum + item.value, 0);
   let progress = 0;
 
   return (
@@ -36,14 +36,14 @@ export function AdminDashboardCharts() {
 
       <article className="admin-chart-card">
         <div className="admin-card-heading">
-          <span>Entity Status</span>
-          <h2>وضعیت رکوردها</h2>
-          <p>بر اساس ستون accuracy در جدول‌های اصلی.</p>
+          <span>Publish Status</span>
+          <h2>انتشار محتوا</h2>
+          <p>تفکیک محتواهای منتشر شده، پیش‌نویس و زمان‌بندی شده.</p>
         </div>
 
-        <svg className="admin-donut-chart" viewBox="0 0 42 42" role="img" aria-label="نمودار وضعیت رکوردها">
+        <svg className="admin-donut-chart" viewBox="0 0 42 42" role="img" aria-label="نمودار انتشار محتوا">
           <circle cx="21" cy="21" fill="transparent" r="15.915" stroke="#e3e7ec" strokeWidth="5" />
-          {dashboardEntityStatus.map((item) => {
+          {dashboardPublishStatus.map((item) => {
             const value = (item.value / totalStatus) * 100;
             const dash = `${value} ${100 - value}`;
             const offset = 25 - progress;
@@ -68,12 +68,12 @@ export function AdminDashboardCharts() {
             {totalStatus}
           </text>
           <text className="admin-donut-label" dominantBaseline="middle" textAnchor="middle" x="21" y="25">
-            رکورد
+            محتوا
           </text>
         </svg>
 
         <div className="admin-status-list">
-          {dashboardEntityStatus.map((item) => (
+          {dashboardPublishStatus.map((item) => (
             <div key={item.label}>
               <span><i style={{ background: item.color }} /> {item.label}</span>
               <strong>{item.value}</strong>
