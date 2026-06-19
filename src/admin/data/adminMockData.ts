@@ -62,10 +62,10 @@ export const adminSidebar: AdminSidebarItem[] = [
 ];
 
 export const adminStats = [
-  { label: "منوهای فعال", value: "۱۲", detail: "۳ سطح قابل مدیریت", tone: "navy" },
-  { label: "محتوای در انتظار", value: "۷", detail: "مقاله و خبر برای تایید", tone: "amber" },
-  { label: "جدول‌های دیتابیس", value: "۳۵", detail: "SQL Server آماده اتصال", tone: "gray" },
-  { label: "کشورهای پایه", value: "۱۰", detail: "داده پایه برای تجارت", tone: "steel" }
+  { label: "مقاله‌های منتشر شده", value: "۳۸", detail: "محتوای فعال سایت", tone: "navy" },
+  { label: "خبرهای منتشر شده", value: "۲۶", detail: "خبرهای قابل نمایش", tone: "amber" },
+  { label: "کل بازدیدها", value: "۱۲.۴K", detail: "نمای کلی ترافیک", tone: "gray" },
+  { label: "در انتظار انتشار", value: "۷", detail: "مقاله و خبر", tone: "steel" }
 ];
 
 export const adminQuickActions = [
