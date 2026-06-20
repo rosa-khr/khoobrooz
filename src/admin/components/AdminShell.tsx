@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, PanelRightClose, PanelRightOpen, Search, Settings } from "lucide-react";
+import { Bell, List, Search, Settings, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("khoobrooz-admin-sidebar");
@@ -20,6 +21,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleSidebar = () => {
+    if (window.matchMedia("(max-width: 980px)").matches) {
+      setMobileOpen((value) => !value);
+      return;
+    }
+
     setCollapsed((value) => {
       const next = !value;
       window.localStorage.setItem("khoobrooz-admin-sidebar", next ? "collapsed" : "expanded");
@@ -27,8 +33,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
     });
   };
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   return (
-    <main className={`admin-app ${collapsed ? "admin-app-collapsed" : ""}`} dir="rtl">
+    <main className={`admin-app ${collapsed ? "admin-app-collapsed" : ""} ${mobileOpen ? "admin-app-mobile-open" : ""}`} dir="rtl">
       <aside className="admin-sidebar" aria-label="ناوبری پنل مدیریت">
         <div className="admin-sidebar-brand">
           <BrandLogoMark className="admin-brand-logo" />
@@ -36,8 +46,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <strong>خوبروز</strong>
             <small>پنل مدیریت</small>
           </div>
-          <button className="admin-sidebar-toggle" aria-label={collapsed ? "باز کردن منوی پنل" : "بستن منوی پنل"} onClick={toggleSidebar} type="button">
-            {collapsed ? <PanelRightOpen size={16} /> : <PanelRightClose size={16} />}
+          <button className="admin-sidebar-toggle" aria-label="باز و بسته کردن منوی پنل" onClick={toggleSidebar} type="button">
+            {mobileOpen ? <X size={16} /> : <List size={16} />}
           </button>
         </div>
 
@@ -47,7 +57,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
             const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href.replace("/list", ""));
 
             return (
-              <Link aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} title={collapsed ? item.label : undefined}>
+              <Link aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined}>
                 <Icon size={17} />
                 <span>{item.label}</span>
               </Link>
@@ -55,6 +65,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
       </aside>
+      <button className="admin-sidebar-backdrop" aria-label="بستن منوی پنل" onClick={() => setMobileOpen(false)} type="button" />
 
       <section className="admin-main">
         <header className="admin-topbar">
@@ -63,8 +74,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <input aria-label="جستجو در پنل" placeholder="جستجو در منو، مقاله، خبر..." />
           </div>
           <div className="admin-topbar-actions">
-            <button aria-label={collapsed ? "باز کردن منوی پنل" : "بستن منوی پنل"} onClick={toggleSidebar} type="button">
-              {collapsed ? <PanelRightOpen size={17} /> : <PanelRightClose size={17} />}
+            <button aria-label="باز و بسته کردن منوی پنل" onClick={toggleSidebar} type="button">
+              <List size={17} />
             </button>
             <button aria-label="اعلان‌ها" type="button">
               <Bell size={17} />

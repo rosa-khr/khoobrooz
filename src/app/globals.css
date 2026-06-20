@@ -76,7 +76,14 @@ textarea {
     linear-gradient(180deg, rgba(7, 23, 43, 0.98), rgba(11, 31, 58, 0.98)),
     repeating-linear-gradient(135deg, rgba(244, 178, 62, 0.08) 0 1px, transparent 1px 30px);
   color: #e8edf2;
-  transition: padding 220ms ease;
+  z-index: 8;
+  transition:
+    padding 220ms ease,
+    transform 220ms ease;
+}
+
+.admin-sidebar-backdrop {
+  display: none;
 }
 
 .admin-sidebar-brand {
@@ -167,7 +174,7 @@ textarea {
 }
 
 .admin-app-collapsed .admin-sidebar-brand {
-  justify-content: center;
+  justify-content: space-between;
   padding-inline: 0;
 }
 
@@ -345,31 +352,31 @@ textarea {
 }
 
 .admin-stat-navy {
-  border-color: rgba(35, 71, 102, 0.16);
+  border-color: rgba(35, 71, 102, 0.24);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(239, 244, 248, 0.74)),
-    linear-gradient(135deg, rgba(35, 71, 102, 0.14), transparent 52%);
+    linear-gradient(145deg, rgba(251, 253, 255, 0.82), rgba(231, 239, 246, 0.8)),
+    linear-gradient(135deg, rgba(35, 71, 102, 0.24), transparent 56%);
 }
 
 .admin-stat-amber {
-  border-color: rgba(244, 178, 62, 0.2);
+  border-color: rgba(244, 178, 62, 0.3);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(250, 247, 239, 0.72)),
-    linear-gradient(135deg, rgba(244, 178, 62, 0.18), transparent 52%);
+    linear-gradient(145deg, rgba(255, 253, 248, 0.84), rgba(251, 241, 218, 0.8)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.3), transparent 56%);
 }
 
 .admin-stat-gray {
-  border-color: rgba(102, 118, 138, 0.16);
+  border-color: rgba(102, 118, 138, 0.24);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(243, 245, 247, 0.74)),
-    linear-gradient(135deg, rgba(102, 118, 138, 0.12), transparent 52%);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(235, 239, 243, 0.8)),
+    linear-gradient(135deg, rgba(102, 118, 138, 0.2), transparent 56%);
 }
 
 .admin-stat-steel {
-  border-color: rgba(72, 101, 125, 0.16);
+  border-color: rgba(72, 101, 125, 0.24);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(241, 245, 248, 0.74)),
-    linear-gradient(135deg, rgba(72, 101, 125, 0.13), transparent 52%);
+    linear-gradient(145deg, rgba(253, 254, 255, 0.82), rgba(232, 239, 244, 0.8)),
+    linear-gradient(135deg, rgba(72, 101, 125, 0.22), transparent 56%);
 }
 
 .admin-stat strong {
@@ -396,12 +403,24 @@ textarea {
   color: var(--admin-blue);
 }
 
+.admin-stat-navy strong {
+  color: #173a58;
+}
+
 .admin-stat-gray span {
   color: #5f6d7e;
 }
 
+.admin-stat-gray strong {
+  color: #4b5868;
+}
+
 .admin-stat-steel span {
   color: #48657d;
+}
+
+.admin-stat-steel strong {
+  color: #2f5874;
 }
 
 .admin-dashboard-grid {
@@ -733,8 +752,35 @@ textarea {
   }
 
   .admin-sidebar {
-    position: relative;
-    height: auto;
+    position: fixed;
+    inset-block: 0;
+    right: 0;
+    width: min(84vw, 320px);
+    height: 100dvh;
+    overflow-y: auto;
+    transform: translateX(105%);
+    box-shadow: -18px 0 46px rgba(7, 23, 43, 0.18);
+  }
+
+  .admin-app-mobile-open .admin-sidebar {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 7;
+    display: block;
+    border: 0;
+    background: rgba(7, 23, 43, 0.36);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+
+  .admin-app-mobile-open .admin-sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .admin-app-collapsed .admin-sidebar-brand div,
@@ -753,7 +799,7 @@ textarea {
   }
 
   .admin-sidebar-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .admin-dashboard-grid {
