@@ -393,23 +393,23 @@ textarea {
 }
 
 .admin-stat-navy {
-  border-color: rgba(35, 71, 102, 0.2);
-  background: #eaf2f8;
+  border-color: rgba(37, 120, 79, 0.2);
+  background: #e8f5ed;
 }
 
 .admin-stat-amber {
-  border-color: rgba(244, 178, 62, 0.26);
-  background: #fff4dc;
+  border-color: rgba(37, 120, 79, 0.2);
+  background: #edf8f1;
 }
 
 .admin-stat-gray {
-  border-color: rgba(198, 138, 43, 0.22);
-  background: #f5ecda;
+  border-color: rgba(244, 178, 62, 0.28);
+  background: #fff4dc;
 }
 
 .admin-stat-steel {
-  border-color: rgba(72, 101, 125, 0.2);
-  background: #e8f1f7;
+  border-color: rgba(198, 138, 43, 0.24);
+  background: #f7edd8;
 }
 
 .admin-stat strong {
@@ -429,15 +429,15 @@ textarea {
 
 .admin-stat-amber span,
 .admin-stat-amber strong {
-  color: #8a5a16;
+  color: #25784f;
 }
 
 .admin-stat-navy span {
-  color: var(--admin-blue);
+  color: #25784f;
 }
 
 .admin-stat-navy strong {
-  color: #173a58;
+  color: #1f6b45;
 }
 
 .admin-stat-gray span {
@@ -449,11 +449,11 @@ textarea {
 }
 
 .admin-stat-steel span {
-  color: #48657d;
+  color: #8a5f1f;
 }
 
 .admin-stat-steel strong {
-  color: #2f5874;
+  color: #76511d;
 }
 
 .admin-dashboard-grid {
