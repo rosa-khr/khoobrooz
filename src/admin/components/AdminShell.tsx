@@ -36,6 +36,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <strong>خوبروز</strong>
             <small>پنل مدیریت</small>
           </div>
+          <button className="admin-sidebar-toggle" aria-label={collapsed ? "باز کردن منوی پنل" : "بستن منوی پنل"} onClick={toggleSidebar} type="button">
+            {collapsed ? <PanelRightOpen size={16} /> : <PanelRightClose size={16} />}
+          </button>
         </div>
 
         <nav className="admin-sidebar-nav">

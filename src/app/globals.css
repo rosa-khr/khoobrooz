@@ -42,6 +42,8 @@ textarea {
 .admin-app {
   --admin-navy: #07172b;
   --admin-navy-soft: #0b1f3a;
+  --admin-blue: #234766;
+  --admin-blue-soft: #48657d;
   --admin-gray: #f0f2f5;
   --admin-line: rgba(7, 23, 43, 0.1);
   --admin-muted: #66768a;
@@ -51,8 +53,9 @@ textarea {
   min-height: 100vh;
   grid-template-columns: 280px minmax(0, 1fr);
   background:
-    linear-gradient(180deg, rgba(240, 242, 245, 0.98), rgba(247, 248, 250, 0.98)),
-    repeating-linear-gradient(90deg, rgba(7, 23, 43, 0.045) 0 1px, transparent 1px 44px);
+    radial-gradient(circle at 76% 10%, rgba(244, 178, 62, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(242, 244, 247, 0.98), rgba(249, 250, 251, 0.98)),
+    repeating-linear-gradient(90deg, rgba(7, 23, 43, 0.028) 0 1px, transparent 1px 48px);
   color: var(--admin-navy);
   font-family: Dana, IRANSans, Vazirmatn, system-ui, sans-serif;
   line-height: 1.65;
@@ -83,6 +86,29 @@ textarea {
   min-height: 58px;
   padding: 8px 10px 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-sidebar-toggle {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  margin-right: auto;
+  place-items: center;
+  border: 1px solid rgba(244, 178, 62, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.admin-sidebar-toggle:hover {
+  border-color: rgba(244, 178, 62, 0.58);
+  background: rgba(244, 178, 62, 0.12);
+  color: #ffffff;
 }
 
 .admin-brand-logo {
@@ -155,6 +181,10 @@ textarea {
   white-space: nowrap;
 }
 
+.admin-app-collapsed .admin-sidebar-toggle {
+  margin-right: 0;
+}
+
 .admin-app-collapsed .admin-sidebar-nav a {
   justify-content: center;
   padding-inline: 0;
@@ -162,6 +192,9 @@ textarea {
 
 .admin-main {
   min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)),
+    transparent;
 }
 
 .admin-topbar {
@@ -248,8 +281,10 @@ textarea {
   border: 1px solid var(--admin-line);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 242, 245, 0.94)),
-    repeating-linear-gradient(90deg, rgba(7, 23, 43, 0.045) 0 1px, transparent 1px 38px);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(241, 244, 247, 0.78)),
+    repeating-linear-gradient(90deg, rgba(7, 23, 43, 0.03) 0 1px, transparent 1px 40px);
+  box-shadow: 0 18px 50px rgba(7, 23, 43, 0.05);
+  backdrop-filter: blur(14px);
 }
 
 .admin-hero span,
@@ -303,9 +338,10 @@ textarea {
   border: 1px solid var(--admin-line);
   border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(250, 251, 252, 0.82)),
-    repeating-linear-gradient(135deg, rgba(7, 23, 43, 0.026) 0 1px, transparent 1px 28px);
-  backdrop-filter: blur(10px);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(244, 247, 249, 0.72)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.08), transparent 45%);
+  box-shadow: 0 14px 34px rgba(7, 23, 43, 0.045);
+  backdrop-filter: blur(14px);
 }
 
 .admin-stat strong {
@@ -346,8 +382,11 @@ textarea {
   padding: 22px;
   border: 1px solid var(--admin-line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(246, 248, 250, 0.7)),
+    linear-gradient(135deg, rgba(35, 71, 102, 0.055), transparent 52%);
+  box-shadow: 0 18px 44px rgba(7, 23, 43, 0.048);
+  backdrop-filter: blur(16px);
 }
 
 .admin-seo-card {
@@ -376,7 +415,7 @@ textarea {
   padding: 18px 10px 0;
   border-bottom: 1px solid var(--admin-line);
   background:
-    linear-gradient(to top, rgba(7, 23, 43, 0.08) 1px, transparent 1px) 0 0 / 100% 48px;
+    linear-gradient(to top, rgba(7, 23, 43, 0.052) 1px, transparent 1px) 0 0 / 100% 48px;
 }
 
 .admin-bar-group {
@@ -400,11 +439,11 @@ textarea {
 }
 
 .admin-bars span:first-child {
-  background: rgba(7, 23, 43, 0.88);
+  background: linear-gradient(180deg, rgba(35, 71, 102, 0.92), rgba(72, 101, 125, 0.78));
 }
 
 .admin-bars span:last-child {
-  background: rgba(244, 178, 62, 0.88);
+  background: linear-gradient(180deg, rgba(244, 178, 62, 0.9), rgba(198, 137, 42, 0.74));
 }
 
 .admin-bar-group small {
@@ -442,7 +481,7 @@ textarea {
 }
 
 .admin-legend-navy {
-  background: var(--admin-navy);
+  background: var(--admin-blue);
 }
 
 .admin-legend-gold {
@@ -477,7 +516,7 @@ textarea {
   padding: 0 10px;
   border: 1px solid var(--admin-line);
   border-radius: 8px;
-  background: rgba(248, 249, 251, 0.82);
+  background: rgba(248, 249, 251, 0.68);
 }
 
 .admin-status-list strong {
@@ -498,8 +537,8 @@ textarea {
   border: 1px solid rgba(7, 23, 43, 0.08);
   border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(248, 249, 251, 0.84), rgba(255, 255, 255, 0.84)),
-    linear-gradient(135deg, rgba(244, 178, 62, 0.12), transparent 48%);
+    linear-gradient(180deg, rgba(248, 249, 251, 0.72), rgba(255, 255, 255, 0.74)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.1), transparent 48%);
 }
 
 .admin-seo-metrics span {
