@@ -809,6 +809,15 @@ textarea {
   line-height: 52px;
 }
 
+.admin-grid-loading {
+  display: grid;
+  height: 100%;
+  place-items: center;
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .admin-grid-actions {
   display: flex;
   align-items: center;

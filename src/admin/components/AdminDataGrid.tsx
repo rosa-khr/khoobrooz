@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry, type ColDef } from "ag-grid-community";
 import { Eye, Pencil, Trash2, BadgeCheck } from "lucide-react";
@@ -23,7 +23,12 @@ type AdminDataGridProps = {
 };
 
 export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridProps) {
+  const [mounted, setMounted] = useState(false);
   const resourcePath = kind === "menus" ? "menus" : kind;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const baseColumns: ColDef[] = [
@@ -111,20 +116,24 @@ export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridP
       </div>
 
       <div className="admin-grid-wrap ag-theme-material">
-        <AgGridReact
-          animateRows
-          columnDefs={columnDefs}
-          defaultColDef={{
-            resizable: true,
-            sortable: true,
-            filter: true,
-            suppressHeaderMenuButton: true
-          }}
-          domLayout="normal"
-          enableRtl
-          rowData={rows}
-          rowHeight={54}
-        />
+        {mounted ? (
+          <AgGridReact
+            animateRows
+            columnDefs={columnDefs}
+            defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+              suppressHeaderMenuButton: true
+            }}
+            domLayout="normal"
+            enableRtl
+            rowData={rows}
+            rowHeight={54}
+          />
+        ) : (
+          <div className="admin-grid-loading">در حال آماده‌سازی جدول...</div>
+        )}
       </div>
     </section>
   );
