@@ -623,27 +623,19 @@ textarea {
   padding: 14px;
   border: 1px solid rgba(7, 23, 43, 0.08);
   border-radius: 8px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(240, 246, 250, 0.74)),
-    linear-gradient(135deg, rgba(35, 71, 102, 0.08), transparent 50%);
+  background: #eaf4ff;
 }
 
 .admin-seo-metrics div:nth-child(2) {
-  background:
-    linear-gradient(145deg, rgba(255, 253, 248, 0.82), rgba(252, 242, 219, 0.74)),
-    linear-gradient(135deg, rgba(244, 178, 62, 0.14), transparent 50%);
+  background: #e9f7ef;
 }
 
 .admin-seo-metrics div:nth-child(3) {
-  background:
-    linear-gradient(145deg, rgba(255, 254, 250, 0.82), rgba(246, 237, 221, 0.74)),
-    linear-gradient(135deg, rgba(198, 138, 43, 0.12), transparent 50%);
+  background: #fff2d9;
 }
 
 .admin-seo-metrics div:nth-child(4) {
-  background:
-    linear-gradient(145deg, rgba(253, 254, 255, 0.82), rgba(229, 240, 248, 0.74)),
-    linear-gradient(135deg, rgba(72, 101, 125, 0.1), transparent 50%);
+  background: #f1eafa;
 }
 
 .admin-seo-metrics span {
