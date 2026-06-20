@@ -1,13 +1,13 @@
 "use client";
 
-import { Check, Clock3, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import type { Accuracy } from "@/admin/data/adminMockData";
 
 export function AccuracyBadge({ value }: { value: Accuracy }) {
   const config = {
-    0: { label: "در انتظار", className: "admin-badge admin-badge-warning" },
-    1: { label: "فعال", className: "admin-badge admin-badge-success" },
-    2: { label: "حذف منطقی", className: "admin-badge admin-badge-danger" }
+    0: { label: "در انتظار تایید", className: "admin-badge admin-badge-warning" },
+    1: { label: "تایید شده", className: "admin-badge admin-badge-success" },
+    2: { label: "حذف شده", className: "admin-badge admin-badge-danger" }
   } satisfies Record<Accuracy, { label: string; className: string }>;
 
   return <span className={config[value].className}>{config[value].label}</span>;
@@ -15,9 +15,12 @@ export function AccuracyBadge({ value }: { value: Accuracy }) {
 
 export function BooleanBadge({ value, trueLabel = "تایید", falseLabel = "نیازمند بررسی" }: { value: boolean; trueLabel?: string; falseLabel?: string }) {
   return (
-    <span className={value ? "admin-badge admin-badge-success" : "admin-badge admin-badge-muted"}>
-      {value ? <Check size={13} /> : <Clock3 size={13} />}
-      {value ? trueLabel : falseLabel}
+    <span
+      aria-label={value ? trueLabel : falseLabel}
+      className={value ? "admin-icon-badge admin-icon-badge-success" : "admin-icon-badge admin-icon-badge-danger"}
+      title={value ? trueLabel : falseLabel}
+    >
+      {value ? <Check size={14} /> : <X size={14} />}
     </span>
   );
 }
