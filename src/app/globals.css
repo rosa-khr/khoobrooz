@@ -344,6 +344,34 @@ textarea {
   backdrop-filter: blur(14px);
 }
 
+.admin-stat-navy {
+  border-color: rgba(35, 71, 102, 0.16);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(239, 244, 248, 0.74)),
+    linear-gradient(135deg, rgba(35, 71, 102, 0.14), transparent 52%);
+}
+
+.admin-stat-amber {
+  border-color: rgba(244, 178, 62, 0.2);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(250, 247, 239, 0.72)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.18), transparent 52%);
+}
+
+.admin-stat-gray {
+  border-color: rgba(102, 118, 138, 0.16);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(243, 245, 247, 0.74)),
+    linear-gradient(135deg, rgba(102, 118, 138, 0.12), transparent 52%);
+}
+
+.admin-stat-steel {
+  border-color: rgba(72, 101, 125, 0.16);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(241, 245, 248, 0.74)),
+    linear-gradient(135deg, rgba(72, 101, 125, 0.13), transparent 52%);
+}
+
 .admin-stat strong {
   display: block;
   margin-top: 10px;
@@ -359,14 +387,21 @@ textarea {
   font-size: 12px;
 }
 
-.admin-stat-amber span {
-  color: #b7791f;
+.admin-stat-amber span,
+.admin-stat-amber strong {
+  color: #8a5a16;
 }
 
-.admin-stat-navy span,
-.admin-stat-gray span,
+.admin-stat-navy span {
+  color: var(--admin-blue);
+}
+
+.admin-stat-gray span {
+  color: #5f6d7e;
+}
+
 .admin-stat-steel span {
-  color: #4d5d70;
+  color: #48657d;
 }
 
 .admin-dashboard-grid {
