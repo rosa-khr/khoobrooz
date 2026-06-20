@@ -481,6 +481,12 @@ textarea {
   min-height: auto;
 }
 
+.admin-publish-card {
+  border-color: rgba(72, 101, 125, 0.14);
+  background: rgba(239, 246, 250, 0.62);
+  box-shadow: 0 14px 34px rgba(7, 23, 43, 0.035);
+}
+
 .admin-card-heading h2 {
   margin: 4px 0;
   color: var(--admin-navy);
@@ -603,7 +609,7 @@ textarea {
   padding: 0 10px;
   border: 1px solid var(--admin-line);
   border-radius: 8px;
-  background: rgba(248, 249, 251, 0.68);
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .admin-status-list strong {

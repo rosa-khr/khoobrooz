@@ -34,7 +34,7 @@ export function AdminDashboardCharts() {
         </div>
       </article>
 
-      <article className="admin-chart-card">
+      <article className="admin-chart-card admin-publish-card">
         <div className="admin-card-heading">
           <span>Publish Status</span>
           <h2>انتشار محتوا</h2>
