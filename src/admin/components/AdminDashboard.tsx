@@ -4,7 +4,7 @@ import { Database, Plus } from "lucide-react";
 import { AdminDashboardCharts } from "@/admin/components/AdminDashboardCharts";
 import { AdminDataGrid } from "@/admin/components/AdminDataGrid";
 import { AdminShell } from "@/admin/components/AdminShell";
-import { adminQuickActions, adminStats, articleRows, menuRows } from "@/admin/data/adminMockData";
+import { adminQuickActions, adminStats, pendingArticleRows, pendingNewsRows } from "@/admin/data/adminMockData";
 
 export default function AdminDashboard() {
   return (
@@ -49,17 +49,17 @@ export default function AdminDashboard() {
         </section>
 
         <AdminDataGrid
-          description="منوها تا سه سطح زیرمنو، URL، عنوان SEO، وضعیت و انتشار را پوشش می‌دهند."
-          kind="menus"
-          rows={menuRows}
-          title="مدیریت منوها"
+          description="فقط مقاله‌هایی که هنوز تایید نشده‌اند و باید قبل از انتشار بررسی شوند."
+          kind="articles"
+          rows={pendingArticleRows}
+          title="مقاله‌های نیازمند تایید"
         />
 
         <AdminDataGrid
-          description="مقالات دارای وضعیت تایید، انتشار، زمان‌بندی و فیلدهای SEO هستند."
-          kind="articles"
-          rows={articleRows}
-          title="مدیریت مقالات"
+          description="خبرهایی که هنوز تایید نشده‌اند و برای انتشار نیاز به بررسی دارند."
+          kind="news"
+          rows={pendingNewsRows}
+          title="خبرهای نیازمند تایید"
         />
       </div>
     </AdminShell>

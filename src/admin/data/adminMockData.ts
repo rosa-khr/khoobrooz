@@ -41,6 +41,8 @@ export type AdminArticleItem = {
   modifiedAt: string;
 };
 
+export type AdminNewsItem = AdminArticleItem;
+
 export type AdminSidebarItem = {
   label: string;
   href: string;
@@ -204,3 +206,45 @@ export const articleRows: AdminArticleItem[] = [
     modifiedAt: "۱۴۰۵/۰۳/۲۷"
   }
 ];
+
+export const newsRows: AdminNewsItem[] = [
+  {
+    id: 201,
+    title: "آخرین تغییرات ثبت سفارش واردات",
+    category: "واردات",
+    slug: "import-order-latest-updates",
+    seoTitle: "تغییرات ثبت سفارش واردات",
+    approve: false,
+    isPublished: false,
+    accuracy: 0,
+    scheduledAt: null,
+    modifiedAt: "۱۴۰۵/۰۳/۲۹"
+  },
+  {
+    id: 202,
+    title: "روند جدید بررسی اسناد گمرکی",
+    category: "ترخیص کالا",
+    slug: "customs-document-review-flow",
+    seoTitle: "بررسی اسناد گمرکی",
+    approve: false,
+    isPublished: false,
+    accuracy: 0,
+    scheduledAt: "۱۴۰۵/۰۴/۰۱",
+    modifiedAt: "۱۴۰۵/۰۳/۲۹"
+  },
+  {
+    id: 203,
+    title: "به‌روزرسانی نرخ‌های مرجع تجاری",
+    category: "بازار و ارز",
+    slug: "trade-reference-rates-update",
+    seoTitle: "به‌روزرسانی نرخ‌های تجاری",
+    approve: true,
+    isPublished: true,
+    accuracy: 1,
+    scheduledAt: null,
+    modifiedAt: "۱۴۰۵/۰۳/۲۸"
+  }
+];
+
+export const pendingArticleRows = articleRows.filter((item) => !item.approve);
+export const pendingNewsRows = newsRows.filter((item) => !item.approve);

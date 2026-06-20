@@ -10,6 +10,22 @@ import { adminSidebar } from "@/admin/data/adminMockData";
 import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import "react-toastify/dist/ReactToastify.css";
 
+const breadcrumbLabels: Record<string, string> = {
+  admin: "داشبوردها",
+  menus: "منوها",
+  articles: "مقالات",
+  news: "خبرها",
+  tags: "تگ‌ها",
+  users: "کاربران",
+  countries: "کشورها",
+  "world-clocks": "ساعت جهانی",
+  reports: "گزارش‌ها",
+  settings: "تنظیمات",
+  list: "لیست",
+  view: "مشاهده",
+  edit: "ویرایش"
+};
+
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -36,6 +52,11 @@ export function AdminShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  const breadcrumbs = pathname
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => breadcrumbLabels[segment] ?? segment);
 
   return (
     <main className={`admin-app ${collapsed ? "admin-app-collapsed" : ""} ${mobileOpen ? "admin-app-mobile-open" : ""}`} dir="rtl">
@@ -69,9 +90,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <section className="admin-main">
         <header className="admin-topbar">
-          <div className="admin-search" role="search">
-            <Search size={17} />
-            <input aria-label="جستجو در پنل" placeholder="جستجو در منو، مقاله، خبر..." />
+          <div className="admin-topbar-start">
+            <nav className="admin-breadcrumb" aria-label="مسیر جاری">
+              {breadcrumbs.map((item, index) => (
+                <span aria-current={index === breadcrumbs.length - 1 ? "page" : undefined} key={`${item}-${index}`}>
+                  {item}
+                </span>
+              ))}
+            </nav>
+            <div className="admin-search" role="search">
+              <Search size={17} />
+              <input aria-label="جستجو در پنل" placeholder="جستجو در منو، مقاله، خبر..." />
+            </div>
           </div>
           <div className="admin-topbar-actions">
             <button aria-label="باز و بسته کردن منوی پنل" onClick={toggleSidebar} type="button">

@@ -1,27 +1,30 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry, type ColDef } from "ag-grid-community";
 import { Eye, Pencil, Trash2, BadgeCheck } from "lucide-react";
 import { toast } from "react-toastify";
 import { AccuracyBadge, BooleanBadge, PublishBadge } from "@/admin/components/AdminBadges";
-import type { AdminArticleItem, AdminMenuItem } from "@/admin/data/adminMockData";
+import type { AdminArticleItem, AdminMenuItem, AdminNewsItem } from "@/admin/data/adminMockData";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-type GridKind = "menus" | "articles";
+type GridKind = "menus" | "articles" | "news";
 
 type AdminDataGridProps = {
   title: string;
   description: string;
   kind: GridKind;
-  rows: AdminMenuItem[] | AdminArticleItem[];
+  rows: AdminMenuItem[] | AdminArticleItem[] | AdminNewsItem[];
 };
 
 export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridProps) {
+  const resourcePath = kind === "menus" ? "menus" : kind;
+
   const columnDefs = useMemo<ColDef[]>(() => {
     const baseColumns: ColDef[] = [
       {
@@ -45,16 +48,16 @@ export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridP
         headerName: "عملیات",
         field: "id",
         pinned: "left",
-        width: kind === "articles" ? 156 : 126,
-        cellRenderer: ({ data }: { data: AdminMenuItem | AdminArticleItem }) => (
+        width: kind === "articles" || kind === "news" ? 156 : 126,
+        cellRenderer: ({ data }: { data: AdminMenuItem | AdminArticleItem | AdminNewsItem }) => (
           <div className="admin-grid-actions">
-            <button aria-label="مشاهده" onClick={() => toast.info(`مشاهده: ${data.title}`)} type="button">
+            <Link aria-label="مشاهده" href={`/admin/${resourcePath}/view/${data.id}`}>
               <Eye size={15} />
-            </button>
-            <button aria-label="ویرایش" onClick={() => toast.success(`ویرایش آماده است: ${data.title}`)} type="button">
+            </Link>
+            <Link aria-label="ویرایش" href={`/admin/${resourcePath}/edit/${data.id}`}>
               <Pencil size={15} />
-            </button>
-            {kind === "articles" ? (
+            </Link>
+            {kind === "articles" || kind === "news" ? (
               <button aria-label="تایید" onClick={() => toast.success(`تایید محتوا: ${data.title}`)} type="button">
                 <BadgeCheck size={15} />
               </button>
@@ -92,7 +95,7 @@ export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridP
       { headerName: "زمان‌بندی", field: "scheduledAt", width: 132, valueFormatter: ({ value }) => value || "-" },
       ...baseColumns
     ];
-  }, [kind]);
+  }, [kind, resourcePath]);
 
   return (
     <section className="admin-grid-section" id={kind}>
@@ -107,7 +110,7 @@ export function AdminDataGrid({ title, description, kind, rows }: AdminDataGridP
         </button>
       </div>
 
-      <div className="admin-grid-wrap ag-theme-quartz">
+      <div className="admin-grid-wrap ag-theme-material">
         <AgGridReact
           animateRows
           columnDefs={columnDefs}

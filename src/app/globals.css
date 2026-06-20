@@ -48,7 +48,9 @@ textarea {
   --admin-line: rgba(7, 23, 43, 0.1);
   --admin-muted: #66768a;
   --admin-gold: #f4b23e;
+  --admin-mustard: #c68a2b;
   --admin-surface: #ffffff;
+  --admin-font: Dana, IRANSans, Vazirmatn, system-ui, sans-serif;
   display: grid;
   min-height: 100vh;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -57,13 +59,22 @@ textarea {
     linear-gradient(180deg, rgba(242, 244, 247, 0.98), rgba(249, 250, 251, 0.98)),
     repeating-linear-gradient(90deg, rgba(7, 23, 43, 0.028) 0 1px, transparent 1px 48px);
   color: var(--admin-navy);
-  font-family: Dana, IRANSans, Vazirmatn, system-ui, sans-serif;
+  font-family: var(--admin-font);
   line-height: 1.65;
   transition: grid-template-columns 220ms ease;
 }
 
+.admin-app *,
+.admin-app input,
+.admin-app button,
+.admin-app textarea,
+.admin-app select,
+.Toastify__toast {
+  font-family: var(--admin-font);
+}
+
 .admin-app-collapsed {
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 112px minmax(0, 1fr);
 }
 
 .admin-sidebar {
@@ -219,6 +230,38 @@ textarea {
   backdrop-filter: blur(14px);
 }
 
+.admin-topbar-start {
+  display: grid;
+  width: min(100%, 640px);
+  gap: 8px;
+}
+
+.admin-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: #6c7888;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-breadcrumb span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-breadcrumb span:not(:last-child)::after {
+  content: "/";
+  color: rgba(102, 118, 138, 0.72);
+  font-weight: 700;
+}
+
+.admin-breadcrumb span[aria-current="page"] {
+  color: var(--admin-navy);
+}
+
 .admin-search {
   display: flex;
   align-items: center;
@@ -247,7 +290,8 @@ textarea {
 }
 
 .admin-topbar-actions button,
-.admin-grid-actions button {
+.admin-grid-actions button,
+.admin-grid-actions a {
   display: grid;
   place-items: center;
   border: 1px solid var(--admin-line);
@@ -267,7 +311,8 @@ textarea {
 }
 
 .admin-topbar-actions button:hover,
-.admin-grid-actions button:hover {
+.admin-grid-actions button:hover,
+.admin-grid-actions a:hover {
   border-color: rgba(244, 178, 62, 0.45);
   background: #fff8e9;
   color: var(--admin-navy);
@@ -352,31 +397,31 @@ textarea {
 }
 
 .admin-stat-navy {
-  border-color: rgba(35, 71, 102, 0.24);
+  border-color: rgba(35, 71, 102, 0.2);
   background:
-    linear-gradient(145deg, rgba(251, 253, 255, 0.82), rgba(231, 239, 246, 0.8)),
-    linear-gradient(135deg, rgba(35, 71, 102, 0.24), transparent 56%);
+    linear-gradient(145deg, rgba(251, 253, 255, 0.86), rgba(230, 240, 248, 0.82)),
+    linear-gradient(135deg, rgba(35, 71, 102, 0.18), transparent 58%);
 }
 
 .admin-stat-amber {
-  border-color: rgba(244, 178, 62, 0.3);
+  border-color: rgba(244, 178, 62, 0.26);
   background:
-    linear-gradient(145deg, rgba(255, 253, 248, 0.84), rgba(251, 241, 218, 0.8)),
-    linear-gradient(135deg, rgba(244, 178, 62, 0.3), transparent 56%);
+    linear-gradient(145deg, rgba(255, 253, 248, 0.88), rgba(252, 243, 222, 0.84)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.24), transparent 58%);
 }
 
 .admin-stat-gray {
-  border-color: rgba(102, 118, 138, 0.24);
+  border-color: rgba(198, 138, 43, 0.22);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(235, 239, 243, 0.8)),
-    linear-gradient(135deg, rgba(102, 118, 138, 0.2), transparent 56%);
+    linear-gradient(145deg, rgba(255, 254, 250, 0.86), rgba(246, 239, 226, 0.82)),
+    linear-gradient(135deg, rgba(198, 138, 43, 0.18), transparent 58%);
 }
 
 .admin-stat-steel {
-  border-color: rgba(72, 101, 125, 0.24);
+  border-color: rgba(72, 101, 125, 0.2);
   background:
-    linear-gradient(145deg, rgba(253, 254, 255, 0.82), rgba(232, 239, 244, 0.8)),
-    linear-gradient(135deg, rgba(72, 101, 125, 0.22), transparent 56%);
+    linear-gradient(145deg, rgba(253, 254, 255, 0.86), rgba(228, 238, 246, 0.82)),
+    linear-gradient(135deg, rgba(72, 101, 125, 0.18), transparent 58%);
 }
 
 .admin-stat strong {
@@ -408,11 +453,11 @@ textarea {
 }
 
 .admin-stat-gray span {
-  color: #5f6d7e;
+  color: #8a5f1f;
 }
 
 .admin-stat-gray strong {
-  color: #4b5868;
+  color: #76511d;
 }
 
 .admin-stat-steel span {
@@ -645,6 +690,56 @@ textarea {
   color: #ffffff;
 }
 
+.admin-page-heading {
+  display: grid;
+  gap: 6px;
+  padding: 22px;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(241, 246, 250, 0.78)),
+    linear-gradient(135deg, rgba(244, 178, 62, 0.08), transparent 52%);
+  box-shadow: 0 14px 34px rgba(7, 23, 43, 0.04);
+}
+
+.admin-page-heading span {
+  color: #7a5a17;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.admin-page-heading h1 {
+  margin: 0;
+  color: var(--admin-navy);
+  font-size: 24px;
+}
+
+.admin-page-heading p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.admin-empty-state {
+  display: grid;
+  gap: 8px;
+  padding: 28px;
+  border: 1px dashed rgba(72, 101, 125, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.admin-empty-state strong {
+  color: var(--admin-navy);
+  font-size: 18px;
+}
+
+.admin-empty-state p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
 .admin-grid-section {
   display: grid;
   gap: 14px;
@@ -679,17 +774,39 @@ textarea {
   overflow: hidden;
   border: 1px solid var(--admin-line);
   border-radius: 8px;
+  --ag-font-family: var(--admin-font);
+  --ag-font-size: 12px;
+  --ag-header-font-family: var(--admin-font);
+  --ag-header-font-size: 12px;
+  --ag-header-font-weight: 850;
+  --ag-foreground-color: #243246;
+  --ag-secondary-foreground-color: #66768a;
+  --ag-header-foreground-color: var(--admin-navy);
+  --ag-background-color: rgba(255, 255, 255, 0.9);
+  --ag-header-background-color: #eef3f7;
+  --ag-odd-row-background-color: rgba(247, 249, 251, 0.75);
+  --ag-row-hover-color: #fff8e9;
+  --ag-border-color: rgba(7, 23, 43, 0.1);
+  --ag-selected-row-background-color: rgba(244, 178, 62, 0.14);
 }
 
 .admin-grid-wrap .ag-root-wrapper {
   border: 0;
-  font-family: inherit;
+  font-family: var(--admin-font);
 }
 
 .admin-grid-wrap .ag-header-cell-text,
 .admin-grid-wrap .ag-cell {
-  font-family: inherit;
+  font-family: var(--admin-font);
   font-size: 12px;
+}
+
+.admin-grid-wrap .ag-header-cell {
+  border-bottom: 1px solid rgba(7, 23, 43, 0.1);
+}
+
+.admin-grid-wrap .ag-cell {
+  line-height: 52px;
 }
 
 .admin-grid-actions {
@@ -699,7 +816,8 @@ textarea {
   height: 100%;
 }
 
-.admin-grid-actions button {
+.admin-grid-actions button,
+.admin-grid-actions a {
   width: 30px;
   height: 30px;
 }
