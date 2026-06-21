@@ -12,7 +12,8 @@ import { ProcessFlow } from "@/shared/components/ProcessFlow";
 import { ServiceMarquee } from "@/shared/components/ServiceMarquee";
 import { MarketRatesMarquee } from "@/shared/components/MarketRatesMarquee";
 import clearanceContainerCloseup from "@/assets/images/banner-library/container-clearance-closeup.jpg";
-import { fetchTgjuMarketRates, MarketRate } from "@/core/lib/tgju";
+import { MarketRate } from "@/core/lib/tgju";
+import { fetchBackendMarketRates } from "@/core/lib/marketRates";
 
 const homeMarketRateItems = [
   { key: "bourse", title: "بورس" },
@@ -230,7 +231,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
 
 async function getHomeMarketRates(): Promise<{ rates: MarketRate[] }> {
   try {
-    const market = await fetchTgjuMarketRates();
+    const market = await fetchBackendMarketRates();
     return {
       rates: homeMarketRateItems
         .map((item) => {

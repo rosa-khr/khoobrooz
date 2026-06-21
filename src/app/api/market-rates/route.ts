@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { fetchTgjuMarketRates } from "@/core/lib/tgju";
+import { fetchBackendMarketRates } from "@/core/lib/marketRates";
 
-export const revalidate = 21600;
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const payload = await fetchTgjuMarketRates();
+    const payload = await fetchBackendMarketRates();
 
     return NextResponse.json({
       ok: true,

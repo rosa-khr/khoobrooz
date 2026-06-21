@@ -1,7 +1,3 @@
-export const TGJU_API_URL =
-  process.env.TGJU_API_URL ??
-  "https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM";
-
 export type MarketRateGroup = "official" | "commercialTransfer" | "commodityTransfer" | "market" | "metal" | "coin" | "board";
 
 export type MarketRateDefinition = {
@@ -21,20 +17,6 @@ export type MarketRate = Omit<MarketRateDefinition, "key"> & {
   changePercent: number | null;
   direction: "high" | "low" | "neutral";
   updatedAt: string;
-};
-
-type TgjuRawRate = {
-  p?: string;
-  h?: string;
-  l?: string;
-  d?: string;
-  dp?: number;
-  dt?: string;
-  ts?: string;
-};
-
-type TgjuResponse = {
-  current?: Record<string, TgjuRawRate>;
 };
 
 export const marketRateDefinitions: MarketRateDefinition[] = [
@@ -86,58 +68,11 @@ export const marketRateGroupLabels: Record<MarketRateGroup, string> = {
 };
 
 export const marketRateGroupDescriptions: Record<MarketRateGroup, string> = {
-  official: "برای نمایش نرخ رسمی ارز. اتصال مستقیم بانک مرکزی به منبع قابل اعتماد نیاز دارد.",
-  commercialTransfer: "برای حواله‌های تجاری و برآورد پرداخت‌های مرتبط با واردات.",
-  commodityTransfer: "برای کالاهای اساسی و دارو؛ کاربرد آن با نوع کالا و مقررات روز مشخص می‌شود.",
+  official: "نرخ رسمی ارز.",
+  commercialTransfer: "حواله‌های تجاری.",
+  commodityTransfer: "حواله کالاهای اساسی و دارو.",
   market: "نرخ روز ارزهای پرکاربرد بازار.",
-  metal: "برای رصد طلا و فلزات پرکاربرد بازار.",
-  coin: "برای رصد سکه‌های رایج بازار.",
+  metal: "طلا و فلزات پرکاربرد بازار.",
+  coin: "سکه‌های رایج بازار.",
   board: "نمای کوتاه نرخ‌های مهم بازار."
 };
-
-export async function fetchTgjuMarketRates(): Promise<{ rates: MarketRate[]; fetchedAt: string; sourceName: string }> {
-  const response = await fetch(TGJU_API_URL, {
-    next: { revalidate: 21600 }
-  });
-
-  if (!response.ok) {
-    throw new Error(`TGJU request failed with status ${response.status}`);
-  }
-
-  const data = (await response.json()) as TgjuResponse;
-  const current = data.current ?? {};
-
-  return {
-    rates: marketRateDefinitions.map((definition) => normalizeRate(definition, definition.key ? current[definition.key] : undefined)),
-    fetchedAt: new Date().toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }),
-    sourceName: "TGJU"
-  };
-}
-
-function normalizeRate(definition: MarketRateDefinition, raw?: TgjuRawRate): MarketRate {
-  if (!raw && definition.group === "official") {
-    return {
-      ...definition,
-      key: definition.key ?? `official_${definition.symbol.toLowerCase()}`,
-      price: "در انتظار اتصال منبع رسمی",
-      high: "—",
-      low: "—",
-      change: "—",
-      changePercent: null,
-      direction: "neutral",
-      updatedAt: "بانک مرکزی"
-    };
-  }
-
-  return {
-    ...definition,
-    key: definition.key ?? `official_${definition.symbol.toLowerCase()}`,
-    price: raw?.p ?? "ناموجود",
-    high: raw?.h ?? "ناموجود",
-    low: raw?.l ?? "ناموجود",
-    change: raw?.d ?? "۰",
-    changePercent: typeof raw?.dp === "number" ? raw.dp : null,
-    direction: raw?.dt === "high" ? "high" : raw?.dt === "low" ? "low" : "neutral",
-    updatedAt: raw?.ts ?? "نامشخص"
-  };
-}

@@ -6,6 +6,8 @@ import { ArrowLeft } from "lucide-react";
 import type { MarketRate } from "@/core/lib/tgju";
 import { Locale, localizedPath } from "@/core/lib/site";
 
+const refreshIntervalMs = 120000;
+
 export function MarketRatesMarquee({
   locale,
   rates
@@ -20,6 +22,45 @@ export function MarketRatesMarquee({
   const isPaused = useRef(false);
   const isVisible = useRef(false);
   const [dragging, setDragging] = useState(false);
+  const [currentRates, setCurrentRates] = useState(rates);
+  const [refreshError, setRefreshError] = useState(false);
+
+  useEffect(() => {
+    setCurrentRates(rates);
+  }, [rates]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const refreshMarketRates = async () => {
+      try {
+        const response = await fetch("/api/market-rates", {
+          cache: "no-store",
+          signal: controller.signal
+        });
+        const payload = (await response.json()) as { ok?: boolean; rates?: MarketRate[] };
+
+        if (!response.ok || payload.ok === false) {
+          throw new Error("Market rates refresh failed");
+        }
+
+        setCurrentRates(payload.rates ?? []);
+        setRefreshError(false);
+      } catch {
+        if (!controller.signal.aborted) {
+          setRefreshError(true);
+        }
+      }
+    };
+
+    refreshMarketRates();
+    const timer = window.setInterval(refreshMarketRates, refreshIntervalMs);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -98,14 +139,14 @@ export function MarketRatesMarquee({
             <ArrowLeft className="size-3" aria-hidden="true" />
           </Link>
         </div>
-        {rates.length === 0 ? (
+        {currentRates.length === 0 ? (
           <div className="rounded-[5px] border border-line bg-background px-3 py-1.5 text-xs font-bold text-muted">
             دریافت نرخ‌ها از TGJU در حال حاضر ممکن نیست.
           </div>
         ) : (
           <div
             ref={scrollerRef}
-          className={`overflow-x-auto overflow-y-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+            className={`overflow-x-auto overflow-y-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
             dir="ltr"
             onMouseEnter={() => {
               isPaused.current = true;
@@ -119,7 +160,7 @@ export function MarketRatesMarquee({
             onPointerCancel={endDrag}
           >
             <div className="flex w-max gap-2">
-              {[...rates, ...rates].map((rate, index) => (
+              {[...currentRates, ...currentRates].map((rate, index) => (
                 <article key={`${rate.key}-${index}`} className="flex h-8 w-[260px] flex-none items-center gap-2 rounded-[5px] border border-[#ead9b8] bg-white px-2.5 text-right shadow-[inset_3px_0_0_#f4b23e,0_4px_10px_rgba(11,31,58,0.035)]" dir="rtl">
                   <strong className="min-w-0 flex-1 whitespace-nowrap text-[11px] font-extrabold text-primary">{rate.title}</strong>
                   <span className="rounded-[4px] bg-[#fff4dc] px-1.5 text-[10px] font-bold text-[#9a5d08]" dir="ltr">{rate.symbol}</span>
@@ -134,6 +175,9 @@ export function MarketRatesMarquee({
               ))}
             </div>
           </div>
+        )}
+        {refreshError && currentRates.length > 0 && (
+          <p className="mt-1 text-[10px] font-bold text-muted">بروزرسانی نرخ‌ها ناموفق بود.</p>
         )}
       </div>
     </section>
