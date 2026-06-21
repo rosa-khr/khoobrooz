@@ -1,4 +1,5 @@
 import { Locale, localizedPath } from "@/core/lib/site";
+import { getDictionary } from "@/data/i18n";
 
 export type NavigationItem = {
   label: string;
@@ -47,7 +48,7 @@ export const navigation: NavigationItem[] = [
       {
         label: "آموزش صادرات و واردات",
         href: "/education",
-        description: "محتوای آموزشی برای شروع و رشد تجارت خارجی"
+        description: "مفاهیم پایه، اسناد و مراحل رایج تجارت خارجی"
       },
       {
         label: "دانشنامه تجارت",
@@ -88,7 +89,7 @@ export const navigation: NavigationItem[] = [
       {
         label: "تماس با ما",
         href: "/contact",
-        description: "واتساپ عمومی و مسیر تماس مخصوص ترخیص"
+        description: "واتساپ عمومی و مسیر اختصاصی ترخیص"
       },
       {
         label: "سوالات متداول",
@@ -100,6 +101,7 @@ export const navigation: NavigationItem[] = [
 ];
 
 export function localizedNavigation(locale: Locale) {
+  const navigation = getDictionary(locale).nav;
   const localizeItem = (item: NavigationItem): NavigationItem => ({
     ...item,
     href: localizedPath(locale, item.href),

@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Instagram, Linkedin, Mail, MapPin, MessageCircle, MessageSquareText, Phone, Send } from "lucide-react";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { Locale, contact, localizedPath } from "@/core/lib/site";
+import { getDictionary } from "@/data/i18n";
+import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import { SeaRoutePattern } from "@/shared/components/SeaRoutePattern";
 
 const primaryContactItems = [
@@ -17,10 +19,10 @@ const socialItems = [
     icon: Send
   },
   {
-    label: "بله",
-    value: "ble.ir/khoobrooz",
-    href: contact.baleUrl,
-    icon: MessageSquareText
+    label: "واتساپ",
+    value: contact.generalWhatsapp,
+    href: contact.generalWhatsappUrl,
+    icon: MessageCircle
   },
   {
     label: "اینستاگرام",
@@ -38,6 +40,10 @@ const socialItems = [
 
 export function Footer({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear();
+  const dictionary = getDictionary(locale);
+  const nav = dictionary.nav;
+  const serviceChildren = nav[1]?.children ?? [];
+  const brandChildren = nav[5]?.children ?? [];
 
   return (
     <footer className="relative overflow-hidden bg-[#07172b] text-blue-100">
@@ -47,34 +53,37 @@ export function Footer({ locale }: { locale: Locale }) {
 
       <div className="container relative z-10 grid gap-8 py-9 lg:grid-cols-[1.15fr_0.7fr_0.85fr_1.2fr]">
         <div className="min-w-0">
-          <h3 className="mb-3 text-xl font-black text-white">خوبروز</h3>
-          <p className="text-sm leading-7 text-blue-200">برند خدمات بازرگانی، آموزش تجارت خارجی، ترخیص کالا و اسناد کاربردی واردات و صادرات.</p>
+          <div className="mb-3 inline-flex items-center gap-2.5">
+            <BrandLogoMark className="size-10" />
+            <h3 className="text-xl font-black text-white">{dictionary.brand.name}</h3>
+          </div>
+          <p className="text-sm leading-7 text-blue-200">{dictionary.footer.intro}</p>
           <p className="mt-4 inline-flex items-start gap-2 text-sm leading-7 text-blue-200">
             <MapPin className="mt-1 size-4 shrink-0 text-accent" aria-hidden="true" />
-            <span>ایران، تهران؛ ارائه خدمات مشاوره و پیگیری بازرگانی به صورت آنلاین و هماهنگ‌شده.</span>
+            <span>{dictionary.footer.address}</span>
           </p>
         </div>
         <div className="min-w-0">
-          <h3 className="mb-3 font-black text-white">صفحات</h3>
+          <h3 className="mb-3 font-black text-white">{dictionary.footer.pages}</h3>
           <ul className="grid gap-2 text-sm text-blue-200">
-            <li><Link href={localizedPath(locale, "/services")}>خدمات</Link></li>
-            <li><Link href={localizedPath(locale, "/knowledge")}>دانشنامه</Link></li>
-            <li><Link href={localizedPath(locale, "/documents")}>فایل‌ها</Link></li>
-            <li><Link href={localizedPath(locale, "/about")}>درباره خوبروز</Link></li>
-            <li><Link href={localizedPath(locale, "/contact")}>تماس با ما</Link></li>
+            <li><Link href={localizedPath(locale, "/services")}>{nav[1]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/knowledge")}>{nav[2]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/documents")}>{nav[3]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/about")}>{brandChildren[0]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/contact")}>{brandChildren[1]?.label}</Link></li>
           </ul>
         </div>
         <div className="min-w-0">
-          <h3 className="mb-3 font-black text-white">خدمات اصلی</h3>
+          <h3 className="mb-3 font-black text-white">{dictionary.footer.mainServices}</h3>
           <ul className="grid gap-2 text-sm text-blue-200">
-            <li><Link href={localizedPath(locale, "/services/customs-clearance")}>ترخیص کالا</Link></li>
-            <li><Link href={localizedPath(locale, "/services")}>واردات و صادرات</Link></li>
-            <li><Link href={localizedPath(locale, "/education")}>آموزش تجارت خارجی</Link></li>
-            <li><Link href={localizedPath(locale, "/markets/currency-rates")}>قیمت ارزهای رایج</Link></li>
+            <li><Link href={localizedPath(locale, "/services/customs-clearance")}>{serviceChildren[0]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/services")}>{serviceChildren[2]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/education")}>{nav[2]?.children?.[0]?.label}</Link></li>
+            <li><Link href={localizedPath(locale, "/markets/currency-rates")}>{nav[4]?.children?.[0]?.label}</Link></li>
           </ul>
         </div>
         <div className="min-w-0">
-          <h3 className="mb-3 font-black text-white">ارتباط و شبکه‌های اجتماعی</h3>
+          <h3 className="mb-3 font-black text-white">{dictionary.footer.contactSocial}</h3>
           <div className="grid gap-2">
             {primaryContactItems.map((item) => {
               const Icon = item.icon;
@@ -91,7 +100,7 @@ export function Footer({ locale }: { locale: Locale }) {
                   <span className="grid size-7 shrink-0 place-items-center rounded-[4px] bg-white/10 text-accent">
                     <Icon className="size-4" aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 truncate font-mono text-sm font-bold text-blue-100" dir="ltr">
+                  <span className="footer-contact-value min-w-0 truncate text-sm font-bold text-blue-100" dir="ltr">
                     {item.value}
                   </span>
                 </a>
@@ -110,8 +119,8 @@ export function Footer({ locale }: { locale: Locale }) {
                     href={item.href}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${item.label}: ${item.value}`}
-                    title={item.value}
+                    aria-label={item.label}
+                    title={item.label}
                     className="grid size-9 place-items-center rounded-[4px] border border-white/10 bg-white/[0.045] text-blue-100 transition hover:border-accent/70 hover:bg-accent hover:text-primary"
                   >
                     <Icon className="size-4" aria-hidden="true" />
@@ -125,7 +134,7 @@ export function Footer({ locale }: { locale: Locale }) {
       <div className="relative z-10 border-t border-white/10 bg-[#061325]/92">
         <div className="container flex min-h-12 flex-col items-center justify-between gap-2 py-3 text-center text-xs text-blue-200 md:flex-row">
           <span>© {year} Khoobrooz Trade. All rights reserved.</span>
-          <span>تمام حقوق مادی و معنوی این وب‌سایت برای خوبروز محفوظ است.</span>
+          <span>{dictionary.footer.rights}</span>
         </div>
       </div>
     </footer>

@@ -1,0 +1,155 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type { MarketRate, MarketRateGroup } from "@/core/lib/tgju";
+import { marketRateGroupLabels } from "@/core/lib/tgju";
+
+const groups: MarketRateGroup[] = ["market", "metal", "coin"];
+const refreshIntervalMs = 120000;
+
+export function MarketRatesBoard({
+  initialRates,
+  initialFetchedAt,
+  initialHasError = false
+}: {
+  initialRates: MarketRate[];
+  initialFetchedAt: string;
+  initialHasError?: boolean;
+}) {
+  const [rates, setRates] = useState(initialRates);
+  const [fetchedAt, setFetchedAt] = useState(initialFetchedAt);
+  const [hasError, setHasError] = useState(initialHasError);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const refreshMarketRates = async () => {
+      try {
+        const response = await fetch("/api/market-rates", {
+          cache: "no-store",
+          signal: controller.signal
+        });
+        const payload = (await response.json()) as {
+          ok?: boolean;
+          rates?: MarketRate[];
+          fetchedAt?: string;
+          message?: string;
+        };
+
+        if (!response.ok || payload.ok === false) {
+          throw new Error(payload.message ?? "Market rates refresh failed");
+        }
+
+        setRates(payload.rates ?? []);
+        setFetchedAt(payload.fetchedAt ?? "نامشخص");
+        setHasError(false);
+      } catch {
+        if (!controller.signal.aborted) {
+          setHasError(true);
+        }
+      }
+    };
+
+    refreshMarketRates();
+    const timer = window.setInterval(refreshMarketRates, refreshIntervalMs);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  return (
+    <>
+      <div className="relative mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div>
+          <h2 className="text-2xl font-black text-primary">جدول ارزهای رایج</h2>
+          <p className="mt-2 max-w-2xl text-muted">آخرین دریافت به وقت ایران: {fetchedAt}</p>
+        </div>
+        <a href="https://www.tgju.org" target="_blank" rel="noreferrer" className="text-sm font-extrabold text-muted underline-offset-4 hover:text-primary hover:underline">
+          منبع: TGJU
+        </a>
+      </div>
+
+      {hasError && rates.length === 0 ? (
+        <div className="rounded-khoobrooz border border-[#ead1a4] bg-[#fff8eb] p-5 text-sm font-bold text-[#7a4a00]">
+          دریافت نرخ‌ها در حال حاضر ممکن نیست. لطفا کمی بعد دوباره بررسی کنید.
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {groups.map((group) => (
+            <RateTable
+              key={group}
+              title={marketRateGroupLabels[group]}
+              rates={rates.filter((rate) => rate.group === group)}
+            />
+          ))}
+          {hasError && rates.length > 0 && (
+            <p className="text-xs font-bold text-muted">بروزرسانی نرخ‌ها ناموفق بود؛ آخرین داده دریافت‌شده نمایش داده می‌شود.</p>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
+function RateTable({ title, rates }: { title: string; rates: MarketRate[] }) {
+  return (
+    <section className="overflow-hidden rounded-khoobrooz border border-line bg-white/92 shadow-soft backdrop-blur">
+      <div className="flex flex-col justify-between gap-2 border-b border-line bg-[#f6f8fb] px-4 py-3 md:flex-row md:items-center">
+        <h2 className="text-lg font-black text-primary">{title}</h2>
+        <span className="text-xs font-bold text-muted">{rates.length} مورد</span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-[860px] w-full border-collapse text-right">
+          <thead className="text-sm text-primary">
+            <tr>
+              <th className="p-4 font-black">نماد</th>
+              <th className="p-4 font-black">عنوان</th>
+              <th className="p-4 font-black">قیمت</th>
+              <th className="p-4 font-black">بیشترین</th>
+              <th className="p-4 font-black">کمترین</th>
+              <th className="p-4 font-black">تغییر</th>
+              <th className="p-4 font-black">زمان منبع</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rates.map((rate) => (
+              <tr key={rate.key} className="border-t border-line">
+                <td className="p-4 font-black text-primary" dir="ltr">{rate.symbol}</td>
+                <td className="p-4">{rate.title}</td>
+                <td className="p-4 font-extrabold text-primary">
+                  <span dir="ltr">{rate.price}</span>
+                  <span className="mr-1 text-xs text-muted">{rate.unit}</span>
+                </td>
+                <td className="p-4 text-muted" dir="ltr">{rate.high}</td>
+                <td className="p-4 text-muted" dir="ltr">{rate.low}</td>
+                <td className="p-4">
+                  <RateChange rate={rate} />
+                </td>
+                <td className="p-4 text-sm text-muted" dir="ltr">{rate.updatedAt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function RateChange({ rate }: { rate: MarketRate }) {
+  const color =
+    rate.direction === "high"
+      ? "bg-[#ecf8f1] text-[#167245]"
+      : rate.direction === "low"
+        ? "bg-[#fff1ed] text-[#a43e21]"
+        : "bg-background text-muted";
+
+  const label = rate.changePercent === null ? rate.change : `${rate.change} / ${rate.changePercent}%`;
+
+  return (
+    <span className={`inline-flex min-w-[96px] justify-center rounded-khoobrooz px-3 py-1 text-xs font-black ${color}`} dir="ltr">
+      {label}
+    </span>
+  );
+}

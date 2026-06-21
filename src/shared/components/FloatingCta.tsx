@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Calculator, NotebookPen, NotepadText, Plus, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { FilePenLine, FileSpreadsheet, NotepadText, Plus, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import baleLogo from "@/assets/images/bale-logo.png";
+import whatsappLogo from "@/assets/images/whatsapp-logo-cgkok.webp";
 import { contact } from "@/core/lib/site";
 import { Button } from "@/shared/components/Button";
 
@@ -53,6 +54,8 @@ function calculate(stored: string, current: string, operator: string | null) {
 }
 
 export function FloatingCta() {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toolButtonsRef = useRef<HTMLDivElement>(null);
   const [activeTool, setActiveTool] = useState<FloatingTool>(null);
   const [notes, setNotes] = useState<TradeNote[]>([]);
   const [draftNote, setDraftNote] = useState("");
@@ -81,6 +84,25 @@ export function FloatingCta() {
     }
   }, [hydrated, notes]);
 
+  useEffect(() => {
+    if (!activeTool) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+
+      if (panelRef.current?.contains(target) || toolButtonsRef.current?.contains(target)) {
+        return;
+      }
+
+      setActiveTool(null);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [activeTool]);
+
   const orderedNotes = useMemo(() => [...notes].sort((first, second) => second.createdAt.localeCompare(first.createdAt)), [notes]);
 
   const saveNote = () => {
@@ -100,7 +122,7 @@ export function FloatingCta() {
     setDraftNote("");
   };
 
-  const handleNumber = (value: string) => {
+  const handleNumber = useCallback((value: string) => {
     if (value === "=") {
       const result = calculate(storedValue, calculatorDisplay, operator);
       setCalculatorDisplay(result);
@@ -126,9 +148,9 @@ export function FloatingCta() {
 
       return `${current}${value}`;
     });
-  };
+  }, [calculatorDisplay, operator, resetDisplay, storedValue]);
 
-  const handleOperator = (nextOperator: string) => {
+  const handleOperator = useCallback((nextOperator: string) => {
     if (operator && storedValue) {
       setStoredValue(calculate(storedValue, calculatorDisplay, operator));
     } else {
@@ -137,24 +159,87 @@ export function FloatingCta() {
 
     setOperator(nextOperator);
     setResetDisplay(true);
-  };
+  }, [calculatorDisplay, operator, storedValue]);
 
-  const clearCalculator = () => {
+  const clearCalculator = useCallback(() => {
     setCalculatorDisplay("0");
     setStoredValue("");
     setOperator(null);
     setResetDisplay(false);
-  };
+  }, []);
+
+  const backspaceCalculator = useCallback(() => {
+    setCalculatorDisplay((current) => {
+      if (resetDisplay || current.length <= 1) {
+        setResetDisplay(false);
+        return "0";
+      }
+
+      return current.slice(0, -1);
+    });
+  }, [resetDisplay]);
+
+  useEffect(() => {
+    if (activeTool !== "calculator") {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) {
+        return;
+      }
+
+      if (/^\d$/.test(event.key)) {
+        event.preventDefault();
+        handleNumber(event.key);
+        return;
+      }
+
+      if (event.key === "." || event.key === "Decimal") {
+        event.preventDefault();
+        handleNumber(".");
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === "=") {
+        event.preventDefault();
+        handleNumber("=");
+        return;
+      }
+
+      if (["+", "-", "*", "/"].includes(event.key)) {
+        event.preventDefault();
+        handleOperator(event.key);
+        return;
+      }
+
+      if (event.key === "Backspace") {
+        event.preventDefault();
+        backspaceCalculator();
+        return;
+      }
+
+      if (event.key === "Escape" || event.key === "Delete") {
+        event.preventDefault();
+        clearCalculator();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeTool, backspaceCalculator, clearCalculator, handleNumber, handleOperator]);
 
   return (
     <>
       {activeTool && (
-        <div className="fixed inset-x-4 bottom-[14.5rem] z-50 max-h-[calc(100vh-16.5rem)] overflow-y-auto sm:inset-x-auto sm:bottom-6 sm:left-[4.5rem] sm:w-[320px] sm:max-h-[calc(100vh-3rem)]">
+        <div ref={panelRef} className="fixed inset-x-4 bottom-[14.5rem] z-50 max-h-[calc(100vh-16.5rem)] overflow-y-auto sm:inset-x-auto sm:bottom-6 sm:left-[4.5rem] sm:w-[320px] sm:max-h-[calc(100vh-3rem)]">
           <div className="overflow-hidden rounded-khoobrooz border border-white/65 bg-[#fff8e9]/94 text-primary shadow-[0_18px_42px_rgba(11,31,58,0.14)] backdrop-blur-xl">
             <div className="flex items-center justify-between border-b border-[#f4b23e]/35 bg-primary px-3 py-2 text-white">
               <strong className="inline-flex items-center gap-2 text-sm font-black">
-                {activeTool === "notes" ? <NotebookPen className="size-4 text-accent" aria-hidden="true" /> : <Calculator className="size-4 text-accent" aria-hidden="true" />}
-                {activeTool === "notes" ? "یادداشت تجارت" : "ماشین‌حساب سریع"}
+                {activeTool === "notes" ? <FilePenLine className="size-4 text-accent" aria-hidden="true" /> : <FileSpreadsheet className="size-4 text-accent" aria-hidden="true" />}
+                {activeTool === "notes" ? "یادداشت کاری" : "محاسبه سریع"}
               </strong>
               <button
                 type="button"
@@ -261,29 +346,29 @@ export function FloatingCta() {
         </div>
       )}
 
-      <div className="fixed bottom-20 left-4 z-50 grid gap-1.5 sm:bottom-6 sm:left-6">
+      <div ref={toolButtonsRef} className="fixed bottom-20 left-4 z-50 grid gap-1.5 sm:bottom-6 sm:left-6">
         <button
           type="button"
-          aria-label={orderedNotes.length > 0 ? "باز کردن یادداشت‌های موجود" : "باز کردن یادداشت تجارت"}
-          title={orderedNotes.length > 0 ? "یادداشت‌های موجود" : "یادداشت"}
+          aria-label={orderedNotes.length > 0 ? "باز کردن یادداشت‌های کاری" : "باز کردن یادداشت کاری"}
+          title={orderedNotes.length > 0 ? "یادداشت‌های کاری" : "یادداشت کاری"}
           className={`relative grid size-10 place-items-center rounded-full border bg-[#07172b]/82 text-accent/90 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5 ${
             activeTool === "notes" ? "border-accent ring-2 ring-accent/25" : "border-white/70"
           }`}
           onClick={() => setActiveTool((value) => (value === "notes" ? null : "notes"))}
         >
-          {orderedNotes.length > 0 ? <NotepadText className="size-4" aria-hidden="true" /> : <NotebookPen className="size-4" aria-hidden="true" />}
+          {orderedNotes.length > 0 ? <NotepadText className="size-4" aria-hidden="true" /> : <FilePenLine className="size-4" aria-hidden="true" />}
           {orderedNotes.length > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full border border-primary bg-accent" aria-hidden="true" />}
         </button>
         <button
           type="button"
-          aria-label="باز کردن ماشین‌حساب سریع"
-          title="ماشین‌حساب"
+          aria-label="باز کردن محاسبه سریع"
+          title="محاسبه سریع"
           className={`grid size-10 place-items-center rounded-full border bg-[#07172b]/82 text-accent/90 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5 ${
             activeTool === "calculator" ? "border-accent ring-2 ring-accent/25" : "border-white/70"
           }`}
           onClick={() => setActiveTool((value) => (value === "calculator" ? null : "calculator"))}
         >
-          <Calculator className="size-4" aria-hidden="true" />
+          <FileSpreadsheet className="size-4" aria-hidden="true" />
         </button>
         <a
           href={contact.baleUrl}
@@ -294,6 +379,16 @@ export function FloatingCta() {
           className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/86 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
         >
           <Image src={baleLogo} alt="" width={40} height={40} className="size-full object-cover" />
+        </a>
+        <a
+          href={contact.generalWhatsappUrl}
+          aria-label="ارسال پیام در واتساپ"
+          title="واتساپ خوبروز"
+          target="_blank"
+          rel="noreferrer"
+          className="grid size-10 place-items-center overflow-hidden rounded-full border border-white/70 bg-white/86 shadow-[0_12px_28px_rgba(11,31,58,0.16)] backdrop-blur transition hover:-translate-y-0.5"
+        >
+          <Image src={whatsappLogo} alt="" width={40} height={40} className="size-full object-cover" />
         </a>
       </div>
 

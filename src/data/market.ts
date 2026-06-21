@@ -1,8 +1,8 @@
 export const currencyRateSource = {
   name: "TGJU",
   url: "https://www.tgju.org/currency",
-  updatedAt: "در انتظار اتصال ایجنت نرخ ارز",
-  note: "نمایش عدد زنده باید از مسیر کرالر/آپدیت‌کننده تأییدشده انجام شود."
+  updatedAt: "در انتظار تایید نرخ روز",
+  note: "نمایش نرخ زنده پس از بررسی منبع معتبر انجام می‌شود."
 };
 
 export const commonCurrencyRows = [
@@ -49,5 +49,7 @@ export const worldClockItems = [
   { city: "دبی", country: "امارات", code: "AE", flag: "🇦🇪", timeZone: "Asia/Dubai", market: "حواله و واردات" },
   { city: "شانگهای", country: "چین", code: "CN", flag: "🇨🇳", timeZone: "Asia/Shanghai", market: "سورسینگ و کارگو" },
   { city: "استانبول", country: "ترکیه", code: "TR", flag: "🇹🇷", timeZone: "Europe/Istanbul", market: "تجارت منطقه‌ای" },
+  { city: "بغداد", country: "عراق", code: "IQ", flag: "🇮🇶", timeZone: "Asia/Baghdad", market: "صادرات و منطقه" },
+  { city: "مسکو", country: "روسیه", code: "RU", flag: "🇷🇺", timeZone: "Europe/Moscow", market: "اوراسیا و واردات" },
   { city: "هامبورگ", country: "آلمان", code: "DE", flag: "🇩🇪", timeZone: "Europe/Berlin", market: "اروپا و حمل دریایی" }
 ];
