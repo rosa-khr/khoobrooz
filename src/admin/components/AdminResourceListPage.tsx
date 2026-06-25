@@ -2,7 +2,7 @@
 
 import { AdminDataGrid } from "@/admin/components/AdminDataGrid";
 import { AdminShell } from "@/admin/components/AdminShell";
-import { articleRows, menuRows, newsRows } from "@/admin/data/adminMockData";
+import { apiServiceGroups, articleRows, menuRows, newsRows } from "@/admin/data/adminMockData";
 
 type AdminResourceListPageProps = {
   resource: string;
@@ -44,6 +44,11 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
     description: "شهرها و کشورهایی که ساعت آن‌ها در سایت نمایش داده می‌شود.",
     label: "World Clock"
   },
+  "api-services": {
+    title: "سرویس‌های API",
+    description: "قرارداد سرویس‌های بک‌اند، ورودی‌ها، خروجی‌ها و وضعیت پیاده‌سازی هر endpoint.",
+    label: "Swagger / OpenAPI"
+  },
   reports: {
     title: "گزارش‌ها",
     description: "گزارش‌های SEO، سرچ کنسول، آنالیتیکس و بازدید.",
@@ -80,7 +85,50 @@ export function AdminResourceListPage({ resource }: AdminResourceListPageProps) 
           <AdminDataGrid description={copy.description} kind="news" rows={newsRows} title={copy.title} />
         ) : null}
 
-        {!["menus", "articles", "news"].includes(resource) ? (
+        {resource === "api-services" ? (
+          <section className="admin-service-catalog" aria-label="لیست سرویس‌های API">
+            {apiServiceGroups.map((group) => (
+              <article className="admin-service-collection" dir="ltr" key={group.id}>
+                <div className="admin-service-collection-heading">
+                  <span>Collection</span>
+                  <h2>{group.serviceName}</h2>
+                  <p>{group.title}</p>
+                </div>
+                <div className="admin-service-actions">
+                  {group.actions.map((service) => (
+                    <details className="admin-service-action" key={service.id}>
+                      <summary className="admin-service-summary">
+                        <span className={`admin-method-badge admin-method-${service.method.toLowerCase()}`}>{service.method}</span>
+                        <div>
+                          <strong>{service.name}</strong>
+                          <small>{service.title}</small>
+                          <code>{service.path}</code>
+                        </div>
+                        <span className={service.status === "active" ? "admin-service-status active" : "admin-service-status"}>{service.status === "active" ? "Active" : "Planned"}</span>
+                      </summary>
+                      <div className="admin-service-meta">
+                        <span>{service.scope}</span>
+                        <span>{group.description}</span>
+                      </div>
+                      <div className="admin-service-contract">
+                        <div>
+                          <strong>Request</strong>
+                          <pre>{JSON.stringify({ input: service.input }, null, 2)}</pre>
+                        </div>
+                        <div>
+                          <strong>Response</strong>
+                          <pre>{JSON.stringify({ output: service.output }, null, 2)}</pre>
+                        </div>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </section>
+        ) : null}
+
+        {!["menus", "articles", "news", "api-services"].includes(resource) ? (
           <section className="admin-empty-state">
             <strong>{copy.title}</strong>
             <p>لیست این بخش در مرحله بعدی به CRUD اختصاصی خودش وصل می‌شود.</p>

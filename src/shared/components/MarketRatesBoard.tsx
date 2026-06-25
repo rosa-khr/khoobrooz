@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import type { MarketRate, MarketRateGroup } from "@/core/lib/tgju";
 import { marketRateGroupLabels } from "@/core/lib/tgju";
+import { getCachedMarketRates, getMarketRatesWithCache } from "@/core/lib/marketRateClientCache";
+import { marketRatesCacheTtlMs } from "@/core/lib/marketRateConfig";
 
 const groups: MarketRateGroup[] = ["market", "metal", "coin"];
-const refreshIntervalMs = 120000;
 
 export function MarketRatesBoard({
   initialRates,
@@ -21,40 +22,39 @@ export function MarketRatesBoard({
   const [hasError, setHasError] = useState(initialHasError);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let mounted = true;
 
     const refreshMarketRates = async () => {
       try {
-        const response = await fetch("/api/market-rates", {
-          cache: "no-store",
-          signal: controller.signal
-        });
-        const payload = (await response.json()) as {
-          ok?: boolean;
-          rates?: MarketRate[];
-          fetchedAt?: string;
-          message?: string;
-        };
+        const payload = await getMarketRatesWithCache();
 
-        if (!response.ok || payload.ok === false) {
-          throw new Error(payload.message ?? "Market rates refresh failed");
+        if (!mounted) {
+          return;
         }
 
-        setRates(payload.rates ?? []);
-        setFetchedAt(payload.fetchedAt ?? "نامشخص");
+        setRates(payload.rates);
+        setFetchedAt(payload.fetchedAt);
         setHasError(false);
       } catch {
-        if (!controller.signal.aborted) {
+        if (mounted) {
           setHasError(true);
         }
       }
     };
 
+    const cached = getCachedMarketRates();
+
+    if (cached) {
+      setRates(cached.rates);
+      setFetchedAt(cached.fetchedAt);
+      setHasError(false);
+    }
+
     refreshMarketRates();
-    const timer = window.setInterval(refreshMarketRates, refreshIntervalMs);
+    const timer = window.setInterval(refreshMarketRates, marketRatesCacheTtlMs);
 
     return () => {
-      controller.abort();
+      mounted = false;
       window.clearInterval(timer);
     };
   }, []);
@@ -66,9 +66,6 @@ export function MarketRatesBoard({
           <h2 className="text-2xl font-black text-primary">جدول ارزهای رایج</h2>
           <p className="mt-2 max-w-2xl text-muted">آخرین دریافت به وقت ایران: {fetchedAt}</p>
         </div>
-        <a href="https://www.tgju.org" target="_blank" rel="noreferrer" className="text-sm font-extrabold text-muted underline-offset-4 hover:text-primary hover:underline">
-          منبع: TGJU
-        </a>
       </div>
 
       {hasError && rates.length === 0 ? (

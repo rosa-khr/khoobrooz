@@ -1,6 +1,5 @@
 export const currencyRateSource = {
-  name: "TGJU",
-  url: "https://www.tgju.org/currency",
+  name: "",
   updatedAt: "در انتظار تایید نرخ روز",
   note: "نمایش نرخ زنده پس از بررسی منبع معتبر انجام می‌شود."
 };

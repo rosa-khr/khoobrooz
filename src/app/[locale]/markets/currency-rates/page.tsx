@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/shared/components/PageHero";
 import { WorldMapPattern } from "@/shared/components/WorldMapPattern";
-import { fetchBackendMarketRates } from "@/core/lib/marketRates";
 import { MarketRatesBoard } from "@/shared/components/MarketRatesBoard";
 
 export const metadata: Metadata = {
@@ -9,11 +8,7 @@ export const metadata: Metadata = {
   description: "جدول ارز بازار، طلا و سکه برای واردات، صادرات، ترخیص کالا و محاسبات تجارت خارجی."
 };
 
-export const dynamic = "force-dynamic";
-
-export default async function CurrencyRatesPage() {
-  const market = await getMarketRates();
-
+export default function CurrencyRatesPage() {
   return (
     <main>
       <PageHero eyebrow="بازار ارز" title="قیمت ارزهای رایج تجارت خارجی">
@@ -25,25 +20,9 @@ export default async function CurrencyRatesPage() {
         <WorldMapPattern className="z-0 text-primary opacity-[0.2]" />
         <div className="absolute inset-0 bg-white/68" aria-hidden="true" />
         <div className="container relative z-10">
-          <MarketRatesBoard initialRates={market.rates} initialFetchedAt={market.fetchedAt} initialHasError={market.hasError} />
+          <MarketRatesBoard initialRates={[]} initialFetchedAt="نامشخص" />
         </div>
       </section>
     </main>
   );
-}
-
-async function getMarketRates() {
-  try {
-    return {
-      ...(await fetchBackendMarketRates()),
-      hasError: false
-    };
-  } catch {
-    return {
-      rates: [],
-      fetchedAt: "نامشخص",
-      sourceName: "TGJU",
-      hasError: true
-    };
-  }
 }

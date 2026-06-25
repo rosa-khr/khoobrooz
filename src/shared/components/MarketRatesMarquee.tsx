@@ -5,8 +5,30 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { MarketRate } from "@/core/lib/tgju";
 import { Locale, localizedPath } from "@/core/lib/site";
+import { getCachedMarketRates, getMarketRatesWithCache } from "@/core/lib/marketRateClientCache";
+import { marketRatesCacheTtlMs } from "@/core/lib/marketRateConfig";
 
-const refreshIntervalMs = 120000;
+const homeMarketRateItems = [
+  { key: "bourse", title: "بورس" },
+  { key: "ons", title: "انس طلا" },
+  { key: "mesghal", title: "مثقال طلا" },
+  { key: "geram18", title: "طلا" },
+  { key: "sekee", title: "سکه" },
+  { key: "price_dollar_rl", title: "دلار" },
+  { key: "price_eur", title: "یورو" },
+  { key: "oil_brent", title: "نفت برنت" },
+  { key: "crypto-bitcoin", title: "بیت‌کوین" }
+];
+
+function selectHomeMarketRates(rates: MarketRate[]) {
+  return homeMarketRateItems
+    .map((item) => {
+      const rate = rates.find((marketRate) => marketRate.key === item.key);
+
+      return rate ? { ...rate, title: item.title } : undefined;
+    })
+    .filter((rate): rate is MarketRate => Boolean(rate));
+}
 
 export function MarketRatesMarquee({
   locale,
@@ -30,34 +52,37 @@ export function MarketRatesMarquee({
   }, [rates]);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let mounted = true;
 
     const refreshMarketRates = async () => {
       try {
-        const response = await fetch("/api/market-rates", {
-          cache: "no-store",
-          signal: controller.signal
-        });
-        const payload = (await response.json()) as { ok?: boolean; rates?: MarketRate[] };
+        const payload = await getMarketRatesWithCache();
 
-        if (!response.ok || payload.ok === false) {
-          throw new Error("Market rates refresh failed");
+        if (!mounted) {
+          return;
         }
 
-        setCurrentRates(payload.rates ?? []);
+        setCurrentRates(selectHomeMarketRates(payload.rates));
         setRefreshError(false);
       } catch {
-        if (!controller.signal.aborted) {
+        if (mounted) {
           setRefreshError(true);
         }
       }
     };
 
+    const cached = getCachedMarketRates();
+
+    if (cached) {
+      setCurrentRates(selectHomeMarketRates(cached.rates));
+      setRefreshError(false);
+    }
+
     refreshMarketRates();
-    const timer = window.setInterval(refreshMarketRates, refreshIntervalMs);
+    const timer = window.setInterval(refreshMarketRates, marketRatesCacheTtlMs);
 
     return () => {
-      controller.abort();
+      mounted = false;
       window.clearInterval(timer);
     };
   }, []);
@@ -141,7 +166,7 @@ export function MarketRatesMarquee({
         </div>
         {currentRates.length === 0 ? (
           <div className="rounded-[5px] border border-line bg-background px-3 py-1.5 text-xs font-bold text-muted">
-            دریافت نرخ‌ها از TGJU در حال حاضر ممکن نیست.
+            دریافت نرخ‌ها در حال حاضر ممکن نیست.
           </div>
         ) : (
           <div

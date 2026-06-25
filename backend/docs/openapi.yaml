@@ -1,0 +1,542 @@
+openapi: 3.1.0
+info:
+  title: Khoobrooz Backend API
+  version: 0.1.0
+  description: >
+    قرارداد اولیه سرویس‌های خوبروز. این فایل منبع Swagger/OpenAPI برای Public API و Admin API است
+    و باید همزمان با پیاده‌سازی Controller, Request و Resource در Laravel بروزرسانی شود.
+servers:
+  - url: http://localhost:8000
+    description: Local lightweight backend
+  - url: https://khoobrooz.com
+    description: Production domain
+tags:
+  - name: Public
+    description: سرویس‌های عمومی سایت
+  - name: Admin
+    description: سرویس‌های پنل مدیریت
+  - name: MarketRates
+    description: نرخ ارز، طلا، سکه و ابزارهای بازار
+paths:
+  /api/v1/market-rates/board:
+    get:
+      tags: [Public, MarketRates]
+      summary: برد خلاصه نرخ‌های بازار
+      description: داده‌های کوتاه برای نوار بازار در Home Page.
+      responses:
+        "200":
+          description: لیست آیتم‌های برد بازار
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MarketRateBoardItem"
+                  updatedAt:
+                    type: string
+                    nullable: true
+  /api/v1/market-rates:
+    get:
+      tags: [Public, MarketRates]
+      summary: لیست نرخ‌های قابل نمایش
+      parameters:
+        - in: query
+          name: group
+          schema:
+            type: string
+          description: currency, gold, coin, energy یا crypto
+        - in: query
+          name: source
+          schema:
+            type: string
+          description: کلید منبع نرخ
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: لیست نرخ‌ها
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketRateListResponse"
+  /api/v1/menus/{key}:
+    get:
+      tags: [Public]
+      summary: دریافت منوی سایت
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema:
+            type: string
+          description: کلید منو مثل main یا footer
+      responses:
+        "200":
+          description: درخت منو تا سه سطح
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MenuItem"
+  /api/v1/articles:
+    get:
+      tags: [Public]
+      summary: لیست مقاله‌های منتشر شده
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: tag
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: مقاله‌های تایید و منتشر شده
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleListResponse"
+  /api/v1/articles/{slug}:
+    get:
+      tags: [Public]
+      summary: جزئیات مقاله
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: مقاله
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Article"
+  /api/v1/news:
+    get:
+      tags: [Public]
+      summary: لیست خبرهای منتشر شده
+      responses:
+        "200":
+          description: خبرهای تایید و منتشر شده
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsListResponse"
+  /api/v1/contact-requests:
+    post:
+      tags: [Public]
+      summary: ثبت درخواست تماس
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactRequestInput"
+      responses:
+        "201":
+          description: درخواست ثبت شد
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/ContactRequest"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /api/admin/menus:
+    get:
+      tags: [Admin]
+      security:
+        - sanctumAuth: []
+      summary: لیست منوها برای پنل مدیریت
+      responses:
+        "200":
+          description: لیست منوها
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MenuItem"
+    post:
+      tags: [Admin]
+      security:
+        - sanctumAuth: []
+      summary: ایجاد منو
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuInput"
+      responses:
+        "201":
+          description: منو ایجاد شد
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/MenuItem"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+  /api/admin/articles/{article}/approve:
+    post:
+      tags: [Admin]
+      security:
+        - sanctumAuth: []
+      summary: تایید یا رد تایید مقاله
+      parameters:
+        - in: path
+          name: article
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approve]
+              properties:
+                approve:
+                  type: boolean
+      responses:
+        "200":
+          description: وضعیت تایید بروزرسانی شد
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Article"
+  /api/admin/articles/{article}/publish:
+    post:
+      tags: [Admin]
+      security:
+        - sanctumAuth: []
+      summary: تغییر وضعیت انتشار مقاله
+      parameters:
+        - in: path
+          name: article
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [isPublished]
+              properties:
+                isPublished:
+                  type: boolean
+                publishDate:
+                  type: string
+                  format: date-time
+                  nullable: true
+      responses:
+        "200":
+          description: وضعیت انتشار بروزرسانی شد
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Article"
+  /api/admin/market-rates/sync:
+    post:
+      tags: [Admin, MarketRates]
+      security:
+        - sanctumAuth: []
+      summary: همگام‌سازی نرخ‌ها از منبع خارجی
+      description: زمان‌بندی هدف برای production ساعت ۹ و ۱۵ به وقت ایران است.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourceKey:
+                  type: string
+                  example: tgju
+                syncMode:
+                  type: string
+                  enum: [manual, scheduled]
+                  default: manual
+      responses:
+        "200":
+          description: گزارش همگام‌سازی
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketRateSyncResult"
+components:
+  securitySchemes:
+    sanctumAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum
+  responses:
+    ValidationError:
+      description: خطای اعتبارسنجی ورودی
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ValidationError"
+  schemas:
+    Accuracy:
+      type: integer
+      enum: [0, 1, 2]
+      description: PENDING = 0, ACCEPTED = 1, TRASHED = 2
+    AuditFields:
+      type: object
+      properties:
+        accuracy:
+          $ref: "#/components/schemas/Accuracy"
+        createDate:
+          type: string
+          format: date-time
+        createUser:
+          type: integer
+          nullable: true
+        modifyDate:
+          type: string
+          format: date-time
+          nullable: true
+        modifyUser:
+          type: integer
+          nullable: true
+    SeoFields:
+      type: object
+      properties:
+        seoTitle:
+          type: string
+          nullable: true
+        seoDescription:
+          type: string
+          nullable: true
+        canonicalUrl:
+          type: string
+          nullable: true
+    MenuInput:
+      type: object
+      required: [title, url]
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+        parentId:
+          type: integer
+          nullable: true
+        seoTitle:
+          type: string
+          nullable: true
+        seoDescription:
+          type: string
+          nullable: true
+        isPublished:
+          type: boolean
+          default: false
+        accuracy:
+          $ref: "#/components/schemas/Accuracy"
+    MenuItem:
+      allOf:
+        - $ref: "#/components/schemas/AuditFields"
+        - $ref: "#/components/schemas/SeoFields"
+        - type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            url:
+              type: string
+            parentId:
+              type: integer
+              nullable: true
+            level:
+              type: integer
+              minimum: 1
+              maximum: 3
+            isPublished:
+              type: boolean
+            children:
+              type: array
+              items:
+                $ref: "#/components/schemas/MenuItem"
+    Article:
+      allOf:
+        - $ref: "#/components/schemas/AuditFields"
+        - $ref: "#/components/schemas/SeoFields"
+        - type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            slug:
+              type: string
+            summary:
+              type: string
+              nullable: true
+            content:
+              type: string
+            approve:
+              type: boolean
+            isPublished:
+              type: boolean
+            publishDate:
+              type: string
+              format: date-time
+              nullable: true
+            tags:
+              type: array
+              items:
+                type: string
+    News:
+      allOf:
+        - $ref: "#/components/schemas/Article"
+    ArticleListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Article"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+    NewsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+    MarketRateBoardItem:
+      type: object
+      properties:
+        key:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+        change:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          nullable: true
+    MarketRateListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketRateBoardItem"
+        meta:
+          type: object
+          properties:
+            source:
+              type: string
+            updatedAt:
+              type: string
+              nullable: true
+    MarketRateSyncResult:
+      type: object
+      properties:
+        source:
+          type: string
+        received:
+          type: integer
+        saved:
+          type: integer
+        failed:
+          type: integer
+        syncedAt:
+          type: string
+          format: date-time
+    ContactRequestInput:
+      type: object
+      required: [name, phone, message]
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        serviceKey:
+          type: string
+          nullable: true
+        message:
+          type: string
+    ContactRequest:
+      allOf:
+        - $ref: "#/components/schemas/AuditFields"
+        - type: object
+          properties:
+            id:
+              type: integer
+            trackingCode:
+              type: string
+            status:
+              type: string
+              enum: [new, in_review, done]
+    PaginationMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        perPage:
+          type: integer
+        total:
+          type: integer
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string

@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Http;
 class TgjuMarketRateService
 {
     private const SOURCE_KEY = 'tgju';
-    private const SOURCE_NAME = 'TGJU';
-    private const SOURCE_URL = 'https://www.tgju.org';
+    private const SOURCE_NAME = 'internal_market_rate_source';
 
     private const DEFINITIONS = [
         ['key' => 'price_dollar_rl', 'title' => 'دلار بازار', 'symbol' => 'USD', 'unit' => 'ریال', 'group' => 'market', 'sort_order' => 10],
@@ -88,7 +87,7 @@ class TgjuMarketRateService
 
             $log->update([
                 'status' => 'success',
-                'message' => "Synced {$synced} TGJU instruments.",
+                'message' => "Synced {$synced} market-rate instruments.",
                 'finished_at' => Carbon::now(),
             ]);
 
@@ -138,7 +137,6 @@ class TgjuMarketRateService
         return [
             'rates' => $rates,
             'fetchedAt' => Carbon::now('Asia/Tehran')->toDateTimeString(),
-            'sourceName' => self::SOURCE_NAME,
         ];
     }
 
@@ -160,7 +158,7 @@ class TgjuMarketRateService
             ['key' => self::SOURCE_KEY],
             [
                 'name' => self::SOURCE_NAME,
-                'base_url' => self::SOURCE_URL,
+                'base_url' => null,
                 'is_active' => true,
             ]
         );

@@ -50,7 +50,7 @@ class CoreSeeder extends Seeder
         ], ['group', 'key', 'locale'], ['value', 'type', 'accuracy']);
 
         DB::table('market_rate_sources')->upsert([
-            ['key' => 'tgju', 'name' => 'TGJU', 'base_url' => 'https://call2.tgju.org/ajax.json', 'is_active' => true, 'accuracy' => 1],
+            ['key' => 'tgju', 'name' => 'internal_market_rate_source', 'base_url' => null, 'is_active' => true, 'accuracy' => 1],
             ['key' => 'cbi', 'name' => 'بانک مرکزی', 'base_url' => 'https://www.cbi.ir', 'is_active' => false, 'accuracy' => 1],
         ], ['key'], ['name', 'base_url', 'is_active', 'accuracy']);
     }

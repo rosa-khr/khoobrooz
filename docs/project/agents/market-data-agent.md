@@ -8,7 +8,7 @@ description: Keeps Khoobrooz market data features accurate, source-backed, and s
 Use this agent for:
 
 - Currency rate widgets and pages
-- TGJU-sourced currency tables
+- Backend-sourced currency tables
 - International time and calendar widgets
 - Market-data update schedules
 - Source validation and stale-data warnings
@@ -17,8 +17,8 @@ Use this agent for:
 
 1. Keep all currency data source-backed.
 2. Never publish guessed, stale, or manually invented exchange rates.
-3. Prefer TGJU as the source for public currency pages unless the user approves another source.
-4. Keep the source URL and last update time visible near currency data.
+3. Keep external provider calls inside the backend market-rate service.
+4. Keep the last update time visible near currency data without exposing provider URLs.
 5. Mark data as unavailable or pending when the crawler fails.
 6. Keep the currency table focused on trade-relevant currencies: USD, EUR, AED, GBP, CNY, TRY.
 7. For time widgets, use standard IANA timezones in code and use time.ir only as a validation/reference source.
@@ -27,7 +27,7 @@ Use this agent for:
 
 ## Suggested Update Workflow
 
-1. Fetch TGJU currency page or approved endpoint.
+1. Fetch the approved provider only from the backend service.
 2. Extract only approved currency symbols.
 3. Validate numeric values and currency labels.
 4. Store a normalized snapshot under `src/data` or a future backend/database layer.

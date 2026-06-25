@@ -26,8 +26,7 @@ const definitions = [
 
 let board = {
   rates: [],
-  fetchedAt: "نامشخص",
-  sourceName: "TGJU"
+  fetchedAt: "نامشخص"
 };
 let lastError = null;
 let syncing = false;
@@ -74,8 +73,7 @@ async function syncTgju() {
           updatedAt: raw.ts ?? "نامشخص"
         };
       }),
-      fetchedAt: new Date().toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }),
-      sourceName: "TGJU"
+      fetchedAt: new Date().toLocaleString("fa-IR", { timeZone: "Asia/Tehran" })
     };
     lastError = null;
     console.log(`[tgju-dev] synced ${board.rates.length} rates at ${board.fetchedAt}`);

@@ -744,6 +744,215 @@ textarea {
   font-size: 13px;
 }
 
+.admin-service-catalog {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.admin-service-collection {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(72, 101, 125, 0.2);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(7, 23, 43, 0.045);
+  text-align: left;
+}
+
+.admin-service-collection-heading {
+  display: grid;
+  gap: 5px;
+  padding-block-end: 14px;
+  border-bottom: 1px solid rgba(72, 101, 125, 0.13);
+  text-align: left;
+}
+
+.admin-service-collection-heading span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.admin-service-collection-heading h2 {
+  margin: 0;
+  color: var(--admin-navy);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 18px;
+}
+
+.admin-service-collection-heading p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.admin-service-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-service-action {
+  display: grid;
+  gap: 0;
+  border: 1px solid rgba(72, 101, 125, 0.13);
+  border-radius: 8px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.admin-service-action[open] {
+  background: #ffffff;
+  border-color: rgba(31, 111, 139, 0.26);
+}
+
+.admin-service-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.admin-service-summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-service-summary strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--admin-navy);
+  font-size: 14px;
+  text-align: left;
+}
+
+.admin-service-summary small {
+  display: block;
+  margin-bottom: 5px;
+  color: #65748a;
+  font-size: 11px;
+  font-weight: 750;
+  text-align: left;
+}
+
+.admin-service-summary code {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: #34475c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  text-align: left;
+}
+
+.admin-method-badge,
+.admin-service-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.admin-method-badge {
+  min-width: 58px;
+  color: #ffffff;
+  letter-spacing: 0;
+}
+
+.admin-method-get {
+  background: #1f6f8b;
+}
+
+.admin-method-post {
+  background: #9b6a13;
+}
+
+.admin-method-put,
+.admin-method-patch {
+  background: #48657d;
+}
+
+.admin-method-delete {
+  background: #9f3f3f;
+}
+
+.admin-service-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px 12px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+  text-align: left;
+}
+
+.admin-service-status {
+  border: 1px solid rgba(244, 178, 62, 0.3);
+  background: #fff6df;
+  color: #7a5a17;
+}
+
+.admin-service-status.active {
+  border-color: rgba(43, 125, 90, 0.24);
+  background: #e9f6ef;
+  color: #236b4b;
+}
+
+.admin-service-contract {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 14px 14px;
+}
+
+.admin-service-contract div {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(72, 101, 125, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.admin-service-contract strong {
+  color: var(--admin-navy);
+  font-size: 12px;
+  text-align: left;
+}
+
+.admin-service-contract pre {
+  max-height: 220px;
+  margin: 0;
+  overflow: auto;
+  color: #263548;
+  direction: ltr;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.75;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.admin-service-contract p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 12px;
+  line-height: 1.9;
+}
+
 .admin-grid-section {
   display: grid;
   gap: 14px;
@@ -958,6 +1167,12 @@ textarea {
   }
 
   .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-service-catalog,
+  .admin-service-actions,
+  .admin-service-contract {
     grid-template-columns: 1fr;
   }
 

@@ -20,3 +20,4 @@ composer
 - `database-contracts.md`: قراردادهای مشترک Database و Migration
 - `testing-standard.md`: استاندارد تست Backend
 - `route-model-service-map.md`: نقشه route، model و service
+- `openapi.yaml`: قرارداد Swagger/OpenAPI برای ورودی و خروجی سرویس‌ها

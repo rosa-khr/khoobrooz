@@ -19,6 +19,7 @@ const breadcrumbLabels: Record<string, string> = {
   users: "کاربران",
   countries: "کشورها",
   "world-clocks": "ساعت جهانی",
+  "api-services": "سرویس‌های API",
   reports: "گزارش‌ها",
   settings: "تنظیمات",
   list: "لیست",

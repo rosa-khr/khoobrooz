@@ -12,20 +12,6 @@ import { ProcessFlow } from "@/shared/components/ProcessFlow";
 import { ServiceMarquee } from "@/shared/components/ServiceMarquee";
 import { MarketRatesMarquee } from "@/shared/components/MarketRatesMarquee";
 import clearanceContainerCloseup from "@/assets/images/banner-library/container-clearance-closeup.jpg";
-import { MarketRate } from "@/core/lib/tgju";
-import { fetchBackendMarketRates } from "@/core/lib/marketRates";
-
-const homeMarketRateItems = [
-  { key: "bourse", title: "بورس" },
-  { key: "ons", title: "انس طلا" },
-  { key: "mesghal", title: "مثقال طلا" },
-  { key: "geram18", title: "طلا" },
-  { key: "sekee", title: "سکه" },
-  { key: "price_dollar_rl", title: "دلار" },
-  { key: "price_eur", title: "یورو" },
-  { key: "oil_brent", title: "نفت برنت" },
-  { key: "crypto-bitcoin", title: "بیت‌کوین" }
-];
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -36,7 +22,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   const dictionary = getDictionary(locale);
   const { home } = dictionary;
-  const market = await getHomeMarketRates();
 
   return (
     <main className="overflow-hidden">
@@ -89,7 +74,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
         </div>
       </section>
 
-      <MarketRatesMarquee locale={locale} rates={market.rates} />
+      <MarketRatesMarquee locale={locale} rates={[]} />
 
       <WorldTimeWidget />
 
@@ -227,23 +212,4 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       </section>
     </main>
   );
-}
-
-async function getHomeMarketRates(): Promise<{ rates: MarketRate[] }> {
-  try {
-    const market = await fetchBackendMarketRates();
-    return {
-      rates: homeMarketRateItems
-        .map((item) => {
-          const rate = market.rates.find((marketRate) => marketRate.key === item.key);
-
-          return rate ? { ...rate, title: item.title } : undefined;
-        })
-        .filter((rate): rate is MarketRate => Boolean(rate))
-    };
-  } catch {
-    return {
-      rates: []
-    };
-  }
 }

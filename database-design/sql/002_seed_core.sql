@@ -56,7 +56,7 @@ VALUES
 
 INSERT INTO dbo.market_rate_sources ([key], name, base_url, is_active, accuracy)
 VALUES
-  (N'tgju', N'TGJU', N'https://call2.tgju.org/ajax.json', 1, 1),
+  (N'tgju', N'internal_market_rate_source', NULL, 1, 1),
   (N'cbi', N'بانک مرکزی', N'https://www.cbi.ir', 0, 1);
 
 DECLARE @tgju_id BIGINT = (SELECT id FROM dbo.market_rate_sources WHERE [key] = N'tgju');
