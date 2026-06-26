@@ -11,6 +11,7 @@
 | `GET /api/v1/articles` | `Article` | `ArticleService` |
 | `GET /api/v1/news` | `News` | `NewsService` |
 | `GET /api/v1/market-rates` | `MarketRateInstrument` | `MarketRateService` |
+| `GET /api/v1/countries` | `Country` | `CountryService` |
 | `GET /api/v1/world-clock` | `WorldClockItem` | `WorldClockService` |
 | `GET /api/v1/social-links` | `SocialLink` | `SocialLinkService` |
 

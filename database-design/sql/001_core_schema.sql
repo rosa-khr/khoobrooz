@@ -138,6 +138,7 @@ CREATE TABLE dbo.countries (
     iso3 CHAR(3) NOT NULL,
     phone_code NVARCHAR(12) NULL,
     capital NVARCHAR(160) NULL,
+    continent NVARCHAR(80) NULL,
     currency_code CHAR(3) NULL,
     timezone_default NVARCHAR(120) NULL,
     flag NVARCHAR(20) NULL,

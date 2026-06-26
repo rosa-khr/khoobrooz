@@ -1,0 +1,41 @@
+# MySQL Schema
+
+این پوشه نسخه اجرایی دیتابیس خوبروز برای `MySQL 8.4` را نگهداری می‌کند.
+
+## ترتیب اجرا
+
+```text
+001_core_schema.sql
+002_seed_core.sql
+```
+
+در حالت `Docker Compose` این فایل‌ها از مسیر زیر به کانتینر `khoobrooz-mysql` وصل می‌شوند و هنگام ساخت volume جدید اجرا می‌شوند:
+
+```text
+/docker-entrypoint-initdb.d
+```
+
+## جدول‌های فعلی
+
+- `menus`
+- `categories`
+- `tags`
+- `services`
+- `articles`
+- `article_tag`
+- `news`
+- `news_tag`
+- `countries`
+- `world_clock_items`
+
+## قانون حذف منطقی
+
+حذف رکوردها با تغییر مقدار `accuracy` انجام می‌شود:
+
+```text
+PENDING = 0
+ACCEPTED = 1
+TRASHED = 2
+```
+
+در خروجی dropdownها فقط داده‌های قابل انتخاب با `accuracy = 1` برگردانده می‌شوند.

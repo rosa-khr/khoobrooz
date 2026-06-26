@@ -4,10 +4,10 @@
 
 ## Database هدف
 
-Database اصلی:
+Database اصلی فعلی:
 
 ```text
-SQL Server
+MySQL 8.4
 ```
 
 ## مواردی که اینجا نگهداری می‌شود
@@ -19,7 +19,8 @@ SQL Server
 - مستندات `Indexes`
 - مستندات `Foreign Keys`
 - تصمیم‌های مربوط به performance و گزارش‌گیری
-- اسکریپت‌های SQL Server در `database-design/sql`
+- اسکریپت‌های اجرایی MySQL در `database-design/mysql`
+- اسکریپت‌های SQL Server قبلی فقط برای آرشیو تصمیم‌های طراحی در `database-design/sql` نگهداری می‌شوند.
 - برنامه seed کامل کشورها در `database-design/countries-seed-plan.md`
 
 ## قوانین مشترک جدول‌ها
@@ -72,10 +73,10 @@ Seedهای پایه که باید در فاز پیاده‌سازی آماده �
 
 ## SQL Scripts
 
-نسخه طراحی‌شده schema و seed در مسیر زیر قرار دارد:
+نسخه اجرایی schema و seed در مسیر زیر قرار دارد:
 
 ```text
-database-design/sql/
+database-design/mysql/
 ```
 
 ترتیب اجرا:

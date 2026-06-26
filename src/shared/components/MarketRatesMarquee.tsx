@@ -104,13 +104,11 @@ export function MarketRatesMarquee({
 
     const timer = window.setInterval(() => {
       if (isVisible.current && !document.hidden && !isPaused.current && !isDragging.current) {
-        scroller.scrollLeft += 1;
-
-        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
-          scroller.scrollLeft -= scroller.scrollWidth / 2;
-        }
+        scroller.classList.remove("market-rates-paused");
+      } else {
+        scroller.classList.add("market-rates-paused");
       }
-    }, 70);
+    }, 250);
 
     return () => {
       observer.disconnect();
@@ -150,6 +148,20 @@ export function MarketRatesMarquee({
     }
   };
 
+  const renderRateCard = (rate: MarketRate, index: number, clone = false) => (
+    <article key={`${rate.key}-${clone ? "clone" : "main"}-${index}`} className="flex h-8 w-[260px] flex-none items-center gap-2 rounded-[5px] border border-[#ead9b8] bg-white px-2.5 text-right shadow-[inset_3px_0_0_#f4b23e,0_4px_10px_rgba(11,31,58,0.035)]" dir="rtl">
+      <strong className="min-w-0 flex-1 whitespace-nowrap text-[11px] font-extrabold text-primary">{rate.title}</strong>
+      <span className="rounded-[4px] bg-[#fff4dc] px-1.5 text-[10px] font-bold text-[#9a5d08]" dir="ltr">{rate.symbol}</span>
+      <span className="shrink-0 text-xs font-extrabold leading-none text-primary" dir="ltr">{rate.price}</span>
+      <span className="shrink-0 text-[10px] font-semibold text-muted">{rate.unit}</span>
+      {rate.changePercent !== null && (
+        <span className={`shrink-0 text-[10px] font-black ${rate.direction === "high" ? "text-[#167245]" : rate.direction === "low" ? "text-[#a43e21]" : "text-muted"}`} dir="ltr">
+          {rate.changePercent}%
+        </span>
+      )}
+    </article>
+  );
+
   return (
     <section className="border-y border-[#ead9b8] bg-[#fffaf0] py-2 text-primary">
       <div className="container">
@@ -171,7 +183,7 @@ export function MarketRatesMarquee({
         ) : (
           <div
             ref={scrollerRef}
-            className={`overflow-x-auto overflow-y-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+            className={`market-rates-marquee overflow-x-auto overflow-y-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${dragging ? "market-rates-paused cursor-grabbing" : "cursor-grab"}`}
             dir="ltr"
             onMouseEnter={() => {
               isPaused.current = true;
@@ -184,20 +196,13 @@ export function MarketRatesMarquee({
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
           >
-            <div className="flex w-max gap-2">
-              {[...currentRates, ...currentRates].map((rate, index) => (
-                <article key={`${rate.key}-${index}`} className="flex h-8 w-[260px] flex-none items-center gap-2 rounded-[5px] border border-[#ead9b8] bg-white px-2.5 text-right shadow-[inset_3px_0_0_#f4b23e,0_4px_10px_rgba(11,31,58,0.035)]" dir="rtl">
-                  <strong className="min-w-0 flex-1 whitespace-nowrap text-[11px] font-extrabold text-primary">{rate.title}</strong>
-                  <span className="rounded-[4px] bg-[#fff4dc] px-1.5 text-[10px] font-bold text-[#9a5d08]" dir="ltr">{rate.symbol}</span>
-                  <span className="shrink-0 text-xs font-extrabold leading-none text-primary" dir="ltr">{rate.price}</span>
-                  <span className="shrink-0 text-[10px] font-semibold text-muted">{rate.unit}</span>
-                  {rate.changePercent !== null && (
-                    <span className={`shrink-0 text-[10px] font-black ${rate.direction === "high" ? "text-[#167245]" : rate.direction === "low" ? "text-[#a43e21]" : "text-muted"}`} dir="ltr">
-                      {rate.changePercent}%
-                    </span>
-                  )}
-                </article>
-              ))}
+            <div className="market-rates-track flex w-max">
+              <div className="market-rates-group flex w-max flex-none gap-2 pe-2">
+                {currentRates.map((rate, index) => renderRateCard(rate, index))}
+              </div>
+              <div className="market-rates-group flex w-max flex-none gap-2 pe-2" aria-hidden="true">
+                {currentRates.map((rate, index) => renderRateCard(rate, index, true))}
+              </div>
             </div>
           </div>
         )}

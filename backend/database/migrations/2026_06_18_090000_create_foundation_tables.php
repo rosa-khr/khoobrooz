@@ -74,6 +74,7 @@ return new class extends Migration
             $table->char('iso3', 3)->unique();
             $table->string('phone_code', 12)->nullable();
             $table->string('capital', 160)->nullable();
+            $table->string('continent', 80)->nullable();
             $table->char('currency_code', 3)->nullable();
             $table->string('timezone_default', 120)->nullable();
             $table->string('flag', 20)->nullable();

@@ -9,12 +9,21 @@ services:
       NODE_ENV: production
       BACKEND_PORT: 8000
       TZ: Asia/Tehran
+      DB_DRIVER: mysql
+      DB_HOST: khoobrooz-mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${MYSQL_DATABASE:-khoobrooz}
+      DB_USERNAME: ${MYSQL_USER:-khoobrooz}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-khoobrooz_dev_2026}
       TGJU_API_URL: ${TGJU_API_URL:-https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM}
       TGJU_SYNC_INTERVAL_MS: ${TGJU_SYNC_INTERVAL_MS:-7200000}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - .:/app:ro
+    depends_on:
+      khoobrooz-mysql:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8000/api/v1/market-rates/board').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -40,25 +49,27 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
 
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: khoobrooz-sqlserver
+  khoobrooz-mysql:
+    image: mysql:8.4
+    container_name: khoobrooz-mysql
     restart: unless-stopped
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: Developer
-      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:-ChangeThisStrongPassword!2026}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-khoobrooz}
+      MYSQL_USER: ${MYSQL_USER:-khoobrooz}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-khoobrooz_dev_2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-ChangeThisStrongPassword!2026}
       TZ: Asia/Tehran
     ports:
-      - "${SQLSERVER_PORT:-1433}:1433"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
-      - khoobrooz_sqlserver_data:/var/opt/mssql
+      - khoobrooz_mysql_data:/var/lib/mysql
+      - ./database-design/mysql:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || exit 1"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
       interval: 15s
       timeout: 10s
       retries: 10
       start_period: 40s
 
 volumes:
-  khoobrooz_sqlserver_data:
+  khoobrooz_mysql_data:
