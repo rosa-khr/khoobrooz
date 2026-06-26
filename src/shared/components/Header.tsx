@@ -6,7 +6,7 @@ import { ChevronDown, Instagram, Linkedin, Mail, Menu, MessageCircle, MessageSqu
 import { useEffect, useState } from "react";
 import { Locale, contact, localeLabels, localeNames, locales, localizedPath, switchLocalePath } from "@/core/lib/site";
 import { getDictionary } from "@/data/i18n";
-import { localizedNavigation } from "@/data/navigation";
+import { localizedNavigation, type NavigationItem } from "@/data/navigation";
 import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import { HeaderDateWidget } from "@/shared/components/DateTools";
 
@@ -49,13 +49,47 @@ const headerContacts = [
   }
 ];
 
+type MenuResponse = {
+  responseStatus: 0 | 1;
+  response: {
+    items: NavigationItem[];
+    total: number;
+  };
+};
+
 export function Header({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [now, setNow] = useState(() => new Date());
   const pathname = usePathname();
   const dictionary = getDictionary(locale);
-  const nav = localizedNavigation(locale);
+  const [nav, setNav] = useState<NavigationItem[]>(() => localizedNavigation(locale));
+
+  useEffect(() => {
+    let mounted = true;
+    const localizeItem = (item: NavigationItem): NavigationItem => ({
+      ...item,
+      href: localizedPath(locale, item.href),
+      children: item.children?.map(localizeItem)
+    });
+
+    fetch("/api/menus", { cache: "no-store" })
+      .then((response) => response.json() as Promise<MenuResponse>)
+      .then((payload) => {
+        if (mounted && payload.responseStatus === 1 && payload.response.items.length > 0) {
+          setNav(payload.response.items.map(localizeItem));
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setNav(localizedNavigation(locale));
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [locale]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
@@ -173,7 +207,6 @@ export function Header({ locale }: { locale: Locale }) {
                           className="rounded-khoobrooz px-3 py-2 text-sm hover:bg-slate-100"
                         >
                           <span className="block font-extrabold text-primary">{child.label}</span>
-                          {child.description && <span className="mt-0.5 block text-xs leading-6 text-muted">{child.description}</span>}
                         </Link>
                       ))}
                     </div>

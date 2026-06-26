@@ -70,7 +70,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
             </div>
             <Button href={localizedPath(locale, "/services")} variant="outline">{home.services.all}</Button>
           </div>
-          <ServiceMarquee locale={locale} services={dictionary.services} ariaLabel={home.services.aria} />
+          <ServiceMarquee locale={locale} ariaLabel={home.services.aria} />
         </div>
       </section>
 

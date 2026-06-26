@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-import { AllCommunityModule, ModuleRegistry, type ColDef } from "ag-grid-community";
+import { AllCommunityModule, ModuleRegistry, type ColDef, type GridApi, type GridReadyEvent } from "ag-grid-community";
 import { Eye, Pencil, Trash2, BadgeCheck } from "lucide-react";
 import { toast } from "react-toastify";
 import { AccuracyBadge, BooleanBadge, PublishBadge } from "@/admin/components/AdminBadges";
 import { deleteAdminRecord, saveAdminRecord, type AdminContentRecord, type AdminGridRecord } from "@/admin/lib/adminApi";
+import { formatPersianDateTime } from "@/admin/lib/date";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
@@ -59,12 +60,21 @@ const persianGridLocale = {
   sortUnSort: "حذف مرتب‌سازی"
 };
 
+type PersistedGridState = {
+  columnState?: ReturnType<GridApi["getColumnState"]>;
+  filterModel?: ReturnType<GridApi["getFilterModel"]>;
+};
+
 function getRecordLabel(data: AdminGridRecord) {
   if ("title" in data) {
     return data.title;
   }
 
   return data.city || data.country || String(data.id);
+}
+
+function formatTagTitles(value?: string[]) {
+  return Array.isArray(value) && value.length > 0 ? value.join("، ") : "-";
 }
 
 type AdminDataGridProps = {
@@ -78,6 +88,7 @@ type AdminDataGridProps = {
 export function AdminDataGrid({ title, description, kind, onChanged, rows }: AdminDataGridProps) {
   const [mounted, setMounted] = useState(false);
   const resourcePath = kind;
+  const gridStorageKey = `khoobrooz.admin.grid.${kind}`;
 
   useEffect(() => {
     setMounted(true);
@@ -109,6 +120,37 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
       .catch((reason: unknown) => toast.error(reason instanceof Error ? reason.message : "حذف منطقی ناموفق بود."));
   }, [kind, onChanged]);
 
+  const saveGridState = useCallback((api: GridApi) => {
+    const state: PersistedGridState = {
+      columnState: api.getColumnState(),
+      filterModel: api.getFilterModel()
+    };
+
+    window.sessionStorage.setItem(gridStorageKey, JSON.stringify(state));
+  }, [gridStorageKey]);
+
+  const restoreGridState = useCallback((event: GridReadyEvent) => {
+    const savedState = window.sessionStorage.getItem(gridStorageKey);
+
+    if (!savedState) {
+      return;
+    }
+
+    try {
+      const state = JSON.parse(savedState) as PersistedGridState;
+
+      if (state.columnState?.length) {
+        event.api.applyColumnState({ applyOrder: true, state: state.columnState });
+      }
+
+      if (state.filterModel) {
+        event.api.setFilterModel(state.filterModel);
+      }
+    } catch {
+      window.sessionStorage.removeItem(gridStorageKey);
+    }
+  }, [gridStorageKey]);
+
   const columnDefs = useMemo<ColDef[]>(() => {
     const baseColumns: ColDef[] = [
       {
@@ -126,7 +168,8 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
       {
         headerName: "آخرین ویرایش",
         field: "modifiedAt",
-        width: 132
+        valueFormatter: ({ value }) => formatPersianDateTime(value) || "-",
+        width: 150
       },
       {
         headerName: "عملیات",
@@ -185,7 +228,8 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
         {
           headerName: "آخرین ویرایش",
           field: "modifiedAt",
-          width: 132
+          valueFormatter: ({ value }) => formatPersianDateTime(value) || "-",
+          width: 150
         },
         baseColumns[3]
       ];
@@ -194,7 +238,7 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
     if (kind === "world-clocks") {
       return [
         { headerName: "کشور", field: "country", flex: 1, minWidth: 160 },
-        { headerName: "پایتخت / شهر", field: "city", flex: 1, minWidth: 150 },
+        { headerName: "شهر", field: "city", flex: 1, minWidth: 150 },
         { headerName: "قاره", field: "continent", width: 130 },
         { headerName: "Timezone", field: "timezone", flex: 1, minWidth: 180, dir: "ltr" },
         { headerName: "ترتیب", field: "sortOrder", width: 95 },
@@ -205,6 +249,14 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
     return [
       { headerName: "عنوان", field: "title", flex: 1.5, minWidth: 230 },
       { headerName: "دسته", field: "category", width: 150 },
+      {
+        headerName: "تگ‌ها",
+        field: "tagTitles",
+        flex: 1,
+        minWidth: 190,
+        valueFormatter: ({ value }) => formatTagTitles(value),
+        filterValueGetter: ({ data }) => formatTagTitles((data as AdminContentRecord | undefined)?.tagTitles)
+      },
       { headerName: "اسلاگ", field: "slug", flex: 1, minWidth: 180, dir: "ltr" },
       { headerName: "عنوان SEO", field: "seoTitle", flex: 1.2, minWidth: 210 },
       {
@@ -213,7 +265,7 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
         width: 145,
         cellRenderer: ({ value }: { value: boolean }) => <BooleanBadge falseLabel="در انتظار تایید" trueLabel="تایید شده" value={value} />
       },
-      { headerName: "زمان‌بندی", field: "scheduledAt", width: 132, valueFormatter: ({ value }) => value || "-" },
+      { headerName: "زمان‌بندی", field: "scheduledAt", width: 150, valueFormatter: ({ value }) => formatPersianDateTime(value) || "-" },
       ...baseColumns
     ];
   }, [handleApprove, handleDelete, kind, resourcePath]);
@@ -237,6 +289,10 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
             animateRows
             columnDefs={columnDefs}
             defaultColDef={{
+              filterParams: {
+                buttons: ["reset"],
+                debounceMs: 250
+              },
               resizable: true,
               sortable: true,
               filter: true,
@@ -245,6 +301,17 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
             domLayout="normal"
             enableRtl
             localeText={persianGridLocale}
+            onColumnMoved={({ api }) => saveGridState(api)}
+            onColumnPinned={({ api }) => saveGridState(api)}
+            onColumnResized={({ api, finished }) => {
+              if (finished) {
+                saveGridState(api);
+              }
+            }}
+            onColumnVisible={({ api }) => saveGridState(api)}
+            onFilterChanged={({ api }) => saveGridState(api)}
+            onGridReady={restoreGridState}
+            onSortChanged={({ api }) => saveGridState(api)}
             pagination
             paginationPageSize={15}
             paginationPageSizeSelector={[15, 25, 50, 100, 200]}

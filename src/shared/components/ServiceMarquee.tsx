@@ -4,11 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Boxes, ClipboardCheck, Container, FileText, Globe2, Handshake, PackageCheck, Ship, Truck } from "lucide-react";
 import { Locale, localizedPath } from "@/core/lib/site";
-import { Dictionary } from "@/data/i18n";
 import { Card } from "@/shared/components/Card";
 
 const serviceIcons = [Container, ClipboardCheck, Boxes, Globe2, Ship, Handshake, FileText, PackageCheck];
-type ServiceCardItem = Dictionary["services"][number];
+
+type ServiceCardItem = {
+  title: string;
+  description: string;
+  href?: string;
+  eyebrow?: string;
+  cta?: string;
+  featured?: boolean;
+};
 
 type ServicesResponse = {
   responseStatus: 0 | 1;
@@ -28,7 +35,7 @@ type ServicesResponse = {
   };
 };
 
-export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale; services: Dictionary["services"]; ariaLabel: string }) {
+export function ServiceMarquee({ locale, ariaLabel }: { locale: Locale; ariaLabel: string }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const dragStartX = useRef(0);
   const dragStartScroll = useRef(0);
@@ -37,7 +44,7 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
   const isPaused = useRef(false);
   const isVisible = useRef(false);
   const [dragging, setDragging] = useState(false);
-  const [dynamicServices, setDynamicServices] = useState<ServiceCardItem[]>(services);
+  const [dynamicServices, setDynamicServices] = useState<ServiceCardItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -64,7 +71,7 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
     return () => {
       mounted = false;
     };
-  }, [services]);
+  }, []);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -114,7 +121,7 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
       observer.disconnect();
       window.cancelAnimationFrame(animationFrame);
     };
-  }, []);
+  }, [dynamicServices.length]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     const scroller = scrollerRef.current;
@@ -181,6 +188,10 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
       </Card>
     );
   };
+
+  if (dynamicServices.length === 0) {
+    return null;
+  }
 
   return (
     <div

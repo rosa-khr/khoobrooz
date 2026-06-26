@@ -30,14 +30,15 @@ Use this agent for:
 1. Fetch the approved provider only from the backend service.
 2. Extract only approved currency symbols.
 3. Validate numeric values and currency labels.
-4. Store a normalized snapshot under `src/data` or a future backend/database layer.
+4. Store a normalized snapshot in the backend/database layer.
 5. Record `updatedAt`, `source`, and `fetchStatus`.
 6. If extraction fails, keep the previous known-good snapshot and show a warning.
 
 ## Implementation Notes
 
 - Current UI route: `src/app/[locale]/markets/currency-rates/page.tsx`
-- Current market data config: `src/data/market.ts`
+- Current market data service: `backend/dev-tgju-server.mjs`
+- Current public clock data table: `world_clock_items`
 - Current home widget: `src/shared/components/WorldTimeWidget.tsx`
 
 ## Future Automation

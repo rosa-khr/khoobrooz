@@ -20,6 +20,11 @@ export const navigation: NavigationItem[] = [
         description: "بررسی مدارک، مراحل و مسیر تماس اختصاصی ترخیص"
       },
       {
+        label: "حواله یوآن چین",
+        href: "/services/yuan-transfer",
+        description: "پرداخت RMB برای سفارش‌های وارداتی و خرید از چین"
+      },
+      {
         label: "ثبت سفارش واردات",
         href: "/services",
         description: "مسیر ثبت سفارش کالا و پیش‌نیازهای واردات"
@@ -62,10 +67,7 @@ export const navigation: NavigationItem[] = [
       }
     ]
   },
-  {
-    label: "فایل‌ها و اسناد",
-    href: "/documents"
-  },
+  { label: "فایل‌ها و اسناد", href: "/documents" },
   {
     label: "بازار",
     href: "/markets/currency-rates",

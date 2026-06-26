@@ -54,12 +54,16 @@ export type AdminContentRecord = {
   scheduledAt: string | null;
   modifiedAt: string;
   tagIds?: number[];
+  tagTitles?: string[];
 };
 
 export type AdminSimpleRecord = {
   id: number;
   title: string;
   slug: string;
+  content?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   summary?: string;
   description?: string;
   cta?: string;
@@ -79,9 +83,18 @@ export type AdminCountryRecord = {
   continent: string;
 };
 
+export type AdminCityOption = {
+  id: number;
+  city: string;
+  cityEn: string;
+  timezone: string;
+  isTradeCity?: boolean;
+};
+
 export type AdminWorldClockRecord = {
   id: number;
   countryId: number | null;
+  cityId: number | null;
   city: string;
   country: string;
   countryCode: string | null;
@@ -155,6 +168,10 @@ export async function loadApiServiceCatalog() {
 
 export async function loadAdminCountries() {
   return adminPost<AdminCountryRecord>("countries", "loadPage", lookupRequest);
+}
+
+export async function loadAdminCountryCities(countryId: number) {
+  return adminPost<AdminCityOption>("countries", "cities", { countryId });
 }
 
 export async function findAdminRecord(resource: AdminResource, id: string) {

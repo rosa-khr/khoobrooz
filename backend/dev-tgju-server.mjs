@@ -53,10 +53,13 @@ const serviceCatalog = [
   { id: 1, serviceName: "MenuService", title: "Site menus", description: "Navigation menu contract.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 100 + index + 1, name, title: `${name} menu`, method: "POST", path: `/api/admin/menus/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number" } }, response: catalogResponse([{ id: "number", title: "string", url: "string", accuracy: "0|1|2" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
   { id: 2, serviceName: "ArticleService", title: "Articles", description: "Article content, tags, approval, publishing, and SEO.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 200 + index + 1, name, title: `${name} article`, method: "POST", path: `/api/admin/articles/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", tagIds: ["number"] } }, response: catalogResponse([{ id: "number", title: "string", approve: "boolean", tagIds: ["number"] }], name === "loadPage" ? "number" : 1), status: "planned" })) },
   { id: 3, serviceName: "NewsService", title: "News", description: "News content, tags, approval, publishing, and SEO.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 300 + index + 1, name, title: `${name} news`, method: "POST", path: `/api/admin/news/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", tagIds: ["number"] } }, response: catalogResponse([{ id: "number", title: "string", approve: "boolean", tagIds: ["number"] }], name === "loadPage" ? "number" : 1), status: "planned" })) },
-  { id: 4, serviceName: "TagService", title: "Tags", description: "Tag lookup for articles and news.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 400 + index + 1, name, title: `${name} tag`, method: "POST", path: `/api/admin/tags/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", accuracy: "0|1|2" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
+  { id: 4, serviceName: "TagService", title: "Tags", description: "Tag lookup and tag landing-page content.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 400 + index + 1, name, title: `${name} tag`, method: "POST", path: `/api/admin/tags/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", content: "string", seoTitle: "string", seoDescription: "string", accuracy: "0|1|2" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string", content: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
   { id: 5, serviceName: "ServiceService", title: "Services", description: "Dynamic trade-service cards and service pages.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 500 + index + 1, name, title: `${name} service`, method: "POST", path: `/api/admin/services/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", summary: "string", accuracy: "0|1|2" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string", summary: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
-  { id: 6, serviceName: "WorldClockService", title: "World clocks", description: "Selected trade countries, up to six active items.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 600 + index + 1, name, title: `${name} world clock`, method: "POST", path: `/api/admin/world-clocks/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", countryId: "number|null" } }, response: catalogResponse([{ id: "number", city: "string", country: "string", timezone: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
-  { id: 7, serviceName: "CountryService", title: "Countries", description: "Country lookup for admin dropdowns.", actions: [{ id: 701, name: "loadPage", title: "loadPage countries", method: "POST", path: "/api/admin/countries/loadPage", scope: "Admin", request: catalogPageRequest, response: catalogResponse([{ id: "number", nameFa: "string", capital: "string|null", continent: "string" }]), status: "planned" }] },
+  { id: 6, serviceName: "WorldClockService", title: "World clocks", description: "Selected trade cities, up to seven active items.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 600 + index + 1, name, title: `${name} world clock`, method: "POST", path: `/api/admin/world-clocks/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", countryId: "number|null" } }, response: catalogResponse([{ id: "number", city: "string", country: "string", timezone: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
+  { id: 7, serviceName: "CountryService", title: "Countries", description: "Country lookup for admin dropdowns.", actions: [
+    { id: 701, name: "loadPage", title: "loadPage countries", method: "POST", path: "/api/admin/countries/loadPage", scope: "Admin", request: catalogPageRequest, response: catalogResponse([{ id: "number", nameFa: "string", capital: "string|null", continent: "string" }]), status: "planned" },
+    { id: 702, name: "cities", title: "load country cities", method: "POST", path: "/api/admin/countries/cities", scope: "Admin", request: { body: { countryId: "number" } }, response: catalogResponse([{ id: "number", city: "string", cityEn: "string", timezone: "string" }]), status: "active" }
+  ] },
   { id: 8, serviceName: "MarketRateService", title: "Market rates", description: "Market-rate board used by frontend.", actions: [{ id: 801, name: "loadPage", title: "Load market board", method: "POST", path: "/api/v1/market-rates/board", scope: "Public", request: catalogPageRequest, response: catalogResponse([{ key: "string", title: "string", price: "string" }]), status: "active" }] }
 ];
 
@@ -93,7 +96,9 @@ function normalizeAdminItems(resource, items = []) {
       return {
         ...item,
         tagIds: item.tagIdsCsv.split(",").map((value) => Number(value)).filter(Number.isFinite),
-        tagIdsCsv: undefined
+        tagTitles: typeof item.tagTitlesCsv === "string" ? item.tagTitlesCsv.split("، ").filter(Boolean) : [],
+        tagIdsCsv: undefined,
+        tagTitlesCsv: undefined
       };
     }
     return item;
@@ -215,9 +220,9 @@ function adminListQuery(resource, body = {}) {
   if (resource === "menus") {
     const whereParts = filterConditions(filters, { id: "m.id", accuracy: "m.accuracy", isPublished: "m.is_published", parentId: "m.parent_id", search: "m.title|m.url|m.slug|m.seo_title" });
     const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
-    const orderBy = firstSort(sorting, { id: "m.id", title: "m.title", level: "m.level", modifiedAt: "COALESCE(m.modified_at, m.created_at)" }, "m.sort_order ASC, m.id ASC");
+    const orderBy = firstSort(sorting, { id: "m.id", title: "m.title", level: "m.level", sortOrder: "m.sort_order", modifiedAt: "COALESCE(m.modified_at, m.created_at)" }, "m.sort_order ASC, m.id ASC");
     return jsonArraySelect(
-      `SELECT JSON_OBJECT('id', m.id, 'title', m.title, 'parentId', m.parent_id, 'parentTitle', p.title, 'url', COALESCE(m.url, ''), 'slug', COALESCE(m.slug, ''), 'seoTitle', COALESCE(m.seo_title, ''), 'seoDescription', COALESCE(m.seo_description, ''), 'level', m.level, 'isPublished', IF(m.is_published = 1, TRUE, FALSE), 'accuracy', m.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(m.modified_at, m.created_at)")}) AS row_json`,
+      `SELECT JSON_OBJECT('id', m.id, 'title', m.title, 'parentId', m.parent_id, 'parentTitle', p.title, 'url', COALESCE(m.url, ''), 'slug', COALESCE(m.slug, ''), 'seoTitle', COALESCE(m.seo_title, ''), 'seoDescription', COALESCE(m.seo_description, ''), 'level', m.level, 'sortOrder', m.sort_order, 'isPublished', IF(m.is_published = 1, TRUE, FALSE), 'accuracy', m.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(m.modified_at, m.created_at)")}) AS row_json`,
       "FROM menus m LEFT JOIN menus p ON p.id = m.parent_id",
       where,
       `ORDER BY ${orderBy}`,
@@ -234,8 +239,8 @@ function adminListQuery(resource, body = {}) {
     const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
     const orderBy = firstSort(sorting, { id: "a.id", title: "a.title", modifiedAt: "COALESCE(a.modified_at, a.created_at)", scheduledAt: "a.scheduled_at" }, "COALESCE(a.modified_at, a.created_at) DESC, a.id DESC");
     return jsonArraySelect(
-      `SELECT JSON_OBJECT('id', a.id, 'title', a.title, 'headline', COALESCE(${headline}, ''), 'categoryId', a.category_id, 'category', c.title, 'slug', a.slug, 'seoTitle', COALESCE(a.seo_title, ''), 'seoDescription', COALESCE(a.seo_description, ''), 'content', COALESCE(a.body, ''), 'approve', IF(a.approve = 1, TRUE, FALSE), 'isPublished', IF(a.is_published = 1, TRUE, FALSE), 'accuracy', a.accuracy, 'scheduledAt', ${mysqlDate("a.scheduled_at")}, 'modifiedAt', ${mysqlDate("COALESCE(a.modified_at, a.created_at)")}, 'tagIdsCsv', COALESCE((SELECT GROUP_CONCAT(rel.tag_id ORDER BY rel.tag_id SEPARATOR ',') FROM ${relationTable} rel WHERE rel.${parentColumn} = a.id AND rel.accuracy <> 2), '')) AS row_json`,
-      `FROM ${table} a LEFT JOIN categories c ON c.id = a.category_id`,
+      `SELECT JSON_OBJECT('id', a.id, 'title', a.title, 'headline', COALESCE(${headline}, ''), 'categoryId', a.category_id, 'category', c.title, 'slug', a.slug, 'seoTitle', COALESCE(a.seo_title, ''), 'seoDescription', COALESCE(a.seo_description, ''), 'content', COALESCE(a.body, ''), 'approve', IF(a.approve = 1, TRUE, FALSE), 'isPublished', IF(a.is_published = 1, TRUE, FALSE), 'accuracy', a.accuracy, 'scheduledAt', ${mysqlDate("a.scheduled_at")}, 'modifiedAt', ${mysqlDate("COALESCE(a.modified_at, a.created_at)")}, 'tagIdsCsv', COALESCE((SELECT GROUP_CONCAT(rel.tag_id ORDER BY rel.tag_id SEPARATOR ',') FROM ${relationTable} rel WHERE rel.${parentColumn} = a.id AND rel.accuracy <> 2), ''), 'tagTitlesCsv', COALESCE((SELECT GROUP_CONCAT(t.title ORDER BY t.title SEPARATOR '، ') FROM ${relationTable} rel JOIN tags t ON t.id = rel.tag_id WHERE rel.${parentColumn} = a.id AND rel.accuracy <> 2 AND t.accuracy <> 2), '')) AS row_json`,
+      `FROM ${table} a LEFT JOIN menus c ON c.id = a.category_id`,
       where,
       `ORDER BY ${orderBy}`,
       limitSql
@@ -247,7 +252,7 @@ function adminListQuery(resource, body = {}) {
     const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
     const orderBy = firstSort(sorting, { id: "w.id", city: "w.city", country: "w.country", sortOrder: "w.sort_order", modifiedAt: "COALESCE(w.modified_at, w.created_at)" }, "w.sort_order ASC, w.id ASC");
     return jsonArraySelect(
-      `SELECT JSON_OBJECT('id', w.id, 'countryId', w.country_id, 'city', w.city, 'country', w.country, 'countryCode', w.country_code, 'continent', COALESCE(c.continent, ${continentCase("c")}), 'timezone', w.timezone, 'marketLabel', w.market_label, 'sortOrder', w.sort_order, 'isPublished', IF(w.is_published = 1, TRUE, FALSE), 'accuracy', w.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(w.modified_at, w.created_at)")}) AS row_json`,
+      `SELECT JSON_OBJECT('id', w.id, 'countryId', w.country_id, 'cityId', w.city_id, 'city', w.city, 'country', w.country, 'countryCode', w.country_code, 'continent', COALESCE(c.continent, ${continentCase("c")}), 'timezone', w.timezone, 'marketLabel', w.market_label, 'flag', COALESCE(w.flag, c.flag, w.country_code), 'sortOrder', w.sort_order, 'isPublished', IF(w.is_published = 1, TRUE, FALSE), 'accuracy', w.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(w.modified_at, w.created_at)")}) AS row_json`,
       "FROM world_clock_items w LEFT JOIN countries c ON c.id = w.country_id",
       where,
       `ORDER BY ${orderBy}`,
@@ -260,12 +265,12 @@ function adminListQuery(resource, body = {}) {
     id: "id",
     accuracy: "accuracy",
     ...(resource === "services" ? { isPublished: "is_published" } : {}),
-    search: resource === "services" ? "title|slug|summary" : "title|slug"
+    search: resource === "services" ? "title|slug|summary" : "title|slug|seo_title|seo_description"
   });
   const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
   const orderBy = firstSort(sorting, { id: "id", title: "title", modifiedAt: "COALESCE(modified_at, created_at)" }, "title ASC");
   return jsonArraySelect(
-    `SELECT JSON_OBJECT('id', id, 'title', title, 'slug', slug, 'summary', ${simpleTable === "services" ? "COALESCE(summary, '')" : "''"}, 'description', ${simpleTable === "services" ? "COALESCE(summary, '')" : "''"}, 'cta', ${simpleTable === "services" ? "COALESCE(short_title, 'مشاهده خدمت')" : "''"}, 'href', ${simpleTable === "services" ? "CONCAT('/services/', slug)" : "''"}, 'isPublished', ${simpleTable === "services" ? "IF(is_published = 1, TRUE, FALSE)" : "TRUE"}, 'accuracy', accuracy, 'modifiedAt', ${mysqlDate("COALESCE(modified_at, created_at)")}) AS row_json`,
+    `SELECT JSON_OBJECT('id', id, 'title', title, 'slug', slug, 'summary', ${simpleTable === "services" ? "COALESCE(summary, '')" : "''"}, 'description', ${simpleTable === "services" ? "COALESCE(summary, '')" : "''"}, 'content', ${simpleTable === "tags" ? "COALESCE(body, '')" : "''"}, 'seoTitle', ${simpleTable === "tags" ? "COALESCE(seo_title, '')" : "''"}, 'seoDescription', ${simpleTable === "tags" ? "COALESCE(seo_description, '')" : "''"}, 'cta', ${simpleTable === "services" ? "COALESCE(short_title, 'مشاهده خدمت')" : "''"}, 'href', ${simpleTable === "services" ? "CONCAT('/services/', slug)" : "''"}, 'isPublished', ${simpleTable === "services" || simpleTable === "tags" ? "IF(is_published = 1, TRUE, FALSE)" : "TRUE"}, 'accuracy', accuracy, 'modifiedAt', ${mysqlDate("COALESCE(modified_at, created_at)")}) AS row_json`,
     `FROM ${simpleTable}`,
     where,
     `ORDER BY ${orderBy}`,
@@ -309,9 +314,9 @@ function adminWriteQuery(resource, action, body) {
 
   if (resource === "world-clocks") {
     if (action === "add") {
-      return `INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, sort_order, is_published, accuracy, created_by) VALUES (${sqlNumber(body.countryId)}, ${sqlString(body.city)}, ${sqlString(body.country)}, ${sqlString(body.countryCode)}, ${sqlString(body.timezone)}, ${sqlString(body.marketLabel)}, ${sqlNumber(body.sortOrder ?? 0)}, ${sqlBit(body.isPublished)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
+      return `INSERT INTO world_clock_items (country_id, city_id, city, country, country_code, timezone, market_label, sort_order, is_published, accuracy, created_by) VALUES (${sqlNumber(body.countryId)}, ${sqlNumber(body.cityId)}, ${sqlString(body.city)}, ${sqlString(body.country)}, ${sqlString(body.countryCode)}, ${sqlString(body.timezone)}, ${sqlString(body.marketLabel)}, ${sqlNumber(body.sortOrder ?? 0)}, ${sqlBit(body.isPublished)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
     }
-    return `UPDATE world_clock_items SET country_id=${sqlNumber(body.countryId)}, city=${sqlString(body.city)}, country=${sqlString(body.country)}, country_code=${sqlString(body.countryCode)}, timezone=${sqlString(body.timezone)}, market_label=${sqlString(body.marketLabel)}, sort_order=${sqlNumber(body.sortOrder ?? 0)}, is_published=${sqlBit(body.isPublished)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+    return `UPDATE world_clock_items SET country_id=${sqlNumber(body.countryId)}, city_id=${sqlNumber(body.cityId)}, city=${sqlString(body.city)}, country=${sqlString(body.country)}, country_code=${sqlString(body.countryCode)}, timezone=${sqlString(body.timezone)}, market_label=${sqlString(body.marketLabel)}, sort_order=${sqlNumber(body.sortOrder ?? 0)}, is_published=${sqlBit(body.isPublished)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
   }
 
   if (resource === "services") {
@@ -322,9 +327,9 @@ function adminWriteQuery(resource, action, body) {
   }
 
   if (action === "add") {
-    return `INSERT INTO tags (title, slug, accuracy, created_by) VALUES (${sqlString(body.title)}, ${sqlString(body.slug)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
+    return `INSERT INTO tags (title, slug, body, seo_title, seo_description, is_published, accuracy, created_by) VALUES (${sqlString(body.title)}, ${sqlString(body.slug)}, ${sqlString(body.content)}, ${sqlString(body.seoTitle)}, ${sqlString(body.seoDescription)}, ${sqlBit(body.isPublished ?? true)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
   }
-  return `UPDATE tags SET title=${sqlString(body.title)}, slug=${sqlString(body.slug)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+  return `UPDATE tags SET title=${sqlString(body.title)}, slug=${sqlString(body.slug)}, body=${sqlString(body.content)}, seo_title=${sqlString(body.seoTitle)}, seo_description=${sqlString(body.seoDescription)}, is_published=${sqlBit(body.isPublished ?? true)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
 }
 
 async function syncContentTags(resource, id, tagIds = []) {
@@ -344,9 +349,71 @@ async function loadPublicServices() {
   return successResponse(normalizeAdminItems("services", result.data ?? []), result.total ?? 0);
 }
 
+async function loadPublicMenus() {
+  const result = await runJsonSql(adminListQuery("menus", { pageing: { pageNumbber: 1, PageSize: 100 }, sorting: [{ field: "sortOrder", direction: "asc" }], filters: { accuracy: 1, isPublished: true } }), { data: [], total: 0 });
+  const items = normalizeAdminItems("menus", result.data ?? []).map((item) => ({
+    id: item.id,
+    parentId: item.parentId,
+    label: item.title,
+    href: item.url || `/${item.slug}`,
+    description: item.seoDescription || "",
+    sortOrder: item.sortOrder ?? item.id
+  }));
+  const byParent = new Map();
+
+  for (const item of items) {
+    const key = item.parentId ?? null;
+    byParent.set(key, [...(byParent.get(key) ?? []), item]);
+  }
+
+  const buildTree = (parentId = null) => (byParent.get(parentId) ?? [])
+    .sort((a, b) => Number(a.sortOrder) - Number(b.sortOrder))
+    .map((item) => {
+      const children = buildTree(item.id);
+      return {
+        label: item.label,
+        href: item.href,
+        description: item.description,
+        ...(children.length ? { children } : {})
+      };
+    });
+
+  const tree = buildTree(null);
+  return successResponse(tree, tree.length);
+}
+
+async function loadPublicWorldClocks() {
+  const result = await runJsonSql(adminListQuery("world-clocks", { pageing: { pageNumbber: 1, PageSize: 7 }, sorting: [{ field: "sortOrder", direction: "asc" }], filters: { accuracy: 1, isPublished: true } }), { data: [], total: 0 });
+  return successResponse(normalizeAdminItems("world-clocks", result.data ?? []), result.total ?? 0);
+}
+
+async function loadCountryCities(body = {}) {
+  const countryId = sqlNumber(body.countryId);
+  if (countryId === "NULL") return successResponse([], 0);
+
+  const result = await runJsonSql(
+    `
+      SELECT JSON_OBJECT(
+        'data', COALESCE((
+          SELECT CAST(CONCAT('[', GROUP_CONCAT(row_json ORDER BY sort_order ASC, name_en ASC SEPARATOR ','), ']') AS JSON)
+          FROM (
+            SELECT id, name_en, sort_order, JSON_OBJECT('id', id, 'city', name_fa, 'cityEn', name_en, 'timezone', timezone, 'isTradeCity', IF(is_trade_city = 1, TRUE, FALSE)) AS row_json
+            FROM cities
+            WHERE country_id = ${countryId} AND accuracy = 1
+          ) ordered_cities
+        ), JSON_ARRAY()),
+        'total', (SELECT COUNT(1) FROM cities WHERE country_id = ${countryId} AND accuracy = 1)
+      );
+    `,
+    { data: [], total: 0 }
+  );
+  return successResponse(result.data ?? [], result.total ?? 0);
+}
+
 async function handleAdminResource(resource, action, body) {
   if (resource === "api-services" && action === "loadPage") return { status: 200, payload: successResponse(serviceCatalog, serviceCatalog.length) };
   if (!adminResources.has(resource)) return { status: 404, payload: errorResponse("Unknown admin resource.") };
+  if (resource === "countries" && action === "cities") return { status: 200, payload: await loadCountryCities(body) };
 
   if (action === "loadPage") {
     const result = await runJsonSql(adminListQuery(resource, body), { data: [], total: 0 });
@@ -460,6 +527,24 @@ const server = http.createServer(async (request, response) => {
       sendJson(response, 200, await loadPublicServices());
     } catch (error) {
       sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "Service list failed"));
+    }
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/v1/menus") {
+    try {
+      sendJson(response, 200, await loadPublicMenus());
+    } catch (error) {
+      sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "Menu list failed"));
+    }
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/v1/world-clocks") {
+    try {
+      sendJson(response, 200, await loadPublicWorldClocks());
+    } catch (error) {
+      sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "World clock list failed"));
     }
     return;
   }

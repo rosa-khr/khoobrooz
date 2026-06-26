@@ -263,6 +263,141 @@ ON DUPLICATE KEY UPDATE
   accuracy = VALUES(accuracy),
   modified_at = UTC_TIMESTAMP();
 
+INSERT INTO cities (country_id, name_fa, name_en, timezone, is_trade_city, sort_order, accuracy, created_by)
+SELECT c.id, city.name_fa, city.name_en, city.timezone, city.is_trade_city, city.sort_order, 1, 1
+FROM countries c
+JOIN (
+  SELECT 'IR' AS iso2, 'تهران' AS name_fa, 'Tehran' AS name_en, 'Asia/Tehran' AS timezone, 1 AS is_trade_city, 10 AS sort_order
+  UNION ALL SELECT 'AE', 'دبی', 'Dubai', 'Asia/Dubai', 1, 10
+  UNION ALL SELECT 'AE', 'ابوظبی', 'Abu Dhabi', 'Asia/Dubai', 1, 20
+  UNION ALL SELECT 'CN', 'شانگهای', 'Shanghai', 'Asia/Shanghai', 1, 10
+  UNION ALL SELECT 'CN', 'پکن', 'Beijing', 'Asia/Shanghai', 1, 20
+  UNION ALL SELECT 'CN', 'گوانگژو', 'Guangzhou', 'Asia/Shanghai', 1, 30
+  UNION ALL SELECT 'CN', 'شنژن', 'Shenzhen', 'Asia/Shanghai', 1, 40
+  UNION ALL SELECT 'CN', 'ییوو', 'Yiwu', 'Asia/Shanghai', 1, 50
+  UNION ALL SELECT 'CN', 'نینگبو', 'Ningbo', 'Asia/Shanghai', 1, 60
+  UNION ALL SELECT 'CN', 'چینگ‌دائو', 'Qingdao', 'Asia/Shanghai', 1, 70
+  UNION ALL SELECT 'TR', 'استانبول', 'Istanbul', 'Europe/Istanbul', 1, 10
+  UNION ALL SELECT 'TR', 'آنکارا', 'Ankara', 'Europe/Istanbul', 1, 20
+  UNION ALL SELECT 'TR', 'مرسین', 'Mersin', 'Europe/Istanbul', 1, 30
+  UNION ALL SELECT 'TR', 'ازمیر', 'Izmir', 'Europe/Istanbul', 1, 40
+  UNION ALL SELECT 'IQ', 'بغداد', 'Baghdad', 'Asia/Baghdad', 1, 10
+  UNION ALL SELECT 'IQ', 'بصره', 'Basra', 'Asia/Baghdad', 1, 20
+  UNION ALL SELECT 'IQ', 'اربیل', 'Erbil', 'Asia/Baghdad', 1, 30
+  UNION ALL SELECT 'RU', 'مسکو', 'Moscow', 'Europe/Moscow', 1, 10
+  UNION ALL SELECT 'RU', 'سن‌پترزبورگ', 'Saint Petersburg', 'Europe/Moscow', 1, 20
+  UNION ALL SELECT 'DE', 'فرانکفورت', 'Frankfurt', 'Europe/Berlin', 1, 10
+  UNION ALL SELECT 'DE', 'هامبورگ', 'Hamburg', 'Europe/Berlin', 1, 20
+  UNION ALL SELECT 'DE', 'برلین', 'Berlin', 'Europe/Berlin', 1, 30
+  UNION ALL SELECT 'GB', 'لندن', 'London', 'Europe/London', 1, 10
+  UNION ALL SELECT 'US', 'نیویورک', 'New York', 'America/New_York', 1, 10
+  UNION ALL SELECT 'US', 'لس‌آنجلس', 'Los Angeles', 'America/Los_Angeles', 1, 20
+  UNION ALL SELECT 'US', 'شیکاگو', 'Chicago', 'America/Chicago', 1, 30
+) city ON city.iso2 = c.iso2
+ON DUPLICATE KEY UPDATE
+  name_fa = VALUES(name_fa),
+  timezone = VALUES(timezone),
+  is_trade_city = VALUES(is_trade_city),
+  sort_order = VALUES(sort_order),
+  accuracy = VALUES(accuracy),
+  modified_at = UTC_TIMESTAMP();
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'خانه', '/', 'home', NULL, 1, 10, 'خوبروز | خدمات بازرگانی', 'صفحه اصلی خوبروز برای خدمات بازرگانی، واردات، صادرات و ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'home');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'خدمات', '/services', 'services', NULL, 1, 20, 'خدمات بازرگانی خوبروز', 'خدمات واردات، صادرات، ترخیص کالا، کارگو و حمل تجاری.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'services');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'مقالات', '/knowledge', 'knowledge', NULL, 1, 30, 'مقالات و دانش تجاری', 'مقالات آموزشی و کاربردی درباره تجارت بین‌المللی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'knowledge');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'خبرها', '/news', 'news', NULL, 1, 40, 'خبرهای تجارت و بازار', 'خبرهای مرتبط با تجارت، بازار و بازرگانی خارجی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'news');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'ترخیص کالا', '/services/customs-clearance', 'customs-clearance', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 21, 'ترخیص کالا', 'بررسی مسیر ترخیص کالا، مدارک و پیگیری امور گمرکی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'customs-clearance');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'حواله یوآن چین', '/services/yuan-transfer', 'yuan-transfer', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 22, 'حواله یوآن چین | پرداخت RMB برای واردات', 'بررسی مسیر حواله یوآن چین برای خرید خارجی، پرداخت به تامین‌کننده و هماهنگی پرداخت‌های وارداتی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'yuan-transfer');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'ثبت سفارش واردات', '/services', 'import-registration-menu', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 23, 'ثبت سفارش واردات | پیش‌نیازها و مدارک', 'آشنایی با مسیر ثبت سفارش واردات، مدارک پایه و ارتباط آن با واردات رسمی و ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'import-registration-menu');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'واردات کالا', '/services', 'import-services-menu', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 24, 'واردات کالا | مسیر بازرگانی و اسناد', 'بررسی مسیر واردات کالا از انتخاب تامین‌کننده تا حمل، اسناد، ثبت سفارش و ترخیص.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'import-services-menu');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'واردات از چین', '/services', 'china-import-menu', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 25, 'واردات از چین | خرید، حمل و ترخیص', 'راهنمای مسیر واردات از چین شامل تامین‌کننده، خرید، پرداخت، حمل و آماده‌سازی ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'china-import-menu');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'کارگو چین', '/services', 'china-cargo-menu', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 26, 'کارگو چین | حمل کالا از چین', 'بررسی مسیر کارگو چین، عوامل موثر بر هزینه حمل و ارتباط آن با اسناد و ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'china-cargo-menu');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'صادرات کالا', '/services', 'export-services-menu', (SELECT id FROM menus m WHERE m.slug = 'services' LIMIT 1), 2, 27, 'صادرات کالا | اسناد و مسیر فروش خارجی', 'مرور اسناد صادرات، آماده‌سازی کالا، مذاکره با خریدار و پیگیری مسیر صادرات.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'export-services-menu');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'فایل‌ها و اسناد', '/documents', 'documents', NULL, 1, 40, 'فایل‌ها و اسناد تجاری | نمونه سند واردات و صادرات', 'نمونه فایل‌ها، چک‌لیست‌ها و اسناد کاربردی برای واردات، صادرات و ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'documents');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'بازار', '/markets/currency-rates', 'markets', NULL, 1, 50, 'نرخ ارز و بازارهای تجاری | خوبروز', 'نمایش نرخ ارزهای مهم، طلا و شاخص‌های پرکاربرد برای رصد عمومی بازار تجارت.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'markets');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'قیمت ارزهای رایج', '/markets/currency-rates', 'currency-rates', (SELECT id FROM menus m WHERE m.slug = 'markets' LIMIT 1), 2, 51, 'قیمت ارزهای رایج تجارت | دلار، یورو و یوان', 'جدول نرخ ارزهای پرکاربرد تجارت خارجی برای رصد دلار، یورو، درهم، یوان و سایر نرخ‌های مهم.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'currency-rates');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'درباره خوبروز', '/about', 'about', NULL, 1, 60, 'درباره خوبروز | خدمات بازرگانی و آموزش تجارت', 'معرفی خوبروز، رویکرد خدمات بازرگانی، آموزش تجارت خارجی و مسیرهای ارتباطی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'about');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'معرفی خوبروز', '/about', 'about-us', (SELECT id FROM menus m WHERE m.slug = 'about' LIMIT 1), 2, 61, 'معرفی خوبروز | رویکرد و ارزش‌ها', 'آشنایی با جایگاه برند خوبروز، تمرکز خدماتی و ارزش‌های محتوایی و بازرگانی.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'about-us');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'تماس با ما', '/contact', 'contact', (SELECT id FROM menus m WHERE m.slug = 'about' LIMIT 1), 2, 62, 'تماس با خوبروز | مشاوره بازرگانی و ترخیص', 'مسیر تماس با خوبروز برای مشاوره خدمات بازرگانی، واردات، صادرات، ترخیص کالا و حواله یوآن.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'contact');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'سوالات متداول', '/faq', 'faq', (SELECT id FROM menus m WHERE m.slug = 'about' LIMIT 1), 2, 63, 'سوالات متداول تجارت خارجی | خوبروز', 'پاسخ پرسش‌های رایج درباره واردات، صادرات، ترخیص کالا، کارگو چین و خدمات خوبروز.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'faq');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'آموزش صادرات و واردات', '/education', 'education', (SELECT id FROM menus m WHERE m.slug = 'knowledge' LIMIT 1), 2, 31, 'آموزش صادرات و واردات | مفاهیم و اسناد تجارت خارجی', 'آموزش مفاهیم پایه واردات، صادرات، ثبت سفارش، حمل، اسناد تجاری و ترخیص کالا.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'education');
+
+INSERT INTO menus (title, url, slug, parent_id, level, sort_order, seo_title, seo_description, is_published, accuracy, created_by)
+SELECT 'دانشنامه تجارت', '/knowledge', 'knowledge-base', (SELECT id FROM menus m WHERE m.slug = 'knowledge' LIMIT 1), 2, 32, 'دانشنامه تجارت خارجی | اصطلاحات واردات و گمرک', 'اصطلاحات کاربردی تجارت خارجی، گمرک، واردات، صادرات، پروفرما، پکینگ لیست و HS Code.', 1, 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM menus WHERE slug = 'knowledge-base');
+
+UPDATE menus
+SET title='آموزش و دانشنامه', url='/knowledge', parent_id=NULL, level=1, sort_order=30, seo_title='آموزش و دانشنامه تجارت خارجی | خوبروز', seo_description='آموزش واردات و صادرات، دانشنامه تجارت خارجی، اصطلاحات گمرکی و محتوای کاربردی بازرگانی.', is_published=1, accuracy=1, modified_at=UTC_TIMESTAMP()
+WHERE slug='knowledge';
+
+UPDATE menus
+SET parent_id=(SELECT id FROM (SELECT id FROM menus WHERE slug='knowledge' LIMIT 1) AS parent_menu), level=2, sort_order=33, title='بخشنامه‌ها و اخبار', url='/news', seo_title='بخشنامه‌ها و اخبار گمرکی | خوبروز', seo_description='اخبار و بخشنامه‌های مرتبط با واردات، صادرات، ثبت سفارش، گمرک و تجارت خارجی.', is_published=1, accuracy=1, modified_at=UTC_TIMESTAMP()
+WHERE slug='news';
+
+UPDATE menus
+SET title='خانه', url='/', parent_id=NULL, level=1, sort_order=10, seo_title='خوبروز | خدمات بازرگانی، واردات و ترخیص کالا', seo_description='خوبروز برای خدمات بازرگانی، واردات، صادرات، ترخیص کالا، حواله یوآن و آموزش تجارت خارجی.', is_published=1, accuracy=1, modified_at=UTC_TIMESTAMP()
+WHERE slug='home';
+
+UPDATE menus
+SET title='خدمات', url='/services', parent_id=NULL, level=1, sort_order=20, seo_title='خدمات بازرگانی خوبروز | واردات، صادرات، ترخیص و حواله یوآن', seo_description='خدمات خوبروز شامل ترخیص کالا، واردات از چین، کارگو، صادرات، ثبت سفارش و حواله یوآن چین است.', is_published=1, accuracy=1, modified_at=UTC_TIMESTAMP()
+WHERE slug='services';
+
 INSERT INTO tags (title, slug, accuracy, created_by) VALUES
   ('ترخیص کالا', 'customs-clearance', 1, 1),
   ('واردات', 'import', 1, 1),
@@ -275,6 +410,7 @@ INSERT INTO services (title, slug, short_title, summary, is_published, accuracy,
   ('ثبت سفارش واردات', 'import-registration', 'بررسی مسیر', 'مرور پیش‌نیازهای ثبت سفارش، مدارک پایه و ارتباط آن با واردات رسمی.', 1, 1, 1),
   ('واردات کالا', 'import-services', 'مشاهده خدمت', 'بررسی مسیر واردات از انتخاب کالا و تامین‌کننده تا حمل، اسناد و تحویل نهایی.', 1, 1, 1),
   ('واردات از چین', 'china-import', 'شروع بررسی', 'بررسی منبع‌یابی، خرید، حمل، کارگو و ملاحظات ورود کالا از چین به ایران.', 1, 1, 1),
+  ('حواله یوآن چین', 'yuan-transfer', 'بررسی حواله', 'بررسی مسیر پرداخت یوآن چین برای سفارش‌های وارداتی، خرید از تامین‌کننده و هماهنگی پرداخت RMB.', 1, 1, 1),
   ('کارگو چین', 'china-cargo', 'جزئیات کارگو', 'توضیح مسیرهای کارگو، عوامل هزینه، ریسک‌ها و ارتباط آن با فرایند ترخیص.', 1, 1, 1),
   ('صادرات کالا', 'export-services', 'مسیر صادرات', 'مرور اسناد پایه صادرات، آماده‌سازی کالا، مذاکره و پیگیری مسیر فروش خارجی.', 1, 1, 1)
 ON DUPLICATE KEY UPDATE
@@ -284,3 +420,55 @@ ON DUPLICATE KEY UPDATE
   is_published = VALUES(is_published),
   accuracy = VALUES(accuracy),
   modified_at = UTC_TIMESTAMP();
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'تهران', 'ایران', 'IR', 'Asia/Tehran', 'دفتر مرکزی', 'IR', 10, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'IR' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Asia/Tehran' AND w.city = 'تهران');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'دبی', 'امارات', 'AE', 'Asia/Dubai', 'حواله و واردات', 'AE', 20, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'AE' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Asia/Dubai' AND w.city = 'دبی');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'شانگهای', 'چین', 'CN', 'Asia/Shanghai', 'سورسینگ و کارگو', 'CN', 30, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'CN' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Asia/Shanghai' AND w.city = 'شانگهای');
+
+UPDATE world_clock_items
+SET accuracy = 2, is_published = 0, modified_at = UTC_TIMESTAMP(), modified_by = 1
+WHERE country_code = 'CN' AND city IN ('Beijing', 'پکن');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'استانبول', 'ترکیه', 'TR', 'Europe/Istanbul', 'تجارت منطقه‌ای', 'TR', 40, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'TR' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Europe/Istanbul' AND w.city = 'استانبول');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'بغداد', 'عراق', 'IQ', 'Asia/Baghdad', 'صادرات و منطقه', 'IQ', 50, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'IQ' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Asia/Baghdad' AND w.city = 'بغداد');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'مسکو', 'روسیه', 'RU', 'Europe/Moscow', 'تجارت اوراسیا', 'RU', 55, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'RU' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Europe/Moscow' AND w.city = 'مسکو');
+
+INSERT INTO world_clock_items (country_id, city, country, country_code, timezone, market_label, flag, sort_order, is_published, accuracy, created_by)
+SELECT c.id, 'فرانکفورت', 'آلمان', 'DE', 'Europe/Berlin', 'اروپا و تجارت مالی', 'DE', 60, 1, 1, 1
+FROM countries c
+WHERE c.iso2 = 'DE' AND NOT EXISTS (SELECT 1 FROM world_clock_items w WHERE w.timezone = 'Europe/Berlin' AND w.city = 'فرانکفورت');
+
+UPDATE world_clock_items
+SET accuracy = 2, is_published = 0, modified_at = UTC_TIMESTAMP(), modified_by = 1
+WHERE country_code = 'DE' AND city = 'هامبورگ';
+
+UPDATE world_clock_items w
+JOIN countries c ON c.id = w.country_id
+JOIN cities ci ON ci.country_id = c.id AND ci.name_fa = w.city AND ci.accuracy = 1
+SET w.city_id = ci.id,
+    w.timezone = ci.timezone,
+    w.modified_at = UTC_TIMESTAMP(),
+    w.modified_by = 1
+WHERE w.city_id IS NULL OR w.timezone <> ci.timezone;

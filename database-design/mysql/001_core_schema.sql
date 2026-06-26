@@ -42,6 +42,12 @@ CREATE TABLE IF NOT EXISTS tags (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(180) NOT NULL,
   slug VARCHAR(180) NOT NULL UNIQUE,
+  body LONGTEXT NULL,
+  seo_title VARCHAR(255) NULL,
+  seo_description VARCHAR(500) NULL,
+  is_published TINYINT(1) NOT NULL DEFAULT 0,
+  published_at TIMESTAMP NULL,
+  published_by BIGINT UNSIGNED NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by BIGINT UNSIGNED NULL,
   modified_at TIMESTAMP NULL,
@@ -96,7 +102,7 @@ CREATE TABLE IF NOT EXISTS articles (
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
   UNIQUE KEY uq_articles_locale_slug (locale, slug),
-  CONSTRAINT fk_articles_category FOREIGN KEY (category_id) REFERENCES categories(id),
+  CONSTRAINT fk_articles_category FOREIGN KEY (category_id) REFERENCES menus(id),
   CONSTRAINT chk_articles_accuracy CHECK (accuracy IN (0, 1, 2))
 );
 
@@ -136,7 +142,7 @@ CREATE TABLE IF NOT EXISTS news (
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
   UNIQUE KEY uq_news_locale_slug (locale, slug),
-  CONSTRAINT fk_news_category FOREIGN KEY (category_id) REFERENCES categories(id),
+  CONSTRAINT fk_news_category FOREIGN KEY (category_id) REFERENCES menus(id),
   CONSTRAINT chk_news_accuracy CHECK (accuracy IN (0, 1, 2))
 );
 
@@ -176,9 +182,29 @@ CREATE TABLE IF NOT EXISTS countries (
   CONSTRAINT chk_countries_accuracy CHECK (accuracy IN (0, 1, 2))
 );
 
+CREATE TABLE IF NOT EXISTS cities (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  country_id BIGINT UNSIGNED NOT NULL,
+  name_fa VARCHAR(160) NOT NULL,
+  name_en VARCHAR(160) NOT NULL,
+  timezone VARCHAR(120) NOT NULL,
+  is_trade_city TINYINT(1) NOT NULL DEFAULT 0,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT UNSIGNED NULL,
+  modified_at TIMESTAMP NULL,
+  modified_by BIGINT UNSIGNED NULL,
+  accuracy TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  UNIQUE KEY uq_cities_country_name (country_id, name_en),
+  KEY ix_cities_country_sort (country_id, accuracy, sort_order),
+  CONSTRAINT fk_cities_country FOREIGN KEY (country_id) REFERENCES countries(id),
+  CONSTRAINT chk_cities_accuracy CHECK (accuracy IN (0, 1, 2))
+);
+
 CREATE TABLE IF NOT EXISTS world_clock_items (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   country_id BIGINT UNSIGNED NULL,
+  city_id BIGINT UNSIGNED NULL,
   city VARCHAR(160) NOT NULL,
   country VARCHAR(160) NOT NULL,
   country_code CHAR(2) NULL,
@@ -195,5 +221,6 @@ CREATE TABLE IF NOT EXISTS world_clock_items (
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
   CONSTRAINT fk_world_clock_country FOREIGN KEY (country_id) REFERENCES countries(id),
+  CONSTRAINT fk_world_clock_city FOREIGN KEY (city_id) REFERENCES cities(id),
   CONSTRAINT chk_world_clock_accuracy CHECK (accuracy IN (0, 1, 2))
 );
