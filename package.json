@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:backend": "node backend/dev-tgju-server.mjs",
+    "dev:backend": "node --env-file=.env backend/dev-tgju-server.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

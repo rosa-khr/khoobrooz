@@ -1,15 +1,14 @@
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: khoobrooz-sqlserver
     restart: unless-stopped
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_PID: Developer
-      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:-ChangeThisStrongPassword!2026}
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:?SQLSERVER_SA_PASSWORD must be set}
       TZ: Asia/Tehran
     ports:
-      - "${SQLSERVER_PORT:-1433}:1433"
+      - "${SQLSERVER_BIND_ADDRESS:-127.0.0.1}:${SQLSERVER_PORT:-1433}:1433"
     volumes:
       - khoobrooz_sqlserver_data:/var/opt/mssql
     healthcheck:
