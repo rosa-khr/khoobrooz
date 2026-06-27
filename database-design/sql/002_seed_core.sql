@@ -27,8 +27,11 @@ VALUES
 
 INSERT INTO dbo.settings ([group], [key], [value], [type], locale, accuracy)
 VALUES
-  (N'contact', N'clearance_phone', N'0912 470 1423', N'string', 'fa', 1),
-  (N'contact', N'general_phone', N'0910 306 0396', N'string', 'fa', 1),
+  (N'contact', N'clearance_phone', N'0910 306 0306', N'string', 'fa', 1),
+  (N'contact', N'general_phone', N'0910 306 0306', N'string', 'fa', 1),
+  (N'contact', N'office_phone', N'021 2265 0282~3', N'string', 'fa', 1),
+  (N'contact', N'fax', N'021 2620 4504', N'string', 'fa', 1),
+  (N'contact', N'address', N'تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی', N'string', 'fa', 1),
   (N'contact', N'email', N'info@khoobrooz.com', N'string', 'fa', 1),
   (N'seo', N'default_title', N'خوبروز', N'string', 'fa', 1),
   (N'seo', N'default_description', N'خدمات بازرگانی، ترخیص، آموزش و محتوای تجاری', N'string', 'fa', 1);
@@ -36,9 +39,10 @@ VALUES
 INSERT INTO dbo.social_links
   (title, platform, url, icon, username, sort_order, is_published, published_at, accuracy)
 VALUES
-  (N'واتساپ', N'whatsapp', N'https://wa.me/989124701423', N'whatsapp', N'09124701423', 10, 1, SYSUTCDATETIME(), 1),
-  (N'بله', N'bale', N'https://ble.ir/khoobrooz', N'bale', N'khoobrooz', 20, 1, SYSUTCDATETIME(), 1),
-  (N'ایمیل', N'email', N'mailto:info@khoobrooz.com', N'email', N'info@khoobrooz.com', 30, 1, SYSUTCDATETIME(), 1);
+  (N'واتساپ', N'whatsapp', N'https://wa.me/989103060306', N'whatsapp', N'09103060306', 10, 1, SYSUTCDATETIME(), 1),
+  (N'تلگرام', N'telegram', N'https://t.me/khoobrooz_trade', N'telegram', N'khoobrooz_trade', 20, 1, SYSUTCDATETIME(), 1),
+  (N'بله', N'bale', N'https://ble.ir/khoobrooz_trade', N'bale', N'khoobrooz_trade', 30, 1, SYSUTCDATETIME(), 1),
+  (N'ایمیل', N'email', N'mailto:info@khoobrooz.com', N'email', N'info@khoobrooz.com', 40, 1, SYSUTCDATETIME(), 1);
 
 INSERT INTO dbo.market_rate_sources ([key], name, base_url, is_active, accuracy)
 VALUES

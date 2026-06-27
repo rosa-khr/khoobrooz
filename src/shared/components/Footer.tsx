@@ -7,15 +7,17 @@ import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import { SeaRoutePattern } from "@/shared/components/SeaRoutePattern";
 
 const primaryContactItems = [
+  { value: contact.officePhone, href: contact.officePhoneUrl, icon: Phone },
   { value: contact.clearancePhone, href: contact.clearancePhoneUrl, icon: Phone },
   { value: contact.generalWhatsapp, href: contact.generalWhatsappUrl, icon: MessageCircle },
+  { value: contact.fax, href: contact.faxUrl, icon: Phone },
   { value: contact.email, href: contact.emailUrl, icon: Mail }
 ];
 
 const socialItems = [
   {
     label: "تلگرام",
-    value: "t.me/khoobrooz",
+    value: `t.me/${contact.telegramName}`,
     href: contact.telegramUrl,
     icon: Send
   },
@@ -96,7 +98,7 @@ export async function Footer({ locale }: { locale: Locale }) {
           <p className="text-sm leading-7 text-blue-200">{dictionary.footer.intro}</p>
           <p className="mt-4 inline-flex items-start gap-2 text-sm leading-7 text-blue-200">
             <MapPin className="mt-1 size-4 shrink-0 text-accent" aria-hidden="true" />
-            <span>{dictionary.footer.address}</span>
+            <span>{contact.address}</span>
           </p>
         </div>
         <div className="min-w-0">
