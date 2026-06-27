@@ -11,6 +11,7 @@ import { WorldTimeWidget } from "@/shared/components/WorldTimeWidget";
 import { ProcessFlow } from "@/shared/components/ProcessFlow";
 import { ServiceMarquee } from "@/shared/components/ServiceMarquee";
 import { MarketRatesMarquee } from "@/shared/components/MarketRatesMarquee";
+import { RemittanceSlider } from "@/shared/components/RemittanceSlider";
 import clearanceContainerCloseup from "@/assets/images/banner-library/container-clearance-closeup.jpg";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
@@ -77,6 +78,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: L
       <MarketRatesMarquee locale={locale} rates={[]} />
 
       <WorldTimeWidget />
+
+      <RemittanceSlider locale={locale} />
 
       <section className="process-section bg-background py-14 md:py-20">
         <div className="container relative z-10">
