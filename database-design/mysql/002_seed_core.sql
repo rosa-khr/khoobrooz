@@ -1,3 +1,5 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 USE khoobrooz;
 
 INSERT INTO countries (name_fa, name_en, iso2, iso3, phone_code, capital, currency_code, timezone_default, flag, sort_order, accuracy)
