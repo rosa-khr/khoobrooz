@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Printer, Send, Smartphone } from "lucide-react";
 import { Locale, contact, localizedPath } from "@/core/lib/site";
 import { getDictionary } from "@/data/i18n";
 import { localizedNavigation, type NavigationItem } from "@/data/navigation";
@@ -8,9 +8,8 @@ import { SeaRoutePattern } from "@/shared/components/SeaRoutePattern";
 
 const primaryContactItems = [
   { value: contact.officePhone, href: contact.officePhoneUrl, icon: Phone },
-  { value: contact.clearancePhone, href: contact.clearancePhoneUrl, icon: Phone },
-  { value: contact.generalWhatsapp, href: contact.generalWhatsappUrl, icon: MessageCircle },
-  { value: contact.fax, href: contact.faxUrl, icon: Phone },
+  { value: contact.clearancePhone, href: contact.clearancePhoneUrl, icon: Smartphone },
+  { value: contact.fax, href: contact.faxUrl, icon: Printer },
   { value: contact.email, href: contact.emailUrl, icon: Mail }
 ];
 
