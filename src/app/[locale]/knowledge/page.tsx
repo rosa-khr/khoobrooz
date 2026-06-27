@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
 import { Card } from "@/shared/components/Card";
 import { PageHero } from "@/shared/components/PageHero";
-import { knowledgeItems } from "@/data/content";
+import { Locale } from "@/core/lib/site";
+import { getDictionary } from "@/data/i18n";
 
-export const metadata: Metadata = {
-  title: "دانشنامه تجارت | اصطلاحات واردات، صادرات و گمرک",
-  description: "دانشنامه تجارت خوبروز شامل اصطلاحات گمرکی، واردات، صادرات، پروفرما، پکینگ لیست، بارنامه، HS Code و سامانه جامع تجارت."
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const page = getDictionary(locale).pages.knowledge;
+  return { title: page.title, description: page.description };
+}
 
-export default function KnowledgePage() {
+export default async function KnowledgePage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const dictionary = getDictionary(locale);
+  const page = dictionary.pages.knowledge;
+
   return (
     <main>
-      <PageHero eyebrow="دانشنامه تجارت" title="دانشنامه تجارت">
-        <p>محتوای دانشنامه برای جذب جستجوهای اطلاعاتی و لینک دادن به صفحات خدمات و فایل‌های تجاری ساخته می‌شود.</p>
+      <PageHero eyebrow={page.eyebrow} title={page.heading}>
+        <p>{page.body}</p>
       </PageHero>
-      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4 md:grid-cols-3">{knowledgeItems.map((item) => <Card key={item.title}><h2 className="mb-2 text-xl font-black text-primary">{item.title}</h2><p className="text-muted">{item.description}</p></Card>)}</div></section>
+      <section className="bg-white py-16 md:py-20"><div className="container grid gap-4 md:grid-cols-3">{dictionary.knowledgeItems.map((item) => <Card key={item.title}><h2 className="mb-2 text-xl font-black text-primary">{item.title}</h2><p className="text-muted">{item.description}</p></Card>)}</div></section>
     </main>
   );
 }
