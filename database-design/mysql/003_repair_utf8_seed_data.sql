@@ -12,6 +12,10 @@ UPDATE cities
 SET name_fa = CONVERT(BINARY CONVERT(name_fa USING latin1) USING utf8mb4)
 WHERE name_fa REGEXP '[ØÙÚÛ]';
 
+UPDATE categories
+SET title = CONVERT(BINARY CONVERT(title USING latin1) USING utf8mb4)
+WHERE title REGEXP '[ØÙÚÛ]';
+
 UPDATE menus
 SET
   title = IF(title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(title USING latin1) USING utf8mb4), title),
@@ -28,6 +32,32 @@ SET
   seo_title = IF(seo_title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_title USING latin1) USING utf8mb4), seo_title),
   seo_description = IF(seo_description REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_description USING latin1) USING utf8mb4), seo_description)
 WHERE title REGEXP '[ØÙÚÛ]'
+   OR body REGEXP '[ØÙÚÛ]'
+   OR seo_title REGEXP '[ØÙÚÛ]'
+   OR seo_description REGEXP '[ØÙÚÛ]';
+
+UPDATE articles
+SET
+  title = IF(title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(title USING latin1) USING utf8mb4), title),
+  excerpt = IF(excerpt REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(excerpt USING latin1) USING utf8mb4), excerpt),
+  body = IF(body REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(body USING latin1) USING utf8mb4), body),
+  seo_title = IF(seo_title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_title USING latin1) USING utf8mb4), seo_title),
+  seo_description = IF(seo_description REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_description USING latin1) USING utf8mb4), seo_description)
+WHERE title REGEXP '[ØÙÚÛ]'
+   OR excerpt REGEXP '[ØÙÚÛ]'
+   OR body REGEXP '[ØÙÚÛ]'
+   OR seo_title REGEXP '[ØÙÚÛ]'
+   OR seo_description REGEXP '[ØÙÚÛ]';
+
+UPDATE news
+SET
+  title = IF(title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(title USING latin1) USING utf8mb4), title),
+  summary = IF(summary REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(summary USING latin1) USING utf8mb4), summary),
+  body = IF(body REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(body USING latin1) USING utf8mb4), body),
+  seo_title = IF(seo_title REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_title USING latin1) USING utf8mb4), seo_title),
+  seo_description = IF(seo_description REGEXP '[ØÙÚÛ]', CONVERT(BINARY CONVERT(seo_description USING latin1) USING utf8mb4), seo_description)
+WHERE title REGEXP '[ØÙÚÛ]'
+   OR summary REGEXP '[ØÙÚÛ]'
    OR body REGEXP '[ØÙÚÛ]'
    OR seo_title REGEXP '[ØÙÚÛ]'
    OR seo_description REGEXP '[ØÙÚÛ]';
