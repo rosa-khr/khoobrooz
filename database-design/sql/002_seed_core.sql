@@ -25,24 +25,13 @@ VALUES
   (N'مدیریت نرخ بازار', N'market.manage', N'market', N'مدیریت ابزارهای نرخ بازار', 1),
   (N'مدیریت تنظیمات', N'settings.manage', N'settings', N'مدیریت تنظیمات عمومی سایت', 1);
 
-INSERT INTO dbo.countries
-  (name_fa, name_en, iso2, iso3, phone_code, capital, currency_code, timezone_default, flag, sort_order, accuracy)
-VALUES
-  (N'ایران', N'Iran', 'IR', 'IRN', '+98', N'تهران', 'IRR', 'Asia/Tehran', N'🇮🇷', 10, 1),
-  (N'امارات متحده عربی', N'United Arab Emirates', 'AE', 'ARE', '+971', N'ابوظبی', 'AED', 'Asia/Dubai', N'🇦🇪', 20, 1),
-  (N'چین', N'China', 'CN', 'CHN', '+86', N'پکن', 'CNY', 'Asia/Shanghai', N'🇨🇳', 30, 1),
-  (N'ترکیه', N'Turkey', 'TR', 'TUR', '+90', N'آنکارا', 'TRY', 'Europe/Istanbul', N'🇹🇷', 40, 1),
-  (N'عراق', N'Iraq', 'IQ', 'IRQ', '+964', N'بغداد', 'IQD', 'Asia/Baghdad', N'🇮🇶', 50, 1),
-  (N'روسیه', N'Russia', 'RU', 'RUS', '+7', N'مسکو', 'RUB', 'Europe/Moscow', N'🇷🇺', 60, 1),
-  (N'آلمان', N'Germany', 'DE', 'DEU', '+49', N'برلین', 'EUR', 'Europe/Berlin', N'🇩🇪', 70, 1),
-  (N'هند', N'India', 'IN', 'IND', '+91', N'دهلی نو', 'INR', 'Asia/Kolkata', N'🇮🇳', 80, 1),
-  (N'انگلستان', N'United Kingdom', 'GB', 'GBR', '+44', N'لندن', 'GBP', 'Europe/London', N'🇬🇧', 90, 1),
-  (N'ایالات متحده آمریکا', N'United States', 'US', 'USA', '+1', N'واشنگتن', 'USD', 'America/New_York', N'🇺🇸', 100, 1);
-
 INSERT INTO dbo.settings ([group], [key], [value], [type], locale, accuracy)
 VALUES
-  (N'contact', N'clearance_phone', N'0912 470 1423', N'string', 'fa', 1),
-  (N'contact', N'general_phone', N'0910 306 0396', N'string', 'fa', 1),
+  (N'contact', N'clearance_phone', N'0910 306 0306', N'string', 'fa', 1),
+  (N'contact', N'general_phone', N'0910 306 0306', N'string', 'fa', 1),
+  (N'contact', N'office_phone', N'021 2265 0282~3', N'string', 'fa', 1),
+  (N'contact', N'fax', N'021 2620 4504', N'string', 'fa', 1),
+  (N'contact', N'address', N'تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی', N'string', 'fa', 1),
   (N'contact', N'email', N'info@khoobrooz.com', N'string', 'fa', 1),
   (N'seo', N'default_title', N'خوبروز', N'string', 'fa', 1),
   (N'seo', N'default_description', N'خدمات بازرگانی، ترخیص، آموزش و محتوای تجاری', N'string', 'fa', 1);
@@ -50,13 +39,14 @@ VALUES
 INSERT INTO dbo.social_links
   (title, platform, url, icon, username, sort_order, is_published, published_at, accuracy)
 VALUES
-  (N'واتساپ', N'whatsapp', N'https://wa.me/989124701423', N'whatsapp', N'09124701423', 10, 1, SYSUTCDATETIME(), 1),
-  (N'بله', N'bale', N'https://ble.ir/khoobrooz', N'bale', N'khoobrooz', 20, 1, SYSUTCDATETIME(), 1),
-  (N'ایمیل', N'email', N'mailto:info@khoobrooz.com', N'email', N'info@khoobrooz.com', 30, 1, SYSUTCDATETIME(), 1);
+  (N'واتساپ', N'whatsapp', N'https://wa.me/989103060306', N'whatsapp', N'09103060306', 10, 1, SYSUTCDATETIME(), 1),
+  (N'تلگرام', N'telegram', N'https://t.me/khoobrooz_trade', N'telegram', N'khoobrooz_trade', 20, 1, SYSUTCDATETIME(), 1),
+  (N'بله', N'bale', N'https://ble.ir/khoobrooz_trade', N'bale', N'khoobrooz_trade', 30, 1, SYSUTCDATETIME(), 1),
+  (N'ایمیل', N'email', N'mailto:info@khoobrooz.com', N'email', N'info@khoobrooz.com', 40, 1, SYSUTCDATETIME(), 1);
 
 INSERT INTO dbo.market_rate_sources ([key], name, base_url, is_active, accuracy)
 VALUES
-  (N'tgju', N'TGJU', N'https://call2.tgju.org/ajax.json', 1, 1),
+  (N'tgju', N'internal_market_rate_source', NULL, 1, 1),
   (N'cbi', N'بانک مرکزی', N'https://www.cbi.ir', 0, 1);
 
 DECLARE @tgju_id BIGINT = (SELECT id FROM dbo.market_rate_sources WHERE [key] = N'tgju');

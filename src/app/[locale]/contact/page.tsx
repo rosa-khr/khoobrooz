@@ -27,8 +27,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           <Card>
             <h2 className="mb-4 text-xl font-black text-primary">{page.methods}</h2>
             <div className="grid gap-3">
-              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.generalWhatsappUrl}><strong>{page.generalWhatsapp}</strong><span>{contact.generalWhatsapp}</span></a>
-              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.clearancePhoneUrl}><strong>{page.customsLine}</strong><span>{contact.clearancePhone}</span></a>
+              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.generalWhatsappUrl}><strong>{page.generalWhatsapp}</strong><span dir="ltr">{contact.generalWhatsapp}</span></a>
+              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.clearancePhoneUrl}><strong>{page.customsLine}</strong><span dir="ltr">{contact.clearancePhone}</span></a>
+              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.officePhoneUrl}><strong>تلفن ثابت</strong><span dir="ltr">{contact.officePhone}</span></a>
+              <a className="flex justify-between rounded-khoobrooz bg-background p-4" href={contact.faxUrl}><strong>فکس</strong><span dir="ltr">{contact.fax}</span></a>
+              <div className="rounded-khoobrooz bg-background p-4">
+                <strong className="block text-primary">آدرس دفتر</strong>
+                <span className="mt-2 block text-sm leading-7 text-muted">{contact.address}</span>
+              </div>
             </div>
             <div className="mt-5 rounded-khoobrooz bg-primary p-4">
               <h3 className="mb-3 text-sm font-black text-white">{page.social}</h3>

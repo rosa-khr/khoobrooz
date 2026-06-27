@@ -31,23 +31,28 @@ export const localeDirections: Record<Locale, "rtl" | "ltr"> = {
 };
 
 export const contact = {
-  generalWhatsapp: "0910 306 0396",
-  generalWhatsappIntl: "+989103060396",
-  generalWhatsappUrl: "https://wa.me/989103060396",
-  generalPhoneUrl: "tel:+989103060396",
-  clearancePhone: "0912 470 1423",
-  clearancePhoneIntl: "+989124701423",
-  clearancePhoneUrl: "tel:+989124701423",
-  email: "info@khoorooz.com",
-  emailUrl: "mailto:info@khoorooz.com",
-  baleName: "khoobrooz",
-  baleUrl: "https://ble.ir/khoobrooz",
+  address: "تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی",
+  officePhone: "021 2265 0282~3",
+  officePhoneUrl: "tel:+982122650282",
+  fax: "021 2620 4504",
+  faxUrl: "tel:+982126204504",
+  generalWhatsapp: "0910 306 0306",
+  generalWhatsappIntl: "+989103060306",
+  generalWhatsappUrl: "https://wa.me/989103060306",
+  generalPhoneUrl: "tel:+989103060306",
+  clearancePhone: "0910 306 0306",
+  clearancePhoneIntl: "+989103060306",
+  clearancePhoneUrl: "tel:+989103060306",
+  email: "info@khoobrooz.com",
+  emailUrl: "mailto:info@khoobrooz.com",
+  baleName: "khoobrooz_trade",
+  baleUrl: "https://ble.ir/khoobrooz_trade",
   linkedinName: "khoobrooz.trade",
   linkedinUrl: "https://www.linkedin.com/company/khoobrooz.trade",
   instagramName: "khoobrooz.ir",
   instagramUrl: "https://www.instagram.com/khoobrooz.ir",
-  telegramName: "khoobrooz",
-  telegramUrl: "https://t.me/khoobrooz"
+  telegramName: "khoobrooz_trade",
+  telegramUrl: "https://t.me/khoobrooz_trade"
 };
 
 export function isLocale(value: string): value is Locale {

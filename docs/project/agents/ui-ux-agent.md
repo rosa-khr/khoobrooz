@@ -59,8 +59,8 @@ Use unless changed later:
 9. Design fully responsive layouts for mobile, tablet, laptop, and desktop.
 10. Prefer a mobile-first approach, then enhance for larger screens.
 11. Use stable responsive constraints so cards, menus, CTAs, and text do not overflow or shift unexpectedly.
-12. On customs clearance pages, make the mobile CTA service-specific and route it to `09124174031`, the Gمرکچی / Gchi partner number.
-13. For general contact and WhatsApp actions, route to the user's personal/general line `09103060396`.
+12. On customs clearance pages, make the mobile CTA service-specific and route it to `09103060306` until a separate clearance line is confirmed.
+13. For general contact and WhatsApp actions, route to the user's personal/general line `09103060306`.
 14. Do not create design prototypes or asset files at the project root; use `docs/project` for docs/prototypes and `src/assets` for assets.
 15. Keep the desktop header compact: only core top-level items should be visible, with secondary pages inside dropdown menus.
 16. On mobile, dropdown children should remain visible and easy to tap when the main menu is open.

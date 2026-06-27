@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell, List, Search, Settings, X } from "lucide-react";
 import type { ReactNode } from "react";
@@ -17,8 +16,8 @@ const breadcrumbLabels: Record<string, string> = {
   news: "خبرها",
   tags: "تگ‌ها",
   users: "کاربران",
-  countries: "کشورها",
   "world-clocks": "ساعت جهانی",
+  "api-services": "سرویس‌های API",
   reports: "گزارش‌ها",
   settings: "تنظیمات",
   list: "لیست",
@@ -78,10 +77,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href.replace("/list", ""));
 
             return (
-              <Link aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined}>
+              <a aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined}>
                 <Icon size={17} />
                 <span>{item.label}</span>
-              </Link>
+              </a>
             );
           })}
         </nav>

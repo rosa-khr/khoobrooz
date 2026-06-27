@@ -91,8 +91,8 @@ Mobile navigation:
 
 Mobile CTA routing:
 
-- On customs clearance pages, use `09124174031`, the Gمرکچی / Gchi partner number.
-- For general WhatsApp/contact actions, use the user's personal/general line `09103060396`.
+- On customs clearance pages, use `09103060306` until a separate clearance line is confirmed.
+- For general WhatsApp/contact actions, use the user's personal/general line `09103060306`.
 
 ## Hero UX
 

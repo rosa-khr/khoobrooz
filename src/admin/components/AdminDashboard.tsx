@@ -1,12 +1,35 @@
 "use client";
 
 import { Database, Plus } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { AdminDashboardCharts } from "@/admin/components/AdminDashboardCharts";
 import { AdminDataGrid } from "@/admin/components/AdminDataGrid";
 import { AdminShell } from "@/admin/components/AdminShell";
-import { adminQuickActions, adminStats, pendingArticleRows, pendingNewsRows } from "@/admin/data/adminMockData";
+import { adminQuickActions, adminStats } from "@/admin/data/adminMockData";
+import { loadAdminPage, type AdminContentRecord, type AdminGridRecord } from "@/admin/lib/adminApi";
 
 export default function AdminDashboard() {
+  const [pendingArticles, setPendingArticles] = useState<AdminGridRecord[]>([]);
+  const [pendingNews, setPendingNews] = useState<AdminGridRecord[]>([]);
+
+  const refreshPendingContent = useCallback(() => {
+    Promise.all([loadAdminPage("articles"), loadAdminPage("news")])
+      .then(([articles, news]) => {
+        const { response: { items: articleItems } } = articles;
+        const { response: { items: newsItems } } = news;
+        setPendingArticles(articleItems.filter((item) => !(item as AdminContentRecord).approve));
+        setPendingNews(newsItems.filter((item) => !(item as AdminContentRecord).approve));
+      })
+      .catch(() => {
+        setPendingArticles([]);
+        setPendingNews([]);
+      });
+  }, []);
+
+  useEffect(() => {
+    refreshPendingContent();
+  }, [refreshPendingContent]);
+
   return (
     <AdminShell>
       <div className="admin-content">
@@ -18,8 +41,8 @@ export default function AdminDashboard() {
           </div>
           <div className="admin-db-status">
             <Database size={18} />
-            <span>SQL Server</span>
-            <strong>۳۵ جدول آماده</strong>
+            <span>MySQL</span>
+            <strong>۱۰ جدول آماده</strong>
           </div>
         </section>
 
@@ -51,14 +74,16 @@ export default function AdminDashboard() {
         <AdminDataGrid
           description="فقط مقاله‌هایی که هنوز تایید نشده‌اند و باید قبل از انتشار بررسی شوند."
           kind="articles"
-          rows={pendingArticleRows}
+          onChanged={refreshPendingContent}
+          rows={pendingArticles}
           title="مقاله‌های نیازمند تایید"
         />
 
         <AdminDataGrid
           description="خبرهایی که هنوز تایید نشده‌اند و برای انتشار نیاز به بررسی دارند."
           kind="news"
-          rows={pendingNewsRows}
+          onChanged={refreshPendingContent}
+          rows={pendingNews}
           title="خبرهای نیازمند تایید"
         />
       </div>

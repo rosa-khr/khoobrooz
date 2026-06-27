@@ -11,6 +11,7 @@
 | `GET /api/v1/articles` | `Article` | `ArticleService` |
 | `GET /api/v1/news` | `News` | `NewsService` |
 | `GET /api/v1/market-rates` | `MarketRateInstrument` | `MarketRateService` |
+| `GET /api/v1/countries` | `Country` | `CountryService` |
 | `GET /api/v1/world-clock` | `WorldClockItem` | `WorldClockService` |
 | `GET /api/v1/social-links` | `SocialLink` | `SocialLinkService` |
 
@@ -31,3 +32,4 @@
 ## وضعیت فعلی
 
 این فایل‌ها skeleton هستند و بعد از scaffold واقعی Laravel باید با Controller، Request، Resource و Test تکمیل شوند.
+قرارداد ورودی و خروجی routeها در `backend/docs/openapi.yaml` نگهداری می‌شود و هر route جدید باید همان‌جا هم ثبت شود.

@@ -74,25 +74,28 @@ Confirmed by user:
 
 - Country: Iran
 - Country code: `0098` / `+98`
-- Personal/general WhatsApp owned by Khoobrooz user: `09103060396`
-- Personal/general WhatsApp international format: `+989103060396`
-- Customs clearance partner CTA owned by Gمرکچی / Gchi: `09124174031`
-- Customs clearance partner international format: `+989124174031`
+- General/mobile WhatsApp owned by Khoobrooz user: `09103060306`
+- General/mobile WhatsApp international format: `+989103060306`
+- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
+- Customs clearance international format: `+989103060306`
+- Office phone: `021 2265 0282~3`
+- Fax: `021 2620 4504`
+- Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
+- Telegram ID: `khoobrooz_trade`
+- Bale ID: `khoobrooz_trade`
 
 CTA routing rules:
 
-- For ترخیص کالا, ترخیص کالا از گمرک, هزینه ترخیص, مدارک ترخیص, and any customs-clearance-specific CTA, use `09124174031`.
-- For general WhatsApp/social contact, use `09103060396`.
+- For ترخیص کالا, ترخیص کالا از گمرک, هزینه ترخیص, مدارک ترخیص, and any customs-clearance-specific CTA, use `09103060306`.
+- For general WhatsApp/social contact, use `09103060306`.
 - Mobile CTA for customs clearance should be clearly service-specific.
 - If a page is not specifically about customs clearance, use the general contact/WhatsApp unless the user later defines another service-specific number.
 
-Partner note:
+Clearance note:
 
-- Khoobrooz collaborates with the Gمرکچی / Gchi customs-clearance brand as a working partner.
-- The `09124174031` number belongs to Gمرکچی / Gchi and should be used only for clearance-specific routing.
-- Do not make this partner name prominent on the public website unless the user explicitly asks.
-- When discussing or designing clearance pages, route clearance CTAs through the approved clearance number but present the service under Khoobrooz's brand.
-- Do not make false claims about ownership, licenses, or guarantees. Treat the relationship as a private operational partnership unless approved for public disclosure.
+- Clearance CTAs currently route to the Khoobrooz user mobile until a separate clearance line is confirmed.
+- Do not mention any operational partner publicly unless the user explicitly approves public disclosure.
+- Do not make false claims about ownership, licenses, or guarantees.
 
 ## Business Details To Collect
 
@@ -106,10 +109,10 @@ Fill these later when the user provides details:
 - Service coverage cities or customs offices:
 - Phone:
 - Mobile:
-- Personal/general WhatsApp: `09103060396`
-- Email: `info@khoorooz.com`
-- Telegram: `khoobrooz`
-- Bale: `khoobrooz`
+- General/mobile WhatsApp: `09103060306`
+- Email: `info@khoobrooz.com`
+- Telegram: `khoobrooz_trade`
+- Bale: `khoobrooz_trade`
 - Instagram: `khoobrooz.ir`
 - LinkedIn: `khoobrooz.trade`
 - Working hours:
@@ -118,18 +121,18 @@ Fill these later when the user provides details:
 - Other licenses or trust badges:
 - Initial language:
 - Future target languages:
-- Customs clearance partner CTA number: `09124174031`
+- Current customs clearance CTA number: `09103060306`
 
 ## Social Identity
 
 Final public social naming:
 
 - Display name: خوبروز | Khoobrooz
-- Website/email domain: `khoorooz.com`
-- Email: `info@khoorooz.com`
+- Website/email domain: `khoobrooz.com`
+- Email: `info@khoobrooz.com`
 - Instagram username: `khoobrooz.ir`
-- Telegram username: `khoobrooz`
-- Bale username: `khoobrooz`
+- Telegram username: `khoobrooz_trade`
+- Bale username: `khoobrooz_trade`
 - LinkedIn identity: `khoobrooz.trade`
 
 Social naming rules:
@@ -141,7 +144,7 @@ Social naming rules:
 
 Best overall recommendation:
 
-- Email/domain identity: `khoorooz.com`.
+- Email/domain identity: `khoobrooz.com`.
 - Social identity: Instagram `khoobrooz.ir`, Telegram/Bale `khoobrooz`, LinkedIn `khoobrooz.trade`.
 
 ## Core Services
@@ -209,12 +212,14 @@ About Us page should answer:
 
 Collect and organize these before writing the Contact Us page:
 
-- Primary contact method: general WhatsApp `09103060396`
-- Secondary contact method: customs clearance CTA `09124174031`
+- Primary contact method: general WhatsApp `09103060306`
+- Secondary contact method: customs clearance CTA `09103060306`
 - Consultation form fields:
-- Office address:
+- Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
 - Map/link if available:
-- Phone and mobile:
+- Phone and mobile: `021 2265 0282~3`, `0910 306 0306`
+- Fax: `021 2620 4504`
+- Telegram and Bale ID: `khoobrooz_trade`
 - WhatsApp CTA text: ارتباط در واتساپ
 - Working hours:
 - Response time promise, only if true:
@@ -272,7 +277,7 @@ When writing business, about, or contact content:
 - Use exact contact details only after the user provides them.
 - Do not invent licenses, addresses, experience years, clients, or legal claims.
 - For customs clearance CTAs, use the approved customs clearance number while keeping the public-facing brand as Khoobrooz.
-- Do not prominently mention the Gمرکچی / Gchi partner name unless the user explicitly approves public disclosure.
+- Do not mention any operational partner unless the user explicitly approves public disclosure.
 - Social channels should be displayed with recognizable icons where possible. Keep labels available through accessible names, titles, or nearby context.
 
 ## Related Files

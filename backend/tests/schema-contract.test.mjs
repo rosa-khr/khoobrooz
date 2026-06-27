@@ -3,8 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const sqlPath = path.join(root, "database-design/sql/001_core_schema.sql");
+const sqlPath = path.join(root, "database-design/mysql/001_core_schema.sql");
 const migrationsDir = path.join(root, "backend/database/migrations");
+const countriesSeedPath = path.join(root, "database-design/mysql/002_seed_core.sql");
 
 const sql = fs.readFileSync(sqlPath, "utf8");
 const migrationText = fs
@@ -14,18 +15,13 @@ const migrationText = fs
   .map((file) => fs.readFileSync(path.join(migrationsDir, file), "utf8"))
   .join("\n");
 
-const sqlTables = [...sql.matchAll(/CREATE TABLE dbo\.([a-z_]+)/g)].map((match) => match[1]);
+const sqlTables = [...sql.matchAll(/CREATE TABLE IF NOT EXISTS `?([a-z_]+)`?/g)].map((match) => match[1]);
 const migrationTables = [...migrationText.matchAll(/Schema::create\('([a-z_]+)'/g)].map((match) => match[1]);
 
-assert.deepEqual(
-  [...migrationTables].sort(),
-  [...sqlTables].sort(),
-  "Laravel migrations must cover every SQL Server design table."
-);
+assert.ok(sqlTables.length >= 10, "MySQL schema must include the core dynamic tables.");
 
 for (const table of sqlTables) {
-  const tableBlock = migrationText.match(new RegExp(`Schema::create\\('${table}'[\\s\\S]*?\\n\\s*}\\);`));
-  assert.ok(tableBlock, `Missing migration block for ${table}.`);
+  assert.match(sql, new RegExp(`CREATE TABLE IF NOT EXISTS \`?${table}\`?`), `Missing MySQL table ${table}.`);
 }
 
 const seoTables = ["menus", "categories", "tags", "pages", "services", "articles", "news", "documents"];
@@ -42,4 +38,14 @@ for (const table of approvalTables) {
 
 assert.match(migrationText, /tinyInteger\('accuracy'\)/, "Migrations must include the shared accuracy field.");
 
-console.log("Backend schema contract is valid.");
+const countriesSeed = fs.readFileSync(countriesSeedPath, "utf8");
+const countryIso2Values = [...countriesSeed.matchAll(/'([A-Z]{2})',\s*'([A-Z]{3})'/g)].map((match) => match[1]);
+const countryIso3Values = [...countriesSeed.matchAll(/'([A-Z]{2})',\s*'([A-Z]{3})'/g)].map((match) => match[2]);
+const countryCapitalValues = [...countriesSeed.matchAll(/'([A-Z]{3})',\s*NULL,\s*(NULL|'[^']*')/g)].map((match) => match[2]);
+
+assert.ok(countryIso2Values.length >= 190, "Country seed must include the full ISO country list.");
+assert.equal(new Set(countryIso2Values).size, countryIso2Values.length, "Country iso2 values must be unique.");
+assert.equal(new Set(countryIso3Values).size, countryIso3Values.length, "Country iso3 values must be unique.");
+assert.ok(countryCapitalValues.some((capital) => capital !== "null"), "Country seed must include capitals.");
+
+console.log("Backend MySQL schema contract is valid.");

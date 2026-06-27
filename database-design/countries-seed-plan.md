@@ -4,21 +4,14 @@
 
 ## وضعیت فعلی
 
-فایل زیر seed bootstrap دارد و فقط کشورهای مهم تجاری را وارد می‌کند:
+Seed کامل کشورها اضافه شده است:
 
 ```text
-database-design/sql/002_seed_core.sql
+backend/database/seeders/data/countries.php
+database-design/sql/004_seed_countries_full.sql
 ```
 
-این seed برای شروع توسعه کافی است، اما جایگزین seed کامل کشورها نیست.
-
-## نیاز نهایی
-
-در فاز Laravel باید یک `Seeder` کامل ساخته شود:
-
-```text
-CountrySeeder
-```
+`CoreSeeder` از فایل `backend/database/seeders/data/countries.php` استفاده می‌کند.
 
 فیلدهای لازم:
 
@@ -48,4 +41,4 @@ accuracy
 
 ## منبع داده
 
-منبع داده باید قبل از پیاده‌سازی نهایی مشخص شود و در داکیومنت integration ثبت شود. داده نباید بدون منبع یا دستی و ناقص وارد production شود.
+داده اولیه از دیتاست ساختاریافته کشورها شامل `name`, `capital`, `iso2`, `iso3` ساخته شده و نام فارسی با `Intl.DisplayNames` تولید شده است.

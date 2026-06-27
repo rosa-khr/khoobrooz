@@ -50,10 +50,10 @@ Recommended sections:
 
 - Country: Iran
 - Country code: `0098` / `+98`
-- Personal/general WhatsApp owned by Khoobrooz user: `09103060396`
-- Personal/general WhatsApp international format: `+989103060396`
-- Customs clearance partner CTA owned by Gمرکچی / Gchi: `09124174031`
-- Customs clearance partner international format: `+989124174031`
+- Personal/general WhatsApp owned by Khoobrooz user: `09103060306`
+- Personal/general WhatsApp international format: `+989103060306`
+- Customs clearance CTA temporarily uses the Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
+- Customs clearance partner international format: `+989103060306`
 
 ## Social Identity Recommendation
 
@@ -77,14 +77,14 @@ Reason:
 
 CTA routing:
 
-- Use `09124174031` anywhere the CTA is specifically for ترخیص کالا or customs clearance.
-- Use `09103060396` for the user's personal/general WhatsApp and social contact.
+- Use `09103060306` anywhere the CTA is specifically for ترخیص کالا or customs clearance.
+- Use `09103060306` for the user's personal/general WhatsApp and social contact.
 
 Partner handling:
 
-- Khoobrooz has a working customs-clearance partner related to Gمرکچی / Gchi.
-- The `09124174031` number belongs to that partner and should be treated as a clearance-only routing number.
-- Do not prominently mention this partner publicly unless the user explicitly approves it.
+- Customs clearance CTAs currently route through the Khoobrooz user mobile.
+- If a separate clearance number is confirmed later, update the central contact constants and routing docs.
+- Do not mention any operational partner publicly unless the user explicitly approves it.
 - Keep clearance-facing copy under the Khoobrooz brand, while avoiding false ownership, licensing, or guarantee claims.
 
 Recommended form fields:

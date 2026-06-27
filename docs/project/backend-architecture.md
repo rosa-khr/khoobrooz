@@ -6,11 +6,11 @@
 
 - `Next.js` همچنان Frontend عمومی سایت باقی می‌ماند.
 - `Laravel` به عنوان `Backend`، `REST API` و پایه `Admin Panel` استفاده می‌شود.
-- `SQL Server` برای ذخیره داده‌های داینامیک استفاده می‌شود.
-- `Docker Compose` برای اجرای سرویس‌های `web`, `api`, `sqlserver`, `redis`, `queue` و `scheduler` در محیط VPS یا Cloud در نظر گرفته می‌شود.
+- `MySQL 8.4` برای ذخیره داده‌های داینامیک استفاده می‌شود تا اجرای local و deploy روی هاست/VPS سبک‌تر و ساده‌تر باشد.
+- `Docker Compose` برای اجرای سرویس‌های `web`, `api`, `mysql`, `redis`, `queue` و `scheduler` در محیط VPS یا Cloud در نظر گرفته می‌شود.
 - پنل ادمین از نظر UI از سبک `Metronic` پیروی می‌کند.
 
-این معماری برای هاست WordPress/cPanel معمولی مناسب نیست، مگر اینکه هاست از `Node.js App`, `PHP Extensions`, `SQL Server Driver`, `Queue Worker` و processهای طولانی پشتیبانی کند. گزینه مناسب‌تر برای این مسیر، VPS یا Azure است.
+این معماری برای هاست WordPress/cPanel معمولی فقط وقتی مناسب است که هاست از `Node.js App`, `PHP`, `MySQL`, `Queue Worker` و processهای طولانی پشتیبانی کند. گزینه تمیزتر برای مسیر نهایی همچنان VPS یا Cloud است.
 
 جزئیات عملیاتی موجودیت‌ها، فیلدهای مشترک، `accuracy`، workflow تایید/انتشار و استاندارد جدول‌های ادمین در سند زیر تکمیل شده است:
 
@@ -40,7 +40,7 @@ khoobrooz/
 - Backend: `Laravel 11/12`
 - Admin Auth: `Laravel Sanctum`
 - Admin UI: `Metronic`
-- Database: `SQL Server`
+- Database: `MySQL 8.4`
 - Cache/Queue: `Redis`
 - Scheduler: `Laravel Scheduler`
 - API Style: `REST API`

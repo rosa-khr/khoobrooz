@@ -147,19 +147,23 @@ Secondary CTAs:
 
 Confirmed contact routing:
 
-- Personal/general WhatsApp owned by Khoobrooz user: `09103060396`
-- Personal/general WhatsApp international format: `+989103060396`
-- Customs clearance partner CTA owned by Gمرکچی / Gchi: `09124174031`
-- Customs clearance partner international format: `+989124174031`
+- General/mobile WhatsApp owned by Khoobrooz user: `09103060306`
+- General/mobile WhatsApp international format: `+989103060306`
+- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
+- Customs clearance international format: `+989103060306`
+- Office phone: `021 2265 0282~3`
+- Fax: `021 2620 4504`
+- Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
+- Telegram and Bale ID: `khoobrooz_trade`
 - Country: Iran
 - Country code: `0098` / `+98`
 
 CTA rules:
 
-- For customs clearance pages and clearance-specific mobile CTAs, use `09124174031`.
-- For general website contact, social contact, and WhatsApp CTAs, use `09103060396`.
-- Clearance services may be supported by a working partner, but public-facing copy should stay under the Khoobrooz brand unless the user approves naming the partner.
-- Internally, remember that `09124174031` is the Gمرکچی / Gchi partner number, not the user's personal line.
+- For customs clearance pages and clearance-specific mobile CTAs, use `09103060306`.
+- For general website contact, social contact, and WhatsApp CTAs, use `09103060306`.
+- Public-facing copy should stay under the Khoobrooz brand.
+- If a separate clearance number is confirmed later, update this section and the central contact constants.
 
 ## Service Priority
 

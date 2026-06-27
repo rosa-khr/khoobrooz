@@ -3,7 +3,6 @@ import type { MarketRate } from "@/core/lib/tgju";
 export type MarketRatesPayload = {
   rates: MarketRate[];
   fetchedAt: string;
-  sourceName: string;
 };
 
 const backendApiBaseUrl = process.env.BACKEND_API_URL ?? "http://127.0.0.1:8000/api/v1";
@@ -25,7 +24,6 @@ export async function fetchBackendMarketRates(): Promise<MarketRatesPayload> {
 
   return {
     rates: payload.rates ?? [],
-    fetchedAt: payload.fetchedAt ?? "نامشخص",
-    sourceName: payload.sourceName ?? "TGJU"
+    fetchedAt: payload.fetchedAt ?? "نامشخص"
   };
 }

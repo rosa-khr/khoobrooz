@@ -24,14 +24,14 @@ Khoobrooz should move forward as:
 
 ## Confirmed CTA Routing
 
-- Personal/general WhatsApp owned by Khoobrooz user: `09103060396`
-- Personal/general WhatsApp international format: `+989103060396`
-- Customs clearance partner CTA owned by Gمرکچی / Gchi: `09124174031`
-- Customs clearance partner international format: `+989124174031`
+- Personal/general WhatsApp owned by Khoobrooz user: `09103060306`
+- Personal/general WhatsApp international format: `+989103060306`
+- Customs clearance CTA temporarily uses the Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
+- Customs clearance partner international format: `+989103060306`
 
 Use the customs clearance number for ترخیص-specific CTAs. Use the general WhatsApp number for broader social/contact actions.
 
-Khoobrooz has a working customs-clearance partner related to Gمرکچی / Gchi, but the partner name should not be prominent publicly unless explicitly approved.
+Customs clearance CTAs currently route through the Khoobrooz user mobile; do not mention any operational partner publicly unless explicitly approved.
 
 ## Recommended Next Step
 

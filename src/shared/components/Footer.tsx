@@ -1,20 +1,22 @@
 import Link from "next/link";
-import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Phone, Printer, Send, Smartphone } from "lucide-react";
 import { Locale, contact, localizedPath } from "@/core/lib/site";
 import { getDictionary } from "@/data/i18n";
+import { localizedNavigation, type NavigationItem } from "@/data/navigation";
 import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import { SeaRoutePattern } from "@/shared/components/SeaRoutePattern";
 
 const primaryContactItems = [
-  { value: contact.clearancePhone, href: contact.clearancePhoneUrl, icon: Phone },
-  { value: contact.generalWhatsapp, href: contact.generalWhatsappUrl, icon: MessageCircle },
+  { value: contact.officePhone, href: contact.officePhoneUrl, icon: Phone },
+  { value: contact.clearancePhone, href: contact.clearancePhoneUrl, icon: Smartphone },
+  { value: contact.fax, href: contact.faxUrl, icon: Printer },
   { value: contact.email, href: contact.emailUrl, icon: Mail }
 ];
 
 const socialItems = [
   {
     label: "تلگرام",
-    value: "t.me/khoobrooz",
+    value: `t.me/${contact.telegramName}`,
     href: contact.telegramUrl,
     icon: Send
   },
@@ -38,10 +40,45 @@ const socialItems = [
   }
 ];
 
-export function Footer({ locale }: { locale: Locale }) {
+type MenuResponse = {
+  responseStatus: 0 | 1;
+  response: {
+    items: NavigationItem[];
+    total: number;
+  };
+};
+
+const backendApiBaseUrl = process.env.BACKEND_API_URL?.replace(/\/api\/v1$/, "") ?? "http://localhost:8000";
+
+async function loadFooterNavigation(locale: Locale) {
+  const fallback = localizedNavigation(locale);
+
+  try {
+    const response = await fetch(`${backendApiBaseUrl}/api/v1/menus`, {
+      cache: "no-store"
+    });
+    const payload = (await response.json()) as MenuResponse;
+
+    if (!response.ok || payload.responseStatus !== 1 || payload.response.items.length === 0) {
+      return fallback;
+    }
+
+    const localizeItem = (item: NavigationItem): NavigationItem => ({
+      ...item,
+      href: localizedPath(locale, item.href),
+      children: item.children?.map(localizeItem)
+    });
+
+    return payload.response.items.map(localizeItem);
+  } catch {
+    return fallback;
+  }
+}
+
+export async function Footer({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear();
   const dictionary = getDictionary(locale);
-  const nav = dictionary.nav;
+  const nav = await loadFooterNavigation(locale);
   const serviceChildren = nav[1]?.children ?? [];
   const brandChildren = nav[5]?.children ?? [];
 
@@ -60,26 +97,26 @@ export function Footer({ locale }: { locale: Locale }) {
           <p className="text-sm leading-7 text-blue-200">{dictionary.footer.intro}</p>
           <p className="mt-4 inline-flex items-start gap-2 text-sm leading-7 text-blue-200">
             <MapPin className="mt-1 size-4 shrink-0 text-accent" aria-hidden="true" />
-            <span>{dictionary.footer.address}</span>
+            <span>{contact.address}</span>
           </p>
         </div>
         <div className="min-w-0">
           <h3 className="mb-3 font-black text-white">{dictionary.footer.pages}</h3>
           <ul className="grid gap-2 text-sm text-blue-200">
-            <li><Link href={localizedPath(locale, "/services")}>{nav[1]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/knowledge")}>{nav[2]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/documents")}>{nav[3]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/about")}>{brandChildren[0]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/contact")}>{brandChildren[1]?.label}</Link></li>
+            <li><Link href={nav[1]?.href ?? localizedPath(locale, "/services")}>{nav[1]?.label}</Link></li>
+            <li><Link href={nav[2]?.href ?? localizedPath(locale, "/knowledge")}>{nav[2]?.label}</Link></li>
+            <li><Link href={nav[3]?.href ?? localizedPath(locale, "/documents")}>{nav[3]?.label}</Link></li>
+            <li><Link href={brandChildren[0]?.href ?? localizedPath(locale, "/about")}>{brandChildren[0]?.label}</Link></li>
+            <li><Link href={brandChildren[1]?.href ?? localizedPath(locale, "/contact")}>{brandChildren[1]?.label}</Link></li>
           </ul>
         </div>
         <div className="min-w-0">
           <h3 className="mb-3 font-black text-white">{dictionary.footer.mainServices}</h3>
           <ul className="grid gap-2 text-sm text-blue-200">
-            <li><Link href={localizedPath(locale, "/services/customs-clearance")}>{serviceChildren[0]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/services")}>{serviceChildren[2]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/education")}>{nav[2]?.children?.[0]?.label}</Link></li>
-            <li><Link href={localizedPath(locale, "/markets/currency-rates")}>{nav[4]?.children?.[0]?.label}</Link></li>
+            <li><Link href={serviceChildren[0]?.href ?? localizedPath(locale, "/services/customs-clearance")}>{serviceChildren[0]?.label}</Link></li>
+            <li><Link href={serviceChildren[1]?.href ?? localizedPath(locale, "/services/yuan-transfer")}>{serviceChildren[1]?.label}</Link></li>
+            <li><Link href={serviceChildren[2]?.href ?? localizedPath(locale, "/services")}>{serviceChildren[2]?.label}</Link></li>
+            <li><Link href={nav[4]?.children?.[0]?.href ?? localizedPath(locale, "/markets/currency-rates")}>{nav[4]?.children?.[0]?.label}</Link></li>
           </ul>
         </div>
         <div className="min-w-0">

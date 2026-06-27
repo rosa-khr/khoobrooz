@@ -4,12 +4,38 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Boxes, ClipboardCheck, Container, FileText, Globe2, Handshake, PackageCheck, Ship, Truck } from "lucide-react";
 import { Locale, localizedPath } from "@/core/lib/site";
-import { Dictionary } from "@/data/i18n";
 import { Card } from "@/shared/components/Card";
 
 const serviceIcons = [Container, ClipboardCheck, Boxes, Globe2, Ship, Handshake, FileText, PackageCheck];
 
-export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale; services: Dictionary["services"]; ariaLabel: string }) {
+type ServiceCardItem = {
+  title: string;
+  description: string;
+  href?: string;
+  eyebrow?: string;
+  cta?: string;
+  featured?: boolean;
+};
+
+type ServicesResponse = {
+  responseStatus: 0 | 1;
+  response: {
+    items: Array<{
+      id: number;
+      title: string;
+      slug: string;
+      summary?: string;
+      description?: string;
+      cta?: string;
+      href?: string;
+      isPublished?: boolean;
+      accuracy: 0 | 1 | 2;
+    }>;
+    total: number;
+  };
+};
+
+export function ServiceMarquee({ locale, ariaLabel }: { locale: Locale; ariaLabel: string }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const dragStartX = useRef(0);
   const dragStartScroll = useRef(0);
@@ -18,6 +44,34 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
   const isPaused = useRef(false);
   const isVisible = useRef(false);
   const [dragging, setDragging] = useState(false);
+  const [dynamicServices, setDynamicServices] = useState<ServiceCardItem[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch("/api/services", { cache: "no-store" })
+      .then((response) => response.json() as Promise<ServicesResponse>)
+      .then((payload) => {
+        if (!mounted || payload.responseStatus !== 1 || payload.response.items.length === 0) {
+          return;
+        }
+
+        setDynamicServices(payload.response.items
+          .filter((item) => item.accuracy === 1 && item.isPublished !== false)
+          .map((item) => ({
+            title: item.title,
+            description: item.summary || item.description || "",
+            href: item.href || `/services/${item.slug}`,
+            eyebrow: "خدمات بازرگانی",
+            cta: item.cta || "مشاهده خدمت"
+          })));
+      })
+      .catch(() => undefined);
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -67,7 +121,7 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
       observer.disconnect();
       window.cancelAnimationFrame(animationFrame);
     };
-  }, []);
+  }, [dynamicServices.length]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     const scroller = scrollerRef.current;
@@ -107,7 +161,7 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
     }
   };
 
-  const renderServiceCard = (service: (typeof services)[number], index: number, clone = false) => {
+  const renderServiceCard = (service: ServiceCardItem, index: number, clone = false) => {
     const Icon = serviceIcons[index] ?? PackageCheck;
 
     return (
@@ -135,6 +189,10 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
     );
   };
 
+  if (dynamicServices.length === 0) {
+    return null;
+  }
+
   return (
     <div
       ref={scrollerRef}
@@ -160,9 +218,9 @@ export function ServiceMarquee({ locale, services, ariaLabel }: { locale: Locale
       }}
     >
       <div className="service-marquee-track">
-        {services.map((service, index) => renderServiceCard(service, index))}
+        {dynamicServices.map((service, index) => renderServiceCard(service, index))}
         <div className="contents" aria-hidden="true">
-          {services.map((service, index) => renderServiceCard(service, index, true))}
+          {dynamicServices.map((service, index) => renderServiceCard(service, index, true))}
         </div>
       </div>
     </div>

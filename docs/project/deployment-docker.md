@@ -66,8 +66,11 @@ cp .env.example .env
 
 ```text
 APP_PORT=3000
+BACKEND_PORT=8000
 TGJU_API_URL=...
 ```
+
+`TGJU_API_URL` فقط باید در سرویس backend/api استفاده شود. سرویس frontend نباید آدرس provider خارجی را داشته باشد.
 
 ## Deployment روی VPS
 

@@ -21,7 +21,7 @@ These sources informed the initial menu and content architecture:
 
 ## Market and Time Sources
 
-- `https://www.tgju.org/currency` for currency-rate source planning.
+- Currency-rate providers are used only behind the backend market-rate service.
 - `https://www.time.ir` for Iran date/time reference and validation.
 
 ## Source Rules
