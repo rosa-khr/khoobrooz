@@ -1,10 +1,11 @@
 services:
   khoobrooz-api:
-    image: node:22-alpine
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: khoobrooz-api:latest
     container_name: khoobrooz-api
     restart: unless-stopped
-    working_dir: /app
-    command: node backend/dev-tgju-server.mjs
     environment:
       NODE_ENV: production
       BACKEND_PORT: 8000
@@ -19,8 +20,6 @@ services:
       TGJU_SYNC_INTERVAL_MS: ${TGJU_SYNC_INTERVAL_MS:-7200000}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
-    volumes:
-      - .:/app:ro
     depends_on:
       khoobrooz-mysql:
         condition: service_healthy

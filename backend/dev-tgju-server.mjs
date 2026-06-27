@@ -1,13 +1,22 @@
 import http from "node:http";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
+import mysql from "mysql2/promise";
 
 const port = Number(process.env.BACKEND_PORT ?? 8000);
 const syncIntervalMs = Number(process.env.TGJU_SYNC_INTERVAL_MS ?? 120000);
-const execFileAsync = promisify(execFile);
 const tgjuApiUrl =
   process.env.TGJU_API_URL ??
   "https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM";
+const databasePool = mysql.createPool({
+  host: process.env.DB_HOST ?? "127.0.0.1",
+  port: Number(process.env.DB_PORT ?? 3306),
+  database: process.env.DB_DATABASE ?? "khoobrooz",
+  user: process.env.DB_USERNAME ?? "khoobrooz",
+  password: process.env.DB_PASSWORD ?? "khoobrooz_dev_2026",
+  charset: "utf8mb4",
+  multipleStatements: true,
+  waitForConnections: true,
+  connectionLimit: 5
+});
 
 const definitions = [
   { key: "price_dollar_rl", title: "دلار", symbol: "USD", unit: "ریال", group: "market" },
@@ -166,15 +175,22 @@ async function readBody(request) {
 }
 
 async function runSql(query) {
-  const database = process.env.DB_DATABASE ?? "khoobrooz";
-  const username = process.env.DB_USERNAME ?? "khoobrooz";
-  const password = process.env.DB_PASSWORD ?? "khoobrooz_dev_2026";
-  const { stdout } = await execFileAsync(
-    "docker",
-    ["exec", "khoobrooz-mysql", "mysql", `-u${username}`, `-p${password}`, "-D", database, "--batch", "--raw", "--skip-column-names", "-e", query],
-    { maxBuffer: 1024 * 1024 * 8 }
-  );
-  return stdout.trim();
+  const [results] = await databasePool.query(query);
+  const resultSets = Array.isArray(results) && results.some(Array.isArray) ? results : [results];
+  const values = [];
+
+  for (const resultSet of resultSets) {
+    if (!Array.isArray(resultSet)) continue;
+    for (const row of resultSet) {
+      for (const value of Object.values(row)) {
+        if (value !== null && value !== undefined) {
+          values.push(typeof value === "string" ? value : JSON.stringify(value));
+        }
+      }
+    }
+  }
+
+  return values.join("\n").trim();
 }
 
 async function runJsonSql(query, fallback = {}) {
@@ -503,6 +519,11 @@ const server = http.createServer(async (request, response) => {
   }
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
+  if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+    sendJson(response, 200, { ok: true, service: "khoobrooz-api" });
+    return;
+  }
+
   const adminMatch = url.pathname.match(/^\/api\/admin\/([^/]+)\/([^/]+)$/);
   if (request.method === "POST" && adminMatch) {
     const [, resource, action] = adminMatch;
