@@ -1,7 +1,12 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --mount=type=secret,id=npm_ca,required=false \
+    if [ -f /run/secrets/npm_ca ]; then \
+      npm_config_cafile=/run/secrets/npm_ca npm ci; \
+    else \
+      npm ci; \
+    fi
 
 FROM node:22-alpine AS builder
 WORKDIR /app
@@ -18,7 +23,7 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 --ingroup nodejs nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
