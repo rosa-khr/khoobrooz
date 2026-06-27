@@ -60,24 +60,17 @@ composer require laravel/sanctum
 composer require predis/predis
 ```
 
-برای `SQL Server` باید driver مناسب PHP روی محیط نصب باشد:
-
-```text
-sqlsrv
-pdo_sqlsrv
-```
-
 ## تنظیمات Environment
 
-نمونه اتصال SQL Server:
+نمونه اتصال MySQL:
 
 ```env
-DB_CONNECTION=sqlsrv
-DB_HOST=sqlserver
-DB_PORT=1433
+DB_CONNECTION=mysql
+DB_HOST=khoobrooz-mysql
+DB_PORT=3306
 DB_DATABASE=khoobrooz
-DB_USERNAME=sa
-DB_PASSWORD=ChangeThisStrongPassword
+DB_USERNAME=khoobrooz
+DB_PASSWORD=
 ```
 
 هیچ مقدار واقعی password نباید داخل repository ذخیره شود.

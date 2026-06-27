@@ -46,10 +46,6 @@ php artisan test
 php artisan migrate --pretend
 ```
 
-## SQL Server لوکال
+## Database لوکال
 
-برای اجرای SQL Server روی local و نکات مربوط به macOS 12، این سند مرجع است:
-
-```text
-database-design/sqlserver-local.md
-```
+دیتابیس local پروژه `MySQL 8.4` است و همراه سرویس‌های web و api از طریق فایل root با `docker compose up --build -d` اجرا می‌شود.

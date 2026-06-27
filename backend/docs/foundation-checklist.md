@@ -38,10 +38,10 @@
 - ساخت migration macro یا pattern برای ستون‌های audit
 - نوشتن test برای حذف منطقی
 
-## مرحله ۵: SQL Server
+## مرحله ۵: MySQL
 
 - تنظیم connection
-- بررسی driverهای `sqlsrv` و `pdo_sqlsrv`
+- بررسی driver `pdo_mysql`
 - تست migrate
 - تست rollback
 

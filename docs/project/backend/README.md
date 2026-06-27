@@ -9,7 +9,7 @@ Backend هنوز پیاده‌سازی نشده است. فولدر `backend/` ب
 ## Stack هدف
 
 - `Laravel`
-- `SQL Server`
+- `MySQL 8.4`
 - `Laravel Sanctum`
 - `Redis`
 - `Laravel Scheduler`

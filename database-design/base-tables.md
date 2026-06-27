@@ -17,10 +17,10 @@ countries
 social_links
 ```
 
-نسخه SQL Server این جدول‌ها و جدول‌های وابسته در مسیر زیر پیاده‌سازی شده است:
+نسخه اجرایی MySQL این جدول‌ها و جدول‌های وابسته در مسیر زیر پیاده‌سازی شده است:
 
 ```text
-database-design/sql/001_core_schema.sql
+database-design/mysql/001_core_schema.sql
 ```
 
 ## جدول users

@@ -506,8 +506,8 @@ $schedule->job(new SyncMarketRatesJob())->timezone('Asia/Tehran')->dailyAt('15:0
 ### فاز ۱: پایه Backend
 
 - ساخت Laravel app در فولدر `backend/`
-- تنظیم SQL Server
-- تنظیم Docker برای API و SQL Server
+- تنظیم MySQL
+- تنظیم Docker برای API و MySQL
 - ساخت Auth اولیه
 - ساخت migrationهای users، settings و menus
 
