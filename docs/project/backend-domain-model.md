@@ -692,7 +692,7 @@ coupons
 
 - ساخت Laravel در `backend/`
 - تنظیم ساختار لایه‌ها
-- تنظیم SQL Server connection
+- تنظیم MySQL connection
 - ساخت migrationهای مشترک
 - ساخت User, Role, Permission
 - ساخت Auth اولیه admin

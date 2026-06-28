@@ -118,7 +118,7 @@ type AdminApiResponse<T> = {
   message?: string;
 };
 
-const adminApiBaseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL ?? "http://localhost:8000";
+const adminApiBaseUrl = "";
 const defaultGridRequest = {
   pageing: {
     pageNumbber: 1,

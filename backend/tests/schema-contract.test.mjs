@@ -4,10 +4,12 @@ import path from "node:path";
 
 const root = process.cwd();
 const sqlPath = path.join(root, "database-design/mysql/001_core_schema.sql");
+const utf8Path = path.join(root, "database-design/mysql/004_enforce_utf8mb4.sql");
 const migrationsDir = path.join(root, "backend/database/migrations");
 const countriesSeedPath = path.join(root, "database-design/mysql/002_seed_core.sql");
 
 const sql = fs.readFileSync(sqlPath, "utf8");
+const utf8Sql = fs.readFileSync(utf8Path, "utf8");
 const migrationText = fs
   .readdirSync(migrationsDir)
   .filter((file) => file.endsWith(".php"))
@@ -19,9 +21,13 @@ const sqlTables = [...sql.matchAll(/CREATE TABLE IF NOT EXISTS `?([a-z_]+)`?/g)]
 const migrationTables = [...migrationText.matchAll(/Schema::create\('([a-z_]+)'/g)].map((match) => match[1]);
 
 assert.ok(sqlTables.length >= 10, "MySQL schema must include the core dynamic tables.");
+assert.match(sql, /CHARACTER SET utf8mb4/, "MySQL database must use utf8mb4.");
+assert.match(sql, /COLLATE utf8mb4_unicode_ci/, "MySQL database must use utf8mb4_unicode_ci.");
+assert.match(utf8Sql, /ALTER DATABASE khoobrooz\s+CHARACTER SET utf8mb4\s+COLLATE utf8mb4_unicode_ci/, "Existing databases must be migrated to utf8mb4_unicode_ci.");
 
 for (const table of sqlTables) {
   assert.match(sql, new RegExp(`CREATE TABLE IF NOT EXISTS \`?${table}\`?`), `Missing MySQL table ${table}.`);
+  assert.match(utf8Sql, new RegExp(`ALTER TABLE \`?${table}\`?\\s+CONVERT TO CHARACTER SET utf8mb4`), `Missing utf8mb4 migration for ${table}.`);
 }
 
 const seoTables = ["menus", "categories", "tags", "pages", "services", "articles", "news", "documents"];

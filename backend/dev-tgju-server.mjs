@@ -3,16 +3,22 @@ import mysql from "mysql2/promise";
 
 const port = Number(process.env.BACKEND_PORT ?? 8000);
 const syncIntervalMs = Number(process.env.TGJU_SYNC_INTERVAL_MS ?? 120000);
+const databasePassword = process.env.DB_PASSWORD ?? process.env.MYSQL_PASSWORD;
+
+if (!databasePassword) {
+  throw new Error("DB_PASSWORD must be set.");
+}
+
 const tgjuApiUrl =
   process.env.TGJU_API_URL ??
   "https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM";
 const databasePool = mysql.createPool({
   host: process.env.DB_HOST ?? "127.0.0.1",
   port: Number(process.env.DB_PORT ?? 3306),
-  database: process.env.DB_DATABASE ?? "khoobrooz",
-  user: process.env.DB_USERNAME ?? "khoobrooz",
-  password: process.env.DB_PASSWORD ?? "khoobrooz_dev_2026",
-  charset: "utf8mb4",
+  database: process.env.DB_DATABASE ?? process.env.MYSQL_DATABASE ?? "khoobrooz",
+  user: process.env.DB_USERNAME ?? process.env.MYSQL_USER ?? "khoobrooz",
+  password: databasePassword,
+  charset: "utf8mb4_unicode_ci",
   multipleStatements: true,
   waitForConnections: true,
   connectionLimit: 5

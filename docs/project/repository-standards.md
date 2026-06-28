@@ -239,6 +239,33 @@ docs/project/
 feat -> dev -> main/prod
 ```
 
+### ساختار پیام Commit
+
+تمام commitهای پروژه باید دقیقا از الگوی زیر پیروی کنند:
+
+```text
+(scope,user,taskType)=> message
+```
+
+تعریف بخش‌ها:
+
+- `scope`: محدوده تغییر، مانند `Frontend`، `Backend`، `Database`، `Admin`، `Infra` یا `Docs`
+- `user`: نام مسئول تغییر؛ برای تغییرات فعلی این پروژه `Rosa`
+- `taskType`: نوع تغییر، مانند `feat`، `bugFix`، `cleanCode`، `refactore`، `style`، `docs`، `test` یا `chore`
+- `message`: توضیح کوتاه، روشن و انگلیسی درباره تغییر
+
+نمونه‌های معتبر:
+
+```text
+(Frontend,Rosa,feat)=> add remittance slider
+(Database,Rosa,bugFix)=> enforce utf8mb4 for Persian content
+(Admin,Rosa,cleanCode)=> simplify service form fields
+(Infra,Rosa,refactore)=> remove legacy database configuration
+(Docs,Rosa,docs)=> document Docker Compose setup
+```
+
+استفاده از الگوهای دیگر مانند `feat: message` یا `fix(scope): message` در این repository مجاز نیست.
+
 قبل از push:
 
 ```bash

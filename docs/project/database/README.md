@@ -5,7 +5,7 @@
 ## Database هدف
 
 ```text
-SQL Server
+MySQL 8.4
 ```
 
 ## مسئولیت‌ها
