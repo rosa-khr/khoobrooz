@@ -79,7 +79,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent --skip-column-names -e 'SELECT 1' $${MYSQL_DATABASE} | grep -q 1"]
       interval: 15s
       timeout: 10s
       retries: 10

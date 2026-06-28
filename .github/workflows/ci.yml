@@ -71,6 +71,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Backend contracts
+        run: npm run test:backend-contracts
+
       - name: Build
         run: npm run build
 
@@ -83,6 +86,12 @@ jobs:
     env:
       APP_ENVIRONMENT: ${{ needs.branch-context.outputs.environment }}
       APP_URL: ${{ needs.branch-context.outputs.app_url }}
+      MYSQL_DATABASE: khoobrooz_ci
+      MYSQL_USER: khoobrooz_ci
+      MYSQL_PASSWORD: ci-db-${{ github.run_id }}
+      MYSQL_ROOT_PASSWORD: ci-root-${{ github.run_id }}
+      ADMIN_USERNAME: ci-admin
+      ADMIN_PASSWORD: ci-admin-${{ github.run_id }}
 
     steps:
       - name: Checkout
@@ -91,12 +100,8 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: false
-          tags: khoobrooz-web:ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
+
+      - name: Build all Docker images
+        run: docker compose build
