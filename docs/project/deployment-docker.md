@@ -4,7 +4,10 @@
 
 ## وضعیت فعلی
 
-- پروژه Frontend با `Next.js` داکرایز شده است.
+- پروژه با سه سرویس Docker اجرا می‌شود:
+  - `khoobrooz-web`: رابط کاربری `Next.js`
+  - `khoobrooz-api`: سرویس Backend
+  - `khoobrooz-mysql`: دیتابیس `MySQL 8.4`
 - فایل‌های اصلی:
   - `Dockerfile`
   - `docker-compose.yml`
@@ -15,7 +18,7 @@
   - `infra/docker/README.md`
   - `infra/nginx/README.md`
 - خروجی Next.js روی حالت `standalone` تنظیم شده است.
-- Docker روی سیستم فعلی نصب نبود، پس تست کانتینری local انجام نشد.
+- اطلاعات محرمانه فقط در فایل local و ignore‌شده `.env` نگهداری می‌شوند.
 
 ## تست production روی local
 
@@ -25,8 +28,7 @@
 npm run typecheck
 npm run lint
 npm run build
-docker compose build
-docker compose up -d
+docker compose up --build -d
 docker compose ps
 ```
 
@@ -39,7 +41,7 @@ http://localhost:3000
 برای دیدن logها:
 
 ```bash
-docker compose logs -f khoobrooz-web
+docker compose logs -f
 ```
 
 برای توقف:
@@ -66,11 +68,21 @@ cp .env.example .env
 
 ```text
 APP_PORT=3000
+APP_BIND_ADDRESS=127.0.0.1
 BACKEND_PORT=8000
+BACKEND_BIND_ADDRESS=127.0.0.1
+MYSQL_DATABASE=...
+MYSQL_USER=...
+MYSQL_PASSWORD=...
+MYSQL_ROOT_PASSWORD=...
+ADMIN_USERNAME=...
+ADMIN_PASSWORD=...
 TGJU_API_URL=...
 ```
 
 `TGJU_API_URL` فقط باید در سرویس backend/api استفاده شود. سرویس frontend نباید آدرس provider خارجی را داشته باشد.
+
+در محیط local، مقادیر رمز در `.env` تنظیم شده‌اند. فایل `.env` در `.gitignore` قرار دارد و نباید commit شود. برای staging و production باید رمزهای قوی و منحصربه‌فرد جایگزین شوند.
 
 ## Deployment روی VPS
 
@@ -88,8 +100,7 @@ TGJU_API_URL=...
 git clone https://github.com/rosa-khr/khoobrooz.git
 cd khoobrooz
 cp .env.example .env
-docker compose build
-docker compose up -d
+docker compose up --build -d
 ```
 
 ## Reverse Proxy
@@ -134,7 +145,7 @@ feat -> dev -> main/prod
 
 ## جداسازی بعدی
 
-بعد از اضافه شدن Laravel و SQL Server، فایل‌های زیرساختی باید مرحله‌ای تفکیک شوند:
+فایل‌های زیرساختی در صورت گسترش سرویس‌ها باید مرحله‌ای تفکیک شوند:
 
 ```text
 infra/docker/

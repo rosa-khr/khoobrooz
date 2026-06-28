@@ -20,7 +20,6 @@ MySQL 8.4
 - مستندات `Foreign Keys`
 - تصمیم‌های مربوط به performance و گزارش‌گیری
 - اسکریپت‌های اجرایی MySQL در `database-design/mysql`
-- اسکریپت‌های SQL Server قبلی فقط برای آرشیو تصمیم‌های طراحی در `database-design/sql` نگهداری می‌شوند.
 - برنامه seed کامل کشورها در `database-design/countries-seed-plan.md`
 
 ## قوانین مشترک جدول‌ها

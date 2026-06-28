@@ -18,7 +18,7 @@ const databasePool = mysql.createPool({
   database: process.env.DB_DATABASE ?? process.env.MYSQL_DATABASE ?? "khoobrooz",
   user: process.env.DB_USERNAME ?? process.env.MYSQL_USER ?? "khoobrooz",
   password: databasePassword,
-  charset: "utf8mb4",
+  charset: "utf8mb4_unicode_ci",
   multipleStatements: true,
   waitForConnections: true,
   connectionLimit: 5
