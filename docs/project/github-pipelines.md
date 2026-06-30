@@ -57,8 +57,10 @@ Pipeline این مراحل را اجرا می‌کند:
 npm ci
 npm run typecheck
 npm run lint
+npm run test:backend-contracts
 npm run build
-docker build
+docker compose config --quiet
+docker compose build
 ```
 
 ## Branch Protection پیشنهادی

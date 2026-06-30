@@ -525,8 +525,18 @@ const server = http.createServer(async (request, response) => {
   }
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
-  if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health")) {
+  if (request.method === "GET" && url.pathname === "/") {
     sendJson(response, 200, { ok: true, service: "khoobrooz-api" });
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/health") {
+    try {
+      await databasePool.query("SELECT 1");
+      sendJson(response, 200, { ok: true, service: "khoobrooz-api", database: "ok" });
+    } catch {
+      sendJson(response, 503, { ok: false, service: "khoobrooz-api", database: "unavailable" });
+    }
     return;
   }
 
