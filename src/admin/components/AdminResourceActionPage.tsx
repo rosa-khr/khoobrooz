@@ -395,6 +395,7 @@ function EditorField({ disabled, defaultValue }: { disabled: boolean; defaultVal
       </div>
       <div
         ref={editorRef}
+        data-dynamic-content
         className="admin-rich-editor"
         contentEditable={!disabled}
         dangerouslySetInnerHTML={{ __html: value }}

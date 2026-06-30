@@ -92,7 +92,7 @@ export function MarketRatesBoard({
 
 function RateTable({ title, rates }: { title: string; rates: MarketRate[] }) {
   return (
-    <section className="overflow-hidden rounded-khoobrooz border border-line bg-white/92 shadow-soft backdrop-blur">
+    <section data-dynamic-content className="overflow-hidden rounded-khoobrooz border border-line bg-white/92 shadow-soft backdrop-blur">
       <div className="flex flex-col justify-between gap-2 border-b border-line bg-[#f6f8fb] px-4 py-3 md:flex-row md:items-center">
         <h2 className="text-lg font-black text-primary">{title}</h2>
         <span className="text-xs font-bold text-muted">{rates.length} مورد</span>

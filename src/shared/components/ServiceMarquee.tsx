@@ -196,6 +196,7 @@ export function ServiceMarquee({ locale, ariaLabel }: { locale: Locale; ariaLabe
   return (
     <div
       ref={scrollerRef}
+      data-dynamic-content
       className={`service-marquee reveal-on-scroll ${dragging ? "is-dragging" : ""}`}
       aria-label={ariaLabel}
       dir="ltr"

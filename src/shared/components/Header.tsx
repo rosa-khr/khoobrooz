@@ -155,7 +155,7 @@ export function Header({ locale }: { locale: Locale }) {
           </div>
         </div>
       </div>
-      <header className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
+      <header data-dynamic-content className="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
         <div className="container relative flex min-h-[76px] items-center justify-between gap-5">
           <Link href={localizedPath(locale, "/")} className="inline-flex items-center gap-2.5 font-black text-primary" aria-label="خوبروز">
             <BrandLogoMark className="size-11" />

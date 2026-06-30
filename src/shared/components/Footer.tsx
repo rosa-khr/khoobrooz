@@ -81,7 +81,7 @@ export async function Footer({ locale }: { locale: Locale }) {
   const brandChildren = nav[5]?.children ?? [];
 
   return (
-    <footer className="relative overflow-hidden bg-[#07172b] text-blue-100">
+    <footer data-dynamic-content className="relative overflow-hidden bg-[#07172b] text-blue-100">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(244,178,62,0.09),transparent_30%),linear-gradient(180deg,rgba(7,23,43,0.98),rgba(6,19,37,0.99))]" aria-hidden="true" />
       <SeaRoutePattern className="z-0 text-[#d7e7f4] opacity-[0.18]" />
       <div className="absolute inset-0 bg-gradient-to-l from-[#07172b]/86 via-[#07172b]/64 to-[#061325]/96" aria-hidden="true" />
