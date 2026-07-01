@@ -35,8 +35,8 @@ class CoreSeeder extends Seeder
         );
 
         DB::table('settings')->upsert([
-            ['group' => 'contact', 'key' => 'clearance_phone', 'value' => '0910 306 0306', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
-            ['group' => 'contact', 'key' => 'general_phone', 'value' => '0910 306 0306', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
+            ['group' => 'contact', 'key' => 'clearance_phone', 'value' => '0910 306 0396', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
+            ['group' => 'contact', 'key' => 'general_phone', 'value' => '0910 306 0396', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'contact', 'key' => 'address', 'value' => 'تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'contact', 'key' => 'email', 'value' => 'info@khoobrooz.com', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'seo', 'key' => 'default_title', 'value' => 'خوبروز', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],

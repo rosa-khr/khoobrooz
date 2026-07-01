@@ -74,18 +74,18 @@ Confirmed by user:
 
 - Country: Iran
 - Country code: `0098` / `+98`
-- General/mobile WhatsApp owned by Khoobrooz user: `09103060306`
-- General/mobile WhatsApp international format: `+989103060306`
-- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
-- Customs clearance international format: `+989103060306`
+- General/mobile WhatsApp owned by Khoobrooz user: `09103060396`
+- General/mobile WhatsApp international format: `+989103060396`
+- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060396`
+- Customs clearance international format: `+989103060396`
 - Office address: `تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1`
 - Telegram ID: `khoobrooz_trade`
 - Bale ID: `khoobrooz_trade`
 
 CTA routing rules:
 
-- For ترخیص کالا, ترخیص کالا از گمرک, هزینه ترخیص, مدارک ترخیص, and any customs-clearance-specific CTA, use `09103060306`.
-- For general WhatsApp/social contact, use `09103060306`.
+- For ترخیص کالا, ترخیص کالا از گمرک, هزینه ترخیص, مدارک ترخیص, and any customs-clearance-specific CTA, use `09103060396`.
+- For general WhatsApp/social contact, use `09103060396`.
 - Mobile CTA for customs clearance should be clearly service-specific.
 - If a page is not specifically about customs clearance, use the general contact/WhatsApp unless the user later defines another service-specific number.
 
@@ -107,7 +107,7 @@ Fill these later when the user provides details:
 - Service coverage cities or customs offices:
 - Phone:
 - Mobile:
-- General/mobile WhatsApp: `09103060306`
+- General/mobile WhatsApp: `09103060396`
 - Email: `info@khoobrooz.com`
 - Telegram: `khoobrooz_trade`
 - Bale: `khoobrooz_trade`
@@ -119,7 +119,7 @@ Fill these later when the user provides details:
 - Other licenses or trust badges:
 - Initial language:
 - Future target languages:
-- Current customs clearance CTA number: `09103060306`
+- Current customs clearance CTA number: `09103060396`
 
 ## Social Identity
 
@@ -210,12 +210,12 @@ About Us page should answer:
 
 Collect and organize these before writing the Contact Us page:
 
-- Primary contact method: general WhatsApp `09103060306`
-- Secondary contact method: customs clearance CTA `09103060306`
+- Primary contact method: general WhatsApp `09103060396`
+- Secondary contact method: customs clearance CTA `09103060396`
 - Consultation form fields:
 - Office address: `تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1`
 - Map/link if available:
-- Mobile: `0910 306 0306`
+- Mobile: `0910 306 0396`
 - Telegram and Bale ID: `khoobrooz_trade`
 - WhatsApp CTA text: ارتباط در واتساپ
 - Working hours:

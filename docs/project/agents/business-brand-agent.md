@@ -38,8 +38,8 @@ Cross-check with:
 4. Write Persian content in a formal, practical, transparent tone.
 5. Avoid exaggerated claims such as guaranteed clearance, lowest price, or fastest service.
 6. Contact pages should make the next step obvious: call, WhatsApp, form, or consultation request.
-7. Use `09103060306` for the user's personal/general WhatsApp and social contact.
-8. Use `09103060306` for customs-clearance-specific CTAs until a separate clearance line is confirmed.
+7. Use `09103060396` for the user's personal/general WhatsApp and social contact.
+8. Use `09103060396` for customs-clearance-specific CTAs until a separate clearance line is confirmed.
 9. Do not mention any operational partner publicly unless the user explicitly approves public disclosure.
 10. Keep clearance services public-facing under the Khoobrooz brand while avoiding false ownership, license, or guarantee claims.
 11. Store updated business facts in `docs/project/skils/business-info.md`.

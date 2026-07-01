@@ -50,8 +50,8 @@ Coordinate with:
 13. Build mobile-first and verify mobile, tablet, laptop, and desktop breakpoints.
 14. Use standard web fonts; prefer Dana for Persian only if licensing and webfont files are available.
 15. Provide robust font fallbacks such as `Dana`, `IRANSans`, `Vazirmatn`, `system-ui`, and `sans-serif`.
-16. Use `09103060306` for customs-clearance-specific mobile CTA links until a separate clearance line is confirmed.
-17. Use `09103060306` / `+989103060306` for the user's personal/general WhatsApp and social contact links.
+16. Use `09103060396` for customs-clearance-specific mobile CTA links until a separate clearance line is confirmed.
+17. Use `09103060396` / `+989103060396` for the user's personal/general WhatsApp and social contact links.
 
 ## Current Project Architecture
 

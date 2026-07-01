@@ -147,10 +147,10 @@ Secondary CTAs:
 
 Confirmed contact routing:
 
-- General/mobile WhatsApp owned by Khoobrooz user: `09103060306`
-- General/mobile WhatsApp international format: `+989103060306`
-- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
-- Customs clearance international format: `+989103060306`
+- General/mobile WhatsApp owned by Khoobrooz user: `09103060396`
+- General/mobile WhatsApp international format: `+989103060396`
+- Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060396`
+- Customs clearance international format: `+989103060396`
 - Office address: `تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1`
 - Telegram and Bale ID: `khoobrooz_trade`
 - Country: Iran
@@ -158,8 +158,8 @@ Confirmed contact routing:
 
 CTA rules:
 
-- For customs clearance pages and clearance-specific mobile CTAs, use `09103060306`.
-- For general website contact, social contact, and WhatsApp CTAs, use `09103060306`.
+- For customs clearance pages and clearance-specific mobile CTAs, use `09103060396`.
+- For general website contact, social contact, and WhatsApp CTAs, use `09103060396`.
 - Public-facing copy should stay under the Khoobrooz brand.
 - If a separate clearance number is confirmed later, update this section and the central contact constants.
 
