@@ -32,10 +32,6 @@ export const localeDirections: Record<Locale, "rtl" | "ltr"> = {
 
 export const contact = {
   address: "تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی",
-  officePhone: "021 2265 0282~3",
-  officePhoneUrl: "tel:+982122650282",
-  fax: "021 2620 4504",
-  faxUrl: "tel:+982126204504",
   generalWhatsapp: "0910 306 0306",
   generalWhatsappIntl: "+989103060306",
   generalWhatsappUrl: "https://wa.me/989103060306",

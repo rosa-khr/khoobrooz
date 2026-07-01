@@ -163,7 +163,7 @@ export function MarketRatesMarquee({
   );
 
   return (
-    <section className="border-y border-[#ead9b8] bg-[#fffaf0] py-2 text-primary">
+    <section data-dynamic-content className="border-y border-[#ead9b8] bg-[#fffaf0] py-2 text-primary">
       <div className="container">
         <div className="mb-2 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">

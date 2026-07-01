@@ -58,7 +58,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
   const services = await loadServices();
 
   return (
-    <main>
+    <main data-dynamic-content>
       <PageHero eyebrow={page.eyebrow} title={page.heading}>
         <p>{page.body}</p>
         <div className="mt-6 flex flex-wrap gap-3">

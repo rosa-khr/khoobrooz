@@ -37,13 +37,16 @@ class CoreSeeder extends Seeder
         DB::table('settings')->upsert([
             ['group' => 'contact', 'key' => 'clearance_phone', 'value' => '0910 306 0306', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'contact', 'key' => 'general_phone', 'value' => '0910 306 0306', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
-            ['group' => 'contact', 'key' => 'office_phone', 'value' => '021 2265 0282~3', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
-            ['group' => 'contact', 'key' => 'fax', 'value' => '021 2620 4504', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'contact', 'key' => 'address', 'value' => 'تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'contact', 'key' => 'email', 'value' => 'info@khoobrooz.com', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'seo', 'key' => 'default_title', 'value' => 'خوبروز', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
             ['group' => 'seo', 'key' => 'default_description', 'value' => 'خدمات بازرگانی، ترخیص، آموزش و محتوای تجاری', 'type' => 'string', 'locale' => 'fa', 'accuracy' => 1],
         ], ['group', 'key', 'locale'], ['value', 'type', 'accuracy']);
+
+        DB::table('settings')
+            ->where('group', 'contact')
+            ->whereIn('key', ['office_phone', 'fax'])
+            ->update(['accuracy' => 2]);
 
         DB::table('market_rate_sources')->upsert([
             ['key' => 'tgju', 'name' => 'internal_market_rate_source', 'base_url' => null, 'is_active' => true, 'accuracy' => 1],

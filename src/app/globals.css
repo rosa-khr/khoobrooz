@@ -1,9 +1,66 @@
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-light.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-medium.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-demibold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-extrabold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dana";
+  src: url("/fonts/dana/dana-black.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+  --font-dana: "Dana", IRANSans, Vazirmatn, system-ui, sans-serif;
 }
 
 * {
@@ -18,7 +75,7 @@ body {
   margin: 0;
   background: #f7f8fa;
   color: #1f2937;
-  font-family: Dana, IRANSans, Vazirmatn, system-ui, sans-serif;
+  font-family: var(--font-dana);
   line-height: 1.85;
 }
 
@@ -30,8 +87,63 @@ a {
 button,
 input,
 select,
-textarea {
+textarea,
+option {
   font: inherit;
+  font-family: var(--font-dana);
+}
+
+[data-dynamic-content] {
+  font-family: var(--font-dana);
+}
+
+[data-dynamic-content] :where(
+  article,
+  section,
+  div,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a,
+  button,
+  label,
+  input,
+  textarea,
+  select,
+  option,
+  ul,
+  ol,
+  li,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  small,
+  strong,
+  em,
+  b,
+  i,
+  font,
+  span:not(.ag-icon):not([class*="icon"])
+) {
+  font-family: var(--font-dana) !important;
+}
+
+.admin-rich-editor,
+.admin-rich-editor :where(div, p, span, a, ul, ol, li, strong, em, b, i, font),
+.tagify,
+.tagify__dropdown,
+.tagify__dropdown__wrapper,
+.tagify__dropdown__item,
+.Toastify__toast,
+.Toastify__toast-body {
+  font-family: var(--font-dana) !important;
 }
 
 ::selection {
@@ -50,7 +162,7 @@ textarea {
   --admin-gold: #f4b23e;
   --admin-mustard: #c68a2b;
   --admin-surface: #ffffff;
-  --admin-font: Dana, IRANSans, Vazirmatn, system-ui, sans-serif;
+  --admin-font: var(--font-dana);
   display: grid;
   min-height: 100vh;
   grid-template-columns: 280px minmax(0, 1fr);

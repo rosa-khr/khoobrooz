@@ -68,7 +68,7 @@ export function WorldTimeWidget() {
   }
 
   return (
-    <section className="bg-white py-6 md:py-8">
+    <section data-dynamic-content className="bg-white py-6 md:py-8">
       <div className="container">
         <div className="relative overflow-hidden rounded-khoobrooz border border-white/15 bg-[#07182b] p-4 text-white shadow-[0_18px_46px_rgba(7,24,43,0.13)] md:p-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(210,132,34,0.13),transparent_30%),radial-gradient(circle_at_82%_78%,rgba(15,118,110,0.1),transparent_34%),linear-gradient(90deg,rgba(7,24,43,0.98),rgba(10,34,55,0.9),rgba(6,20,36,0.98))]" aria-hidden="true" />
