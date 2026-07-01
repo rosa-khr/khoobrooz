@@ -50,10 +50,10 @@ Recommended sections:
 
 - Country: Iran
 - Country code: `0098` / `+98`
-- Personal/general WhatsApp owned by Khoobrooz user: `09103060306`
-- Personal/general WhatsApp international format: `+989103060306`
-- Customs clearance CTA temporarily uses the Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
-- Customs clearance partner international format: `+989103060306`
+- Personal/general WhatsApp owned by Khoobrooz user: `09103060396`
+- Personal/general WhatsApp international format: `+989103060396`
+- Customs clearance CTA temporarily uses the Khoobrooz user mobile until a separate clearance line is confirmed: `09103060396`
+- Customs clearance partner international format: `+989103060396`
 
 ## Social Identity Recommendation
 
@@ -77,8 +77,8 @@ Reason:
 
 CTA routing:
 
-- Use `09103060306` anywhere the CTA is specifically for ترخیص کالا or customs clearance.
-- Use `09103060306` for the user's personal/general WhatsApp and social contact.
+- Use `09103060396` anywhere the CTA is specifically for ترخیص کالا or customs clearance.
+- Use `09103060396` for the user's personal/general WhatsApp and social contact.
 
 Partner handling:
 

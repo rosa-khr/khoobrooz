@@ -99,8 +99,8 @@ Root should only contain required framework/config files. Do not add new source 
 10. Prepare product pages for future Zarinpal checkout.
 11. Verify responsive behavior at mobile, tablet, laptop, desktop, and wide desktop widths.
 12. Verify font loading and fallback behavior.
-13. Route customs-clearance-specific phone CTAs to `09103060306` until a separate clearance line is confirmed.
-14. Route the user's personal/general WhatsApp and social contact CTAs to `09103060306` or `+989103060306`.
+13. Route customs-clearance-specific phone CTAs to `09103060396` until a separate clearance line is confirmed.
+14. Route the user's personal/general WhatsApp and social contact CTAs to `09103060396` or `+989103060396`.
 
 ## Initial Components
 
