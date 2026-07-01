@@ -31,7 +31,7 @@ export const localeDirections: Record<Locale, "rtl" | "ltr"> = {
 };
 
 export const contact = {
-  address: "تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی",
+  address: "تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1",
   generalWhatsapp: "0910 306 0306",
   generalWhatsappIntl: "+989103060306",
   generalWhatsappUrl: "https://wa.me/989103060306",

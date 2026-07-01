@@ -78,7 +78,7 @@ Confirmed by user:
 - General/mobile WhatsApp international format: `+989103060306`
 - Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
 - Customs clearance international format: `+989103060306`
-- Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
+- Office address: `تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1`
 - Telegram ID: `khoobrooz_trade`
 - Bale ID: `khoobrooz_trade`
 
@@ -213,7 +213,7 @@ Collect and organize these before writing the Contact Us page:
 - Primary contact method: general WhatsApp `09103060306`
 - Secondary contact method: customs clearance CTA `09103060306`
 - Consultation form fields:
-- Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
+- Office address: `تهران، بلوار آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1`
 - Map/link if available:
 - Mobile: `0910 306 0306`
 - Telegram and Bale ID: `khoobrooz_trade`
