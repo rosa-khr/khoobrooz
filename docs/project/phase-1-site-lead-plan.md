@@ -151,8 +151,6 @@ Confirmed contact routing:
 - General/mobile WhatsApp international format: `+989103060306`
 - Customs clearance CTA temporarily uses the same Khoobrooz user mobile until a separate clearance line is confirmed: `09103060306`
 - Customs clearance international format: `+989103060306`
-- Office phone: `021 2265 0282~3`
-- Fax: `021 2620 4504`
 - Office address: `تهران، منطقه 3، آفریقا (جردن)، بالاتر از خیابان اسفندیار، خیابان انصاری (صداقت)، پلاک 1، واحد 1 غربی`
 - Telegram and Bale ID: `khoobrooz_trade`
 - Country: Iran
