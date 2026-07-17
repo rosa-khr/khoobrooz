@@ -267,6 +267,57 @@ option {
   padding-top: 18px;
 }
 
+.admin-sidebar-group {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-sidebar-group + .admin-sidebar-group {
+  margin-top: 6px;
+}
+
+.admin-sidebar-group-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(232, 237, 242, 0.58);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.admin-sidebar-group-trigger svg {
+  transition: transform 180ms ease;
+}
+
+.admin-sidebar-group-trigger:hover,
+.admin-sidebar-group-trigger.active {
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-sidebar-group.is-open .admin-sidebar-group-trigger svg {
+  transform: rotate(180deg);
+}
+
+.admin-sidebar-group-items {
+  display: none;
+  gap: 4px;
+}
+
+.admin-sidebar-group.is-open .admin-sidebar-group-items {
+  display: grid;
+}
+
 .admin-sidebar-nav a {
   display: flex;
   align-items: center;
@@ -302,7 +353,8 @@ option {
 }
 
 .admin-app-collapsed .admin-sidebar-brand div,
-.admin-app-collapsed .admin-sidebar-nav a span {
+.admin-app-collapsed .admin-sidebar-nav a span,
+.admin-app-collapsed .admin-sidebar-group-trigger span {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -318,6 +370,15 @@ option {
 .admin-app-collapsed .admin-sidebar-nav a {
   justify-content: center;
   padding-inline: 0;
+}
+
+.admin-app-collapsed .admin-sidebar-group-trigger {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.admin-app-collapsed .admin-sidebar-group-trigger svg {
+  display: none;
 }
 
 .admin-main {

@@ -3,17 +3,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry, type ColDef, type GridApi, type GridReadyEvent } from "ag-grid-community";
-import { Eye, Pencil, Trash2, BadgeCheck } from "lucide-react";
+import { Eye, Pencil, Trash2, BadgeCheck, Archive, RefreshCw, Send, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import { AccuracyBadge, BooleanBadge, PublishBadge } from "@/admin/components/AdminBadges";
-import { deleteAdminRecord, saveAdminRecord, type AdminContentRecord, type AdminGridRecord } from "@/admin/lib/adminApi";
+import { deleteAdminRecord, runAdminResourceAction, saveAdminRecord, type AdminContentRecord, type AdminGridRecord } from "@/admin/lib/adminApi";
 import { formatPersianDateTime } from "@/admin/lib/date";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-type GridKind = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks";
+type GridKind = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks" | "content-sources" | "source-items";
 
 const persianGridLocale = {
   page: "صفحه",
@@ -77,6 +77,37 @@ function formatTagTitles(value?: string[]) {
   return Array.isArray(value) && value.length > 0 ? value.join("، ") : "-";
 }
 
+function sourceStatusLabel(value?: string) {
+  const labels: Record<string, string> = {
+    ready: "آماده",
+    needs_configuration: "نیازمند تنظیم",
+    manual_required: "ورود دستی",
+    disabled: "غیرفعال",
+    error: "خطادار",
+    pending_review: "در انتظار بررسی",
+    approved: "تاییدشده",
+    published: "منتشرشده",
+    rejected: "ردشده",
+    duplicate: "تکراری",
+    archived: "بایگانی",
+    failed: "خطادار",
+    filtered_out: "ردشده توسط فیلتر"
+  };
+  return value ? labels[value] ?? value : "-";
+}
+
+function ExternalLinkCell({ value }: { value?: string }) {
+  if (!value) {
+    return <span>-</span>;
+  }
+
+  return (
+    <a className="font-bold text-secondary underline-offset-4 hover:text-accent hover:underline" dir="ltr" href={value} rel="noreferrer" target="_blank">
+      {value}
+    </a>
+  );
+}
+
 type AdminDataGridProps = {
   title: string;
   description: string;
@@ -118,6 +149,15 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
         onChanged?.();
       })
       .catch((reason: unknown) => toast.error(reason instanceof Error ? reason.message : "حذف منطقی ناموفق بود."));
+  }, [kind, onChanged]);
+
+  const handleResourceAction = useCallback((data: AdminGridRecord, action: string) => {
+    runAdminResourceAction(kind, action, { id: data.id })
+      .then(() => {
+        toast.success("عملیات انجام شد.");
+        onChanged?.();
+      })
+      .catch((reason: unknown) => toast.error(reason instanceof Error ? reason.message : "عملیات ناموفق بود."));
   }, [kind, onChanged]);
 
   const saveGridState = useCallback((api: GridApi) => {
@@ -175,7 +215,7 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
         headerName: "عملیات",
         field: "id",
         pinned: "left",
-        width: kind === "articles" || kind === "news" ? 156 : 126,
+        width: kind === "source-items" ? 230 : kind === "content-sources" || kind === "articles" || kind === "news" ? 170 : 126,
         cellRenderer: ({ data }: { data: AdminGridRecord }) => (
           <div className="admin-grid-actions">
             <a aria-label="مشاهده" href={`/admin/${resourcePath}/view/${data.id}`}>
@@ -188,6 +228,27 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
               <button aria-label="تایید" onClick={() => handleApprove(data)} type="button">
                 <BadgeCheck size={15} />
               </button>
+            ) : null}
+            {kind === "content-sources" ? (
+              <button aria-label="دریافت دستی" onClick={() => handleResourceAction(data, "fetch")} type="button">
+                <RefreshCw size={15} />
+              </button>
+            ) : null}
+            {kind === "source-items" ? (
+              <>
+                <button aria-label="تایید" onClick={() => handleResourceAction(data, "approve")} type="button">
+                  <BadgeCheck size={15} />
+                </button>
+                <button aria-label="انتشار" onClick={() => handleResourceAction(data, "publish")} type="button">
+                  <Send size={15} />
+                </button>
+                <button aria-label="رد" onClick={() => handleResourceAction(data, "reject")} type="button">
+                  <XCircle size={15} />
+                </button>
+                <button aria-label="بایگانی" onClick={() => handleResourceAction(data, "archive")} type="button">
+                  <Archive size={15} />
+                </button>
+              </>
             ) : null}
             <button aria-label="حذف" onClick={() => handleDelete(data)} type="button">
               <Trash2 size={15} />
@@ -258,6 +319,43 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
       ];
     }
 
+    if (kind === "content-sources") {
+      return [
+        { headerName: "منبع", field: "name", flex: 1.2, minWidth: 190 },
+        { headerName: "نوع اتصال", field: "sourceType", width: 125 },
+        { headerName: "گروه", field: "sourceCategory", width: 145 },
+        { headerName: "وضعیت اتصال", field: "connectionStatus", width: 155, valueFormatter: ({ value }) => sourceStatusLabel(value) },
+        { headerName: "آدرس سایت", field: "websiteUrl", flex: 1.2, minWidth: 200, dir: "ltr", cellRenderer: ({ value }: { value?: string }) => <ExternalLinkCell value={value} /> },
+        { headerName: "فید", field: "feedUrl", flex: 1.4, minWidth: 240, dir: "ltr", cellRenderer: ({ value }: { value?: string }) => <ExternalLinkCell value={value} /> },
+        { headerName: "فاصله", field: "fetchIntervalMinutes", width: 95 },
+        { headerName: "فعال", field: "isActive", width: 105, cellRenderer: ({ value }: { value: boolean }) => <BooleanBadge falseLabel="غیرفعال" trueLabel="فعال" value={value} /> },
+        { headerName: "آخرین دریافت", field: "lastFetchedAt", width: 150, valueFormatter: ({ value }) => formatPersianDateTime(value) || "-" },
+        { headerName: "خطا", field: "lastErrorMessage", flex: 1, minWidth: 220 },
+        ...baseColumns.filter((column) => column.field !== "isPublished")
+      ];
+    }
+
+    if (kind === "source-items") {
+      return [
+        { headerName: "عنوان اصلی", field: "originalTitle", flex: 1.6, minWidth: 260 },
+        { headerName: "منبع", field: "sourceName", width: 165 },
+        { headerName: "نوع", field: "detectedContentType", width: 125 },
+        { headerName: "دسته پیشنهادی", field: "suggestedCategory", width: 165, valueFormatter: ({ value }) => value || "-" },
+        { headerName: "امتیاز ارتباط", field: "relevanceScore", width: 130 },
+        { headerName: "وضعیت بررسی", field: "processingStatus", width: 160, valueFormatter: ({ value }) => sourceStatusLabel(value) },
+        { headerName: "تاریخ منبع", field: "sourcePublishedAt", width: 150, valueFormatter: ({ value }) => formatPersianDateTime(value) || "-" },
+        { headerName: "دریافت", field: "fetchedAt", width: 150, valueFormatter: ({ value }) => formatPersianDateTime(value) || "-" },
+        { headerName: "لینک منبع", field: "sourceUrl", flex: 1.2, minWidth: 220, dir: "ltr", cellRenderer: ({ value }: { value?: string }) => <ExternalLinkCell value={value} /> },
+        {
+          headerName: "وضعیت",
+          field: "accuracy",
+          width: 128,
+          cellRenderer: ({ value }: { value: 0 | 1 | 2 }) => <AccuracyBadge value={value} />
+        },
+        baseColumns[3]
+      ];
+    }
+
     return [
       { headerName: "عنوان", field: "title", flex: 1.5, minWidth: 230 },
       { headerName: "دسته", field: "category", width: 150 },
@@ -280,13 +378,13 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
       { headerName: "زمان‌بندی", field: "scheduledAt", width: 150, valueFormatter: ({ value }) => formatPersianDateTime(value) || "-" },
       ...baseColumns
     ];
-  }, [handleApprove, handleDelete, kind, resourcePath]);
+  }, [handleApprove, handleDelete, handleResourceAction, kind, resourcePath]);
 
   return (
     <section className="admin-grid-section" id={kind}>
       <div className="admin-section-heading">
         <div>
-          <span>{kind === "menus" ? "Navigation" : kind === "categories" ? "Categories" : kind === "pages" ? "Pages" : kind === "tags" ? "Tags" : kind === "services" ? "Services" : kind === "world-clocks" ? "World Clock" : "Content"}</span>
+          <span>{kind === "menus" ? "Navigation" : kind === "categories" ? "Categories" : kind === "pages" ? "Pages" : kind === "tags" ? "Tags" : kind === "services" ? "Services" : kind === "world-clocks" ? "World Clock" : kind === "content-sources" ? "Sources" : kind === "source-items" ? "Incoming" : "Content"}</span>
           <h2>{title}</h2>
           <p>{description}</p>
         </div>

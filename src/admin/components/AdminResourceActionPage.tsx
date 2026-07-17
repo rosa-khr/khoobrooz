@@ -26,10 +26,12 @@ import {
   type AdminCountryRecord,
   type AdminCityOption,
   type AdminContentRecord,
+  type AdminContentSourceRecord,
   type AdminGridRecord,
   type AdminMenuRecord,
   type AdminResource,
   type AdminSimpleRecord,
+  type AdminSourceItemRecord,
   type AdminWorldClockRecord
 } from "@/admin/lib/adminApi";
 
@@ -1144,8 +1146,288 @@ function WorldClockForm({ action, id }: { action: "add" | "view" | "edit"; id?: 
   );
 }
 
+function ContentSourceForm({ action, id }: { action: "add" | "view" | "edit"; id?: string }) {
+  const [row, setRow] = useState<AdminContentSourceRecord | null>(null);
+  const [categories, setCategories] = useState<AdminCategoryRecord[]>([]);
+  const disabled = action === "view";
+
+  useEffect(() => {
+    loadAdminLookup("categories", { accuracy: 1 })
+      .then(({ response: { items } }) => setCategories(items as AdminCategoryRecord[]))
+      .catch(() => setCategories([]));
+  }, []);
+
+  useEffect(() => {
+    if (!id || action === "add") return;
+    findAdminRecord("content-sources", id)
+      .then(({ response: { items } }) => setRow((items[0] as AdminContentSourceRecord | undefined) ?? null))
+      .catch(() => toast.error("دریافت منبع ناموفق بود."));
+  }, [action, id]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const form = new FormData(event.currentTarget);
+
+    try {
+      await saveAdminRecord("content-sources", action === "edit" ? "update" : "add", {
+        id: row?.id,
+        name: form.get("name"),
+        slug: form.get("slug"),
+        websiteUrl: form.get("websiteUrl"),
+        feedUrl: form.get("feedUrl"),
+        sourceType: form.get("sourceType"),
+        sourceCategory: form.get("sourceCategory"),
+        language: form.get("language"),
+        country: form.get("country"),
+        defaultArticleType: form.get("defaultArticleType"),
+        defaultCategoryId: toNumberOrNull(form.get("defaultCategoryId")),
+        trustLevel: form.get("trustLevel"),
+        fetchIntervalMinutes: toNumberOrNull(form.get("fetchIntervalMinutes")) ?? 60,
+        backfillDays: toNumberOrNull(form.get("backfillDays")) ?? 7,
+        maxBackfillItems: toNumberOrNull(form.get("maxBackfillItems")) ?? 20,
+        requiresReview: true,
+        allowAutoPublish: false,
+        isActive: toBoolean(form.get("isActive")),
+        respectRobots: toBoolean(form.get("respectRobots")),
+        connectionStatus: form.get("connectionStatus"),
+        termsNotes: form.get("termsNotes"),
+        parserKey: form.get("parserKey"),
+        accuracy: toNumberOrNull(form.get("accuracy")) ?? 1
+      });
+      toast.success("منبع ذخیره شد.");
+    } catch (reason) {
+      toast.error(reason instanceof Error ? reason.message : "ذخیره منبع ناموفق بود.");
+      throw reason;
+    }
+  }
+
+  const categoryOptions = categories.map((category) => ({
+    group: category.type,
+    label: category.parentTitle ? `${category.parentTitle} / ${category.title}` : category.title,
+    value: category.id
+  }));
+
+  return (
+    <AdminFormFrame action={action} id={row?.id} onSubmit={handleSubmit} resource="content-sources" title={action === "add" ? "ایجاد منبع خبری" : row?.name ?? "منبع خبری"}>
+      <div className="admin-form-grid two">
+        <FieldShell label="نام منبع">
+          <TextInput disabled={disabled} defaultValue={row?.name} name="name" placeholder="خبرگزاری یا منبع رسمی" />
+        </FieldShell>
+        <FieldShell label="اسلاگ">
+          <TextInput disabled={disabled} defaultValue={row?.slug} dir="ltr" name="slug" placeholder="tasnim-news" />
+        </FieldShell>
+        <FieldShell label="آدرس سایت">
+          <TextInput disabled={disabled} defaultValue={row?.websiteUrl} dir="ltr" name="websiteUrl" placeholder="https://example.com" />
+        </FieldShell>
+        <FieldShell label="آدرس فید یا API">
+          <TextInput disabled={disabled} defaultValue={row?.feedUrl} dir="ltr" name="feedUrl" placeholder="بدون حدس URL" />
+        </FieldShell>
+        <FieldShell label="نوع اتصال">
+          <ChoiceInput disabled={disabled} defaultValue={row?.sourceType ?? "manual"} name="sourceType" options={[
+            { label: "RSS", value: "rss" },
+            { label: "Atom", value: "atom" },
+            { label: "API", value: "api" },
+            { label: "Scraper", value: "scraper" },
+            { label: "Manual", value: "manual" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="گروه منبع">
+          <ChoiceInput disabled={disabled} defaultValue={row?.sourceCategory ?? "official"} name="sourceCategory" options={[
+            { label: "رسمی", value: "official" },
+            { label: "خبرگزاری", value: "news_agency" },
+            { label: "رسانه تجاری", value: "trade_media" },
+            { label: "بین‌المللی", value: "international" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="زبان">
+          <TextInput disabled={disabled} defaultValue={row?.language ?? "fa"} dir="ltr" name="language" placeholder="fa" />
+        </FieldShell>
+        <FieldShell label="کشور">
+          <TextInput disabled={disabled} defaultValue={row?.country ?? "IR"} dir="ltr" name="country" placeholder="IR" />
+        </FieldShell>
+        <FieldShell label="نوع محتوای پیش‌فرض">
+          <ChoiceInput disabled={disabled} defaultValue={row?.defaultArticleType ?? "news"} name="defaultArticleType" options={[
+            { label: "خبر", value: "news" },
+            { label: "بخشنامه", value: "circular" },
+            { label: "مقرره", value: "regulation" },
+            { label: "اطلاعیه رسمی", value: "official_notice" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="دسته پیش‌فرض">
+          <ChoiceInput disabled={disabled} defaultValue={row?.defaultCategoryId ?? ""} name="defaultCategoryId" options={[{ label: "بدون دسته", value: "" }, ...categoryOptions]} searchable />
+        </FieldShell>
+        <FieldShell label="سطح اعتماد">
+          <ChoiceInput disabled={disabled} defaultValue={row?.trustLevel ?? "medium"} name="trustLevel" options={[
+            { label: "رسمی", value: "official" },
+            { label: "بالا", value: "high" },
+            { label: "متوسط", value: "medium" },
+            { label: "پایین", value: "low" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="وضعیت اتصال">
+          <ChoiceInput disabled={disabled} defaultValue={row?.connectionStatus ?? "needs_configuration"} name="connectionStatus" options={[
+            { label: "آماده", value: "ready" },
+            { label: "نیازمند تنظیم", value: "needs_configuration" },
+            { label: "ورود دستی لازم است", value: "manual_required" },
+            { label: "غیرفعال", value: "disabled" },
+            { label: "خطادار", value: "error" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="فاصله بررسی (دقیقه)">
+          <TextInput disabled={disabled} defaultValue={row?.fetchIntervalMinutes ?? 60} dir="ltr" name="fetchIntervalMinutes" />
+        </FieldShell>
+        <FieldShell label="حداکثر Backfill">
+          <TextInput disabled={disabled} defaultValue={row?.maxBackfillItems ?? 20} dir="ltr" name="maxBackfillItems" />
+        </FieldShell>
+        <FieldShell label="روزهای Backfill">
+          <TextInput disabled={disabled} defaultValue={row?.backfillDays ?? 7} dir="ltr" name="backfillDays" />
+        </FieldShell>
+        <FieldShell label="Parser Key">
+          <TextInput disabled={disabled} defaultValue={row?.parserKey ?? "rss-generic"} dir="ltr" name="parserKey" />
+        </FieldShell>
+        <FieldShell label="فعال">
+          <ChoiceInput disabled={disabled} defaultValue={String(Boolean(row?.isActive))} name="isActive" options={publishOptions} />
+        </FieldShell>
+        <FieldShell label="رعایت Robots/Terms">
+          <ChoiceInput disabled={disabled} defaultValue={String(row?.respectRobots ?? true)} name="respectRobots" options={publishOptions} />
+        </FieldShell>
+      </div>
+      <FieldShell label="یادداشت شرایط استفاده و محدودیت‌ها">
+        <textarea defaultValue={row?.termsNotes ?? ""} disabled={disabled} name="termsNotes" rows={4} />
+      </FieldShell>
+      <StatusFields accuracy={row?.accuracy ?? 1} disabled={disabled} withPublish={false} />
+    </AdminFormFrame>
+  );
+}
+
+function SourceItemForm({ action, id }: { action: "add" | "view" | "edit"; id?: string }) {
+  const [row, setRow] = useState<AdminSourceItemRecord | null>(null);
+  const [categories, setCategories] = useState<AdminCategoryRecord[]>([]);
+  const disabled = action === "view";
+
+  useEffect(() => {
+    loadAdminLookup("categories", { accuracy: 1 })
+      .then(({ response: { items } }) => setCategories(items as AdminCategoryRecord[]))
+      .catch(() => setCategories([]));
+  }, []);
+
+  useEffect(() => {
+    if (!id || action === "add") return;
+    findAdminRecord("source-items", id)
+      .then(({ response: { items } }) => setRow((items[0] as AdminSourceItemRecord | undefined) ?? null))
+      .catch(() => toast.error("دریافت خبر ورودی ناموفق بود."));
+  }, [action, id]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const form = new FormData(event.currentTarget);
+
+    try {
+      await saveAdminRecord("source-items", "update", {
+        id: row?.id,
+        reviewTitle: form.get("reviewTitle"),
+        slug: form.get("slug"),
+        summary: form.get("summary"),
+        content: form.get("content"),
+        detectedContentType: form.get("detectedContentType"),
+        suggestedCategoryId: toNumberOrNull(form.get("suggestedCategoryId")),
+        processingStatus: form.get("processingStatus"),
+        seoTitle: form.get("seoTitle"),
+        seoDescription: form.get("seoDescription"),
+        selectedImageUrl: form.get("selectedImageUrl"),
+        circularNumber: form.get("circularNumber"),
+        issuer: form.get("issuer"),
+        effectiveAt: form.get("effectiveAt"),
+        validityStatus: form.get("validityStatus"),
+        accuracy: toNumberOrNull(form.get("accuracy")) ?? 1
+      });
+      toast.success("آیتم ورودی ذخیره شد.");
+    } catch (reason) {
+      toast.error(reason instanceof Error ? reason.message : "ذخیره آیتم ورودی ناموفق بود.");
+      throw reason;
+    }
+  }
+
+  const categoryOptions = categories.map((category) => ({
+    group: category.type,
+    label: category.parentTitle ? `${category.parentTitle} / ${category.title}` : category.title,
+    value: category.id
+  }));
+
+  return (
+    <AdminFormFrame action={action} id={row?.id} onSubmit={handleSubmit} resource="source-items" title={row?.originalTitle ?? "خبر ورودی"}>
+      {row ? (
+        <section className="admin-empty-state">
+          <strong>اطلاعات منبع</strong>
+          <p>{row.sourceName} | {formatPersianDateTime(row.sourcePublishedAt) || "بدون تاریخ"} | <a href={row.sourceUrl} rel="noreferrer" target="_blank">مشاهده منبع اصلی</a></p>
+          <p>{row.originalSummary || "خلاصه‌ای از منبع دریافت نشده است."}</p>
+        </section>
+      ) : null}
+      <div className="admin-form-grid two">
+        <FieldShell label="عنوان قابل انتشار">
+          <TextInput disabled={disabled} defaultValue={row?.reviewTitle ?? row?.originalTitle} name="reviewTitle" />
+        </FieldShell>
+        <FieldShell label="Slug">
+          <TextInput disabled={disabled} defaultValue={row?.slug} dir="ltr" name="slug" />
+        </FieldShell>
+        <FieldShell label="نوع محتوا">
+          <ChoiceInput disabled={disabled} defaultValue={row?.detectedContentType ?? "news"} name="detectedContentType" options={[
+            { label: "خبر", value: "news" },
+            { label: "بخشنامه", value: "circular" },
+            { label: "مقرره", value: "regulation" },
+            { label: "اطلاعیه رسمی", value: "official_notice" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="دسته پیشنهادی/نهایی">
+          <ChoiceInput disabled={disabled} defaultValue={row?.suggestedCategoryId ?? ""} name="suggestedCategoryId" options={[{ label: "بدون دسته", value: "" }, ...categoryOptions]} searchable />
+        </FieldShell>
+        <FieldShell label="وضعیت بررسی">
+          <ChoiceInput disabled={disabled} defaultValue={row?.processingStatus ?? "pending_review"} name="processingStatus" options={[
+            { label: "در انتظار بررسی", value: "pending_review" },
+            { label: "تایید شده", value: "approved" },
+            { label: "منتشر شده", value: "published" },
+            { label: "رد شده", value: "rejected" },
+            { label: "تکراری", value: "duplicate" },
+            { label: "بایگانی", value: "archived" },
+            { label: "خطادار", value: "failed" },
+            { label: "ردشده توسط فیلتر", value: "filtered_out" }
+          ]} />
+        </FieldShell>
+        <FieldShell label="تصویر انتخابی">
+          <TextInput disabled={disabled} defaultValue={row?.selectedImageUrl || row?.originalImageUrl} dir="ltr" name="selectedImageUrl" />
+        </FieldShell>
+        <FieldShell label="شماره بخشنامه">
+          <TextInput disabled={disabled} defaultValue={row?.circularNumber} name="circularNumber" />
+        </FieldShell>
+        <FieldShell label="مرجع صادرکننده">
+          <TextInput disabled={disabled} defaultValue={row?.issuer} name="issuer" />
+        </FieldShell>
+        <FieldShell label="تاریخ اجرا">
+          <DateTextInput disabled={disabled} defaultValue={row?.effectiveAt} name="effectiveAt" />
+        </FieldShell>
+        <FieldShell label="وضعیت اعتبار">
+          <TextInput disabled={disabled} defaultValue={row?.validityStatus} name="validityStatus" />
+        </FieldShell>
+      </div>
+      <FieldShell label="خلاصه قابل انتشار">
+        <textarea defaultValue={row?.summary || row?.originalSummary} disabled={disabled} name="summary" rows={4} />
+      </FieldShell>
+      <FieldShell label="متن قابل انتشار">
+        <EditorField defaultValue={row?.content || row?.originalContent} disabled={disabled} />
+      </FieldShell>
+      <div className="admin-form-grid two">
+        <FieldShell label="SEO Title">
+          <TextInput disabled={disabled} defaultValue={row?.seoTitle} name="seoTitle" />
+        </FieldShell>
+        <FieldShell label="SEO Description">
+          <TextInput disabled={disabled} defaultValue={row?.seoDescription} name="seoDescription" />
+        </FieldShell>
+      </div>
+      <StatusFields accuracy={row?.accuracy ?? 1} disabled={disabled} withPublish={false} />
+    </AdminFormFrame>
+  );
+}
+
 export function AdminResourceActionPage({ action, id, resource }: AdminResourceActionPageProps) {
-  const supported = useMemo(() => ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks"].includes(resource), [resource]);
+  const supported = useMemo(() => ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource), [resource]);
 
   return (
     <AdminShell>
@@ -1161,6 +1443,8 @@ export function AdminResourceActionPage({ action, id, resource }: AdminResourceA
         {resource === "articles" || resource === "news" ? <ContentForm action={action} id={id} resource={resource} /> : null}
         {resource === "tags" || resource === "services" || resource === "pages" ? <SimpleForm action={action} id={id} resource={resource} /> : null}
         {resource === "world-clocks" ? <WorldClockForm action={action} id={id} /> : null}
+        {resource === "content-sources" ? <ContentSourceForm action={action} id={id} /> : null}
+        {resource === "source-items" ? <SourceItemForm action={action} id={id} /> : null}
         {!supported ? (
           <section className="admin-empty-state">
             <strong>فرم این بخش آماده نیست</strong>

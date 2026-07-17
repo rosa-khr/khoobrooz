@@ -1,9 +1,11 @@
 import http from "node:http";
 import crypto from "node:crypto";
+import { readFileSync } from "node:fs";
 import mysql from "mysql2/promise";
 
 const port = Number(process.env.BACKEND_PORT ?? 8000);
 const syncIntervalMs = Number(process.env.TGJU_SYNC_INTERVAL_MS ?? 120000);
+const contentSourceSyncIntervalMs = Number(process.env.CONTENT_SOURCE_SYNC_INTERVAL_MS ?? 1800000);
 const databasePassword = process.env.DB_PASSWORD ?? process.env.MYSQL_PASSWORD;
 
 if (!databasePassword) {
@@ -51,6 +53,7 @@ const definitions = [
 let board = { rates: [], fetchedAt: "نامشخص" };
 let lastError = null;
 let syncing = false;
+let contentSourceSyncing = false;
 const marketRateSockets = new Set();
 
 function getMarketRatesSocketPayload() {
@@ -179,7 +182,7 @@ function handleMarketRatesSocket(request, socket) {
   }
 }
 
-const adminResources = new Set(["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "countries"]);
+const adminResources = new Set(["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "countries", "content-sources", "source-items"]);
 const adminResourceTables = {
   menus: "menus",
   categories: "categories",
@@ -189,8 +192,20 @@ const adminResourceTables = {
   news: "news",
   tags: "tags",
   "world-clocks": "world_clock_items",
-  countries: "countries"
+  countries: "countries",
+  "content-sources": "content_sources",
+  "source-items": "source_items"
 };
+
+const relevantKeywords = [
+  "واردات", "صادرات", "تجارت خارجی", "گمرک", "بخشنامه", "تعرفه", "حقوق ورودی", "سود بازرگانی",
+  "ثبت سفارش", "سامانه جامع تجارت", "تخصیص ارز", "تأمین ارز", "تامین ارز", "رفع تعهد ارزی",
+  "حواله", "حواله یوان", "یوان", "دلار", "درهم", "ارز تجاری", "بانک مرکزی", "وزارت صمت",
+  "سازمان توسعه تجارت", "کارت بازرگانی", "ممنوعیت واردات", "ممنوعیت صادرات", "مجوز واردات",
+  "مجوز صادرات", "ترخیص کالا", "ارزش گمرکی", "HS Code", "کد تعرفه", "چین", "تجارت ایران و چین",
+  "خرید از چین", "حمل دریایی", "حمل هوایی", "بندر", "کانتینر", "ثبت منشأ ارز", "پروفرما", "اینکوترمز",
+  "import", "export", "customs", "tariff", "trade", "shipping", "container", "china"
+];
 
 const catalogPageRequest = {
   pageing: { pageNumbber: 1, PageSize: 15 },
@@ -212,7 +227,9 @@ const serviceCatalog = [
     { id: 701, name: "loadPage", title: "loadPage countries", method: "POST", path: "/api/admin/countries/loadPage", scope: "Admin", request: catalogPageRequest, response: catalogResponse([{ id: "number", nameFa: "string", capital: "string|null", continent: "string" }]), status: "planned" },
     { id: 702, name: "cities", title: "load country cities", method: "POST", path: "/api/admin/countries/cities", scope: "Admin", request: { body: { countryId: "number" } }, response: catalogResponse([{ id: "number", city: "string", cityEn: "string", timezone: "string" }]), status: "active" }
   ] },
-  { id: 8, serviceName: "MarketRateService", title: "Market rates", description: "Market-rate board used by frontend.", actions: [{ id: 801, name: "loadPage", title: "Load market board", method: "POST", path: "/api/v1/market-rates/board", scope: "Public", request: catalogPageRequest, response: catalogResponse([{ key: "string", title: "string", price: "string" }]), status: "active" }] }
+  { id: 8, serviceName: "MarketRateService", title: "Market rates", description: "Market-rate board used by frontend.", actions: [{ id: 801, name: "loadPage", title: "Load market board", method: "POST", path: "/api/v1/market-rates/board", scope: "Public", request: catalogPageRequest, response: catalogResponse([{ key: "string", title: "string", price: "string" }]), status: "active" }] },
+  { id: 11, serviceName: "ContentSourceService", title: "Content sources", description: "RSS/Atom/API/Scraper/manual source configuration for trade news monitoring.", actions: ["loadPage", "find", "add", "update", "delete", "fetch", "fetchAll"].map((name, index) => ({ id: 1100 + index + 1, name, title: `${name} content source`, method: "POST", path: `/api/admin/content-sources/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", sourceType: "rss|atom|api|scraper|manual", allowAutoPublish: false } }, response: catalogResponse([{ id: "number", name: "string", connectionStatus: "ready|needs_configuration|manual_required|error" }], name === "loadPage" ? "number" : 1), status: "active" })) },
+  { id: 12, serviceName: "SourceItemService", title: "Source items", description: "Incoming news/circular review queue. No item is auto-published.", actions: ["loadPage", "find", "update", "approve", "publish", "reject", "archive", "markDuplicate"].map((name, index) => ({ id: 1200 + index + 1, name, title: `${name} source item`, method: "POST", path: `/api/admin/source-items/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", processingStatus: "pending_review|approved|published|rejected|duplicate|archived|failed" } }, response: catalogResponse([{ id: "number", originalTitle: "string", processingStatus: "pending_review" }], name === "loadPage" ? "number" : 1), status: "active" })) }
 ];
 
 function sqlString(value) {
@@ -229,9 +246,130 @@ function sqlBit(value) {
   return value === true || value === "true" || value === 1 || value === "1" ? "1" : "0";
 }
 
+function sqlDateValue(value) {
+  if (!value) return "NULL";
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "NULL";
+  return sqlString(date.toISOString().slice(0, 19).replace("T", " "));
+}
+
 function normalizeAccuracy(value) {
   const parsed = Number(value);
   return parsed === 1 || parsed === 2 ? parsed : 0;
+}
+
+function sha256(value) {
+  return crypto.createHash("sha256").update(String(value ?? ""), "utf8").digest("hex");
+}
+
+function decodeEntities(value = "") {
+  return String(value)
+    .replaceAll("<![CDATA[", "")
+    .replaceAll("]]>", "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, num) => String.fromCodePoint(Number(num)))
+    .trim();
+}
+
+function stripUnsafeHtml(value = "") {
+  return decodeEntities(value)
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, "")
+    .replace(/\son\w+="[^"]*"/gi, "")
+    .replace(/\son\w+='[^']*'/gi, "")
+    .replace(/javascript:/gi, "")
+    .trim();
+}
+
+function textFromHtml(value = "") {
+  return stripUnsafeHtml(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function normalizeTitle(value = "") {
+  return textFromHtml(value).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").replace(/\s+/g, " ").trim();
+}
+
+function isPrivateHostname(hostname = "") {
+  const host = hostname.toLowerCase();
+  if (["localhost", "127.0.0.1", "0.0.0.0", "::1"].includes(host)) return true;
+  if (/^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)) return true;
+  if (/^169\.254\./.test(host) || /^metadata\.google\.internal$/.test(host)) return true;
+  return false;
+}
+
+function safeUrl(value, baseUrl = "") {
+  try {
+    const parsed = new URL(value, baseUrl || undefined);
+    if (!["http:", "https:"].includes(parsed.protocol)) return "";
+    if (isPrivateHostname(parsed.hostname)) return "";
+    return parsed.toString();
+  } catch {
+    return "";
+  }
+}
+
+function xmlTag(block, tagName) {
+  const match = block.match(new RegExp(`<${tagName}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tagName}>`, "i"));
+  return decodeEntities(match?.[1] ?? "");
+}
+
+function xmlAttr(block, tagName, attrName) {
+  const match = block.match(new RegExp(`<${tagName}\\b([^>]*)>`, "i"));
+  const attrs = match?.[1] ?? "";
+  const attr = attrs.match(new RegExp(`${attrName}=["']([^"']+)["']`, "i"));
+  return decodeEntities(attr?.[1] ?? "");
+}
+
+function parseFeedItems(xml, source) {
+  const sourceBase = source.feedUrl || source.websiteUrl || "";
+  const rssBlocks = [...String(xml).matchAll(/<item\b[\s\S]*?<\/item>/gi)].map((match) => match[0]);
+  const atomBlocks = [...String(xml).matchAll(/<entry\b[\s\S]*?<\/entry>/gi)].map((match) => match[0]);
+  const blocks = rssBlocks.length ? rssBlocks : atomBlocks;
+  const isAtom = !rssBlocks.length && atomBlocks.length > 0;
+
+  return blocks.map((block) => {
+    const title = textFromHtml(xmlTag(block, "title"));
+    const summary = stripUnsafeHtml(xmlTag(block, "description") || xmlTag(block, "summary"));
+    const content = stripUnsafeHtml(xmlTag(block, "content:encoded") || xmlTag(block, "content") || summary);
+    const guid = xmlTag(block, "guid") || xmlTag(block, "id");
+    const link = isAtom ? xmlAttr(block, "link", "href") || xmlTag(block, "link") : xmlTag(block, "link");
+    const image = xmlAttr(block, "media:content", "url") || xmlAttr(block, "enclosure", "url");
+    const author = xmlTag(block, "dc:creator") || xmlTag(block, "author");
+    const published = xmlTag(block, "pubDate") || xmlTag(block, "published") || xmlTag(block, "updated");
+    const updated = xmlTag(block, "updated");
+    const sourceUrl = safeUrl(link || guid, sourceBase);
+
+    return {
+      guid: guid || sourceUrl,
+      sourceUrl,
+      originalTitle: title,
+      originalSummary: summary,
+      originalContent: content,
+      originalImageUrl: safeUrl(image, sourceBase),
+      originalAuthor: textFromHtml(author),
+      sourcePublishedAt: published ? new Date(published) : null,
+      sourceUpdatedAt: updated ? new Date(updated) : null,
+      rawPayload: { block: block.slice(0, 8000) }
+    };
+  }).filter((item) => item.originalTitle && item.sourceUrl);
+}
+
+function relevanceScore(item) {
+  const haystack = `${item.originalTitle} ${textFromHtml(item.originalSummary)} ${textFromHtml(item.originalContent)}`.toLowerCase();
+  const hits = relevantKeywords.filter((keyword) => haystack.includes(keyword.toLowerCase())).length;
+  return Math.min(100, hits * 12);
+}
+
+function detectContentType(source, item) {
+  const haystack = `${item.originalTitle} ${textFromHtml(item.originalSummary)}`;
+  if (source.defaultArticleType && source.defaultArticleType !== "news") return source.defaultArticleType;
+  if (/بخشنامه|ابلاغیه|مصوبه|آیین.?نامه|تصویب.?نامه|مقرره|regulation|circular/i.test(haystack)) return "circular";
+  return "news";
 }
 
 function successResponse(items = [], total = 0) {
@@ -345,6 +483,14 @@ async function runJsonSql(query, fallback = {}) {
   return JSON.parse(output.slice(start, end + 1));
 }
 
+async function ensureContentIngestionSchema() {
+  const schemaSql = readFileSync("database-design/mysql/001_core_schema.sql", "utf8");
+  const seedSql = readFileSync("database-design/mysql/006_content_ingestion_seed.sql", "utf8");
+  await runSql(schemaSql);
+  await runSql(seedSql);
+  console.log("[content-ingestion] ensured content source tables and initial sources");
+}
+
 function mysqlDate(column) {
   return `DATE_FORMAT(${column}, '%Y-%m-%d %H:%i:%s')`;
 }
@@ -439,6 +585,48 @@ function adminListQuery(resource, body = {}) {
     return jsonArraySelect(
       `SELECT JSON_OBJECT('id', p.id, 'title', p.title, 'slug', p.slug, 'summary', COALESCE(p.summary, ''), 'description', COALESCE(p.summary, ''), 'content', COALESCE(p.body, ''), 'seoTitle', COALESCE(p.seo_title, ''), 'seoDescription', COALESCE(p.seo_description, ''), 'href', CONCAT('/', p.slug), 'isPublished', IF(p.is_published = 1, TRUE, FALSE), 'accuracy', p.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(p.modified_at, p.created_at)")}) AS row_json`,
       "FROM pages p",
+      where,
+      `ORDER BY ${orderBy}`,
+      limitSql
+    );
+  }
+
+  if (resource === "content-sources") {
+    const whereParts = filterConditions(filters, {
+      id: "s.id",
+      accuracy: "s.accuracy",
+      isActive: "s.is_active",
+      sourceType: "s.source_type",
+      sourceCategory: "s.source_category",
+      connectionStatus: "s.connection_status",
+      search: "s.name|s.slug|s.website_url|s.feed_url|s.terms_notes"
+    });
+    const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
+    const orderBy = firstSort(sorting, { id: "s.id", name: "s.name", sourceType: "s.source_type", modifiedAt: "COALESCE(s.modified_at, s.created_at)" }, "s.source_category ASC, s.name ASC");
+    return jsonArraySelect(
+      `SELECT JSON_OBJECT('id', s.id, 'title', s.name, 'name', s.name, 'slug', s.slug, 'websiteUrl', s.website_url, 'feedUrl', COALESCE(s.feed_url, ''), 'sourceType', s.source_type, 'sourceCategory', s.source_category, 'language', s.language, 'country', COALESCE(s.country, ''), 'defaultArticleType', s.default_article_type, 'defaultCategoryId', s.default_category_id, 'defaultCategory', c.title, 'trustLevel', s.trust_level, 'fetchIntervalMinutes', s.fetch_interval_minutes, 'backfillDays', s.backfill_days, 'maxBackfillItems', s.max_backfill_items, 'requiresReview', IF(s.requires_review = 1, TRUE, FALSE), 'allowAutoPublish', IF(s.allow_auto_publish = 1, TRUE, FALSE), 'isActive', IF(s.is_active = 1, TRUE, FALSE), 'respectRobots', IF(s.respect_robots = 1, TRUE, FALSE), 'connectionStatus', s.connection_status, 'termsNotes', COALESCE(s.terms_notes, ''), 'parserKey', COALESCE(s.parser_key, ''), 'lastFetchedAt', ${mysqlDate("s.last_fetched_at")}, 'lastSuccessfulFetchAt', ${mysqlDate("s.last_successful_fetch_at")}, 'lastErrorAt', ${mysqlDate("s.last_error_at")}, 'lastErrorMessage', COALESCE(s.last_error_message, ''), 'etag', COALESCE(s.etag, ''), 'lastModified', COALESCE(s.last_modified, ''), 'accuracy', s.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(s.modified_at, s.created_at)")}) AS row_json`,
+      "FROM content_sources s LEFT JOIN categories c ON c.id = s.default_category_id",
+      where,
+      `ORDER BY ${orderBy}`,
+      limitSql
+    );
+  }
+
+  if (resource === "source-items") {
+    const whereParts = filterConditions(filters, {
+      id: "i.id",
+      accuracy: "i.accuracy",
+      sourceId: "i.source_id",
+      processingStatus: "i.processing_status",
+      detectedContentType: "i.detected_content_type",
+      categoryId: "i.suggested_category_id",
+      search: "i.original_title|i.source_url|i.original_summary|i.issuer|i.circular_number"
+    });
+    const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
+    const orderBy = firstSort(sorting, { id: "i.id", fetchedAt: "i.fetched_at", relevanceScore: "i.relevance_score" }, "i.fetched_at DESC, i.id DESC");
+    return jsonArraySelect(
+      `SELECT JSON_OBJECT('id', i.id, 'title', i.original_title, 'sourceId', i.source_id, 'sourceName', s.name, 'sourceUrl', i.source_url, 'originalTitle', i.original_title, 'originalSummary', COALESCE(i.original_summary, ''), 'originalContent', COALESCE(i.original_content, ''), 'originalImageUrl', COALESCE(i.original_image_url, ''), 'originalAuthor', COALESCE(i.original_author, ''), 'originalLanguage', i.original_language, 'sourcePublishedAt', ${mysqlDate("i.source_published_at")}, 'sourceUpdatedAt', ${mysqlDate("i.source_updated_at")}, 'fetchedAt', ${mysqlDate("i.fetched_at")}, 'detectedContentType', i.detected_content_type, 'suggestedCategoryId', i.suggested_category_id, 'suggestedCategory', c.title, 'relevanceScore', i.relevance_score, 'processingStatus', i.processing_status, 'duplicateOfId', i.duplicate_of_id, 'articleId', i.article_id, 'newsId', i.news_id, 'circularNumber', COALESCE(i.circular_number, ''), 'issuer', COALESCE(i.issuer, ''), 'issuedAt', ${mysqlDate("i.issued_at")}, 'effectiveAt', ${mysqlDate("i.effective_at")}, 'attachmentUrl', COALESCE(i.attachment_url, ''), 'officialPageUrl', COALESCE(i.official_page_url, ''), 'validityStatus', COALESCE(i.validity_status, ''), 'reviewTitle', COALESCE(i.title, i.original_title), 'slug', COALESCE(i.slug, ''), 'summary', COALESCE(i.summary, i.original_summary, ''), 'content', COALESCE(i.body, i.original_content, ''), 'seoTitle', COALESCE(i.seo_title, ''), 'seoDescription', COALESCE(i.seo_description, ''), 'selectedImageUrl', COALESCE(i.selected_image_url, ''), 'accuracy', i.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(i.modified_at, i.created_at)")}) AS row_json`,
+      "FROM source_items i JOIN content_sources s ON s.id = i.source_id LEFT JOIN categories c ON c.id = i.suggested_category_id",
       where,
       `ORDER BY ${orderBy}`,
       limitSql
@@ -542,6 +730,41 @@ function adminWriteQuery(resource, action, body) {
     return `UPDATE pages SET title=${sqlString(body.title)}, slug=${sqlString(body.slug)}, summary=${sqlString(body.summary ?? body.description)}, body=${sqlString(body.content)}, seo_title=${sqlString(body.seoTitle)}, seo_description=${sqlString(body.seoDescription)}, is_published=${sqlBit(body.isPublished ?? true)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
   }
 
+  if (resource === "content-sources") {
+    const values = [
+      sqlString(body.name ?? body.title),
+      sqlString(body.slug),
+      sqlString(body.websiteUrl),
+      sqlString(body.feedUrl),
+      sqlString(body.sourceType ?? "manual"),
+      sqlString(body.sourceCategory ?? "official"),
+      sqlString(body.language ?? "fa"),
+      sqlString(body.country),
+      sqlString(body.defaultArticleType ?? "news"),
+      sqlNumber(body.defaultCategoryId),
+      sqlString(body.trustLevel ?? "medium"),
+      sqlNumber(body.fetchIntervalMinutes ?? 60),
+      sqlNumber(body.backfillDays ?? 7),
+      sqlNumber(body.maxBackfillItems ?? 20),
+      sqlBit(body.requiresReview ?? true),
+      sqlBit(false),
+      sqlBit(body.isActive),
+      sqlBit(body.respectRobots ?? true),
+      sqlString(body.connectionStatus ?? "needs_configuration"),
+      sqlString(body.termsNotes),
+      sqlString(body.parserKey ?? "rss-generic"),
+      accuracy
+    ];
+    if (action === "add") {
+      return `INSERT INTO content_sources (name, slug, website_url, feed_url, source_type, source_category, language, country, default_article_type, default_category_id, trust_level, fetch_interval_minutes, backfill_days, max_backfill_items, requires_review, allow_auto_publish, is_active, respect_robots, connection_status, terms_notes, parser_key, accuracy, created_by) VALUES (${values.join(", ")}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
+    }
+    return `UPDATE content_sources SET name=${values[0]}, slug=${values[1]}, website_url=${values[2]}, feed_url=${values[3]}, source_type=${values[4]}, source_category=${values[5]}, language=${values[6]}, country=${values[7]}, default_article_type=${values[8]}, default_category_id=${values[9]}, trust_level=${values[10]}, fetch_interval_minutes=${values[11]}, backfill_days=${values[12]}, max_backfill_items=${values[13]}, requires_review=${values[14]}, allow_auto_publish=0, is_active=${values[16]}, respect_robots=${values[17]}, connection_status=${values[18]}, terms_notes=${values[19]}, parser_key=${values[20]}, accuracy=${values[21]}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+  }
+
+  if (resource === "source-items") {
+    return `UPDATE source_items SET detected_content_type=${sqlString(body.detectedContentType ?? "news")}, suggested_category_id=${sqlNumber(body.suggestedCategoryId)}, processing_status=${sqlString(body.processingStatus ?? "pending_review")}, title=${sqlString(body.reviewTitle ?? body.title)}, slug=${sqlString(body.slug)}, summary=${sqlString(body.summary)}, body=${sqlString(body.content)}, seo_title=${sqlString(body.seoTitle)}, seo_description=${sqlString(body.seoDescription)}, selected_image_url=${sqlString(body.selectedImageUrl)}, circular_number=${sqlString(body.circularNumber)}, issuer=${sqlString(body.issuer)}, effective_at=${body.effectiveAt ? sqlString(body.effectiveAt) : "NULL"}, validity_status=${sqlString(body.validityStatus)}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+  }
+
   if (action === "add") {
     return `INSERT INTO tags (title, slug, body, seo_title, seo_description, is_published, accuracy, created_by) VALUES (${sqlString(body.title)}, ${sqlString(body.slug)}, ${sqlString(body.content)}, ${sqlString(body.seoTitle)}, ${sqlString(body.seoDescription)}, ${sqlBit(body.isPublished ?? true)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
   }
@@ -609,6 +832,49 @@ async function loadPublicWorldClocks() {
   return successResponse(normalizeAdminItems("world-clocks", result.data ?? []), result.total ?? 0);
 }
 
+async function loadPublicNewsCollection(kind = "all", slug = "") {
+  const categoryFilter = kind === "circulars" ? "AND c.type = 'circular'" : kind === "news" ? "AND (c.type IS NULL OR c.type = 'news')" : "";
+  const slugFilter = slug ? `AND n.slug = ${sqlString(slug)}` : "";
+  const limitSql = slug ? "LIMIT 1" : "LIMIT 20";
+  const result = await runJsonSql(
+    `
+      SELECT JSON_OBJECT(
+        'data', COALESCE((SELECT JSON_ARRAYAGG(row_json) FROM (
+          SELECT JSON_OBJECT(
+            'id', n.id,
+            'title', n.title,
+            'slug', n.slug,
+            'summary', COALESCE(n.summary, ''),
+            'content', COALESCE(n.body, ''),
+            'category', c.title,
+            'categorySlug', c.slug,
+            'categoryType', c.type,
+            'sourceName', COALESCE(n.source_name, ''),
+            'sourceUrl', COALESCE(n.source_url, ''),
+            'sourcePublishedAt', ${mysqlDate("n.news_date")},
+            'publishedAt', ${mysqlDate("n.published_at")},
+            'seoTitle', COALESCE(n.seo_title, ''),
+            'seoDescription', COALESCE(n.seo_description, '')
+          ) AS row_json
+          FROM news n
+          LEFT JOIN categories c ON c.id = n.category_id
+          WHERE n.accuracy = 1 AND n.approve = 1 AND n.is_published = 1 ${categoryFilter} ${slugFilter}
+          ORDER BY COALESCE(n.published_at, n.created_at) DESC, n.id DESC
+          ${limitSql}
+        ) AS public_news), JSON_ARRAY()),
+        'total', (
+          SELECT COUNT(1)
+          FROM news n
+          LEFT JOIN categories c ON c.id = n.category_id
+          WHERE n.accuracy = 1 AND n.approve = 1 AND n.is_published = 1 ${categoryFilter} ${slugFilter}
+        )
+      );
+    `,
+    { data: [], total: 0 }
+  );
+  return successResponse(result.data ?? [], result.total ?? 0);
+}
+
 async function loadCountryCities(body = {}) {
   const countryId = sqlNumber(body.countryId);
   if (countryId === "NULL") return successResponse([], 0);
@@ -632,10 +898,210 @@ async function loadCountryCities(body = {}) {
   return successResponse(result.data ?? [], result.total ?? 0);
 }
 
+async function loadSourceForFetch(sourceId) {
+  const result = await runJsonSql(adminFindQuery("content-sources", sourceId), { data: [] });
+  return Array.isArray(result.data) ? normalizeAdminItems("content-sources", result.data)[0] : null;
+}
+
+async function storeSourceItem(source, item) {
+  const score = relevanceScore(item);
+  if (score <= 0) {
+    return { inserted: false, duplicate: false, filtered: true };
+  }
+
+  const detectedContentType = detectContentType(source, item);
+  const contentHash = sha256(`${item.originalTitle}\n${textFromHtml(item.originalSummary)}\n${textFromHtml(item.originalContent)}`);
+  const titleHash = sha256(normalizeTitle(item.originalTitle));
+  const duplicate = await runJsonSql(
+    `
+      SELECT JSON_OBJECT(
+        'data', COALESCE((SELECT JSON_ARRAYAGG(JSON_OBJECT('id', id)) FROM source_items WHERE source_id=${sqlNumber(source.id)} AND (guid=${sqlString(item.guid)} OR source_url=${sqlString(item.sourceUrl)} OR content_hash=${sqlString(contentHash)}) LIMIT 1), JSON_ARRAY())
+      );
+    `,
+    { data: [] }
+  );
+
+  if (duplicate.data?.length) {
+    return { inserted: false, duplicate: true, id: duplicate.data[0].id };
+  }
+
+  const slugBase = normalizeTitle(item.originalTitle).replace(/\s+/g, "-").slice(0, 180) || `source-item-${Date.now()}`;
+  const rawPayload = JSON.stringify(item.rawPayload ?? {});
+  const fetchMetadata = JSON.stringify({ parser: source.parserKey || "rss-generic", importedWithoutRewrite: true });
+
+  const result = await runJsonSql(
+    `
+      INSERT INTO source_items (
+        source_id, external_id, guid, source_url, original_title, original_summary, original_content,
+        original_image_url, original_author, original_language, source_published_at, source_updated_at,
+        content_hash, normalized_title_hash, detected_content_type, suggested_category_id, relevance_score,
+        processing_status, raw_payload, fetch_metadata, title, slug, summary, body, seo_title, seo_description,
+        created_by, accuracy
+      ) VALUES (
+        ${sqlNumber(source.id)}, ${sqlString(item.guid)}, ${sqlString(item.guid)}, ${sqlString(item.sourceUrl)},
+        ${sqlString(item.originalTitle)}, ${sqlString(item.originalSummary)}, ${sqlString(item.originalContent)},
+        ${sqlString(item.originalImageUrl)}, ${sqlString(item.originalAuthor)}, ${sqlString(source.language || "fa")},
+        ${sqlDateValue(item.sourcePublishedAt)}, ${sqlDateValue(item.sourceUpdatedAt)},
+        ${sqlString(contentHash)}, ${sqlString(titleHash)}, ${sqlString(detectedContentType)}, ${sqlNumber(source.defaultCategoryId)},
+        ${sqlNumber(score)}, 'pending_review', CAST(${sqlString(rawPayload)} AS JSON), CAST(${sqlString(fetchMetadata)} AS JSON),
+        ${sqlString(item.originalTitle)}, ${sqlString(slugBase)}, ${sqlString(textFromHtml(item.originalSummary))},
+        ${sqlString(stripUnsafeHtml(item.originalContent))}, ${sqlString(item.originalTitle)}, ${sqlString(textFromHtml(item.originalSummary).slice(0, 500))},
+        1, 1
+      );
+      SELECT JSON_OBJECT('id', LAST_INSERT_ID());
+    `,
+    {}
+  );
+
+  return { inserted: true, duplicate: false, filtered: false, id: result.id, status: "pending_review" };
+}
+
+async function fetchContentSource(sourceId) {
+  const source = await loadSourceForFetch(sourceId);
+  if (!source) return { status: 404, payload: errorResponse("Source was not found.") };
+  if (!["rss", "atom"].includes(source.sourceType)) {
+    await runSql(`UPDATE content_sources SET last_fetched_at=UTC_TIMESTAMP(), last_error_at=UTC_TIMESTAMP(), last_error_message=${sqlString("Only RSS/Atom sources can be fetched automatically in this step.")}, connection_status='manual_required', modified_at=UTC_TIMESTAMP() WHERE id=${sqlNumber(source.id)};`);
+    return { status: 400, payload: errorResponse("این منبع هنوز نیازمند تنظیم دستی یا parser اختصاصی است.") };
+  }
+
+  const feedUrl = safeUrl(source.feedUrl);
+  if (!feedUrl) {
+    await runSql(`UPDATE content_sources SET last_fetched_at=UTC_TIMESTAMP(), last_error_at=UTC_TIMESTAMP(), last_error_message=${sqlString("Feed URL is empty or unsafe.")}, connection_status='needs_configuration', modified_at=UTC_TIMESTAMP() WHERE id=${sqlNumber(source.id)};`);
+    return { status: 400, payload: errorResponse("Feed URL معتبر نیست.") };
+  }
+
+  try {
+    const headers = {
+      Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, */*;q=0.7",
+      "User-Agent": "KhoobroozNewsMonitor/1.0 (+https://khoobrooz.com)"
+    };
+    if (source.etag) headers["If-None-Match"] = source.etag;
+    if (source.lastModified) headers["If-Modified-Since"] = source.lastModified;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const response = await fetch(feedUrl, { headers, signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (response.status === 304) {
+      await runSql(`UPDATE content_sources SET last_fetched_at=UTC_TIMESTAMP(), last_successful_fetch_at=UTC_TIMESTAMP(), last_error_message=NULL, modified_at=UTC_TIMESTAMP() WHERE id=${sqlNumber(source.id)};`);
+      return { status: 200, payload: successResponse([{ fetched: 0, inserted: 0, duplicates: 0, notModified: true }], 1) };
+    }
+
+    if (!response.ok) throw new Error(`Fetch failed with status ${response.status}`);
+    const text = await response.text();
+    const parsedItems = parseFeedItems(text, source).slice(0, Number(source.maxBackfillItems || 20));
+    let inserted = 0;
+    let duplicates = 0;
+    let filtered = 0;
+
+    for (const item of parsedItems) {
+      const stored = await storeSourceItem(source, item);
+      if (stored.inserted) {
+        inserted += 1;
+      } else if (stored.filtered) {
+        filtered += 1;
+      } else if (stored.duplicate) {
+        duplicates += 1;
+      }
+    }
+
+    await runSql(`UPDATE content_sources SET last_fetched_at=UTC_TIMESTAMP(), last_successful_fetch_at=UTC_TIMESTAMP(), last_error_at=NULL, last_error_message=NULL, etag=${sqlString(response.headers.get("etag"))}, last_modified=${sqlString(response.headers.get("last-modified"))}, connection_status='ready', modified_at=UTC_TIMESTAMP() WHERE id=${sqlNumber(source.id)};`);
+    return { status: 200, payload: successResponse([{ fetched: parsedItems.length, inserted, duplicates, filtered, notModified: false }], 1) };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Source fetch failed";
+    await runSql(`UPDATE content_sources SET last_fetched_at=UTC_TIMESTAMP(), last_error_at=UTC_TIMESTAMP(), last_error_message=${sqlString(message)}, connection_status='error', modified_at=UTC_TIMESTAMP() WHERE id=${sqlNumber(source.id)};`);
+    return { status: 502, payload: errorResponse(message) };
+  }
+}
+
+async function fetchActiveContentSources() {
+  if (contentSourceSyncing) return;
+  contentSourceSyncing = true;
+
+  try {
+    const sources = await runJsonSql(
+      adminListQuery("content-sources", {
+        pageing: { pageNumbber: 1, PageSize: 200 },
+        filters: { isActive: true, accuracy: 1 }
+      }),
+      { data: [] }
+    );
+
+    let processed = 0;
+    let inserted = 0;
+    let duplicates = 0;
+    let filtered = 0;
+    let failed = 0;
+
+    for (const source of sources.data ?? []) {
+      if (!["rss", "atom"].includes(source.sourceType)) continue;
+
+      const result = await fetchContentSource(source.id);
+      const row = result.payload.response.items[0] ?? {};
+      processed += 1;
+      inserted += Number(row.inserted ?? 0);
+      duplicates += Number(row.duplicates ?? 0);
+      filtered += Number(row.filtered ?? 0);
+      if (result.status >= 400) failed += 1;
+    }
+
+    console.log(`[content-ingestion] active source sync processed=${processed} inserted=${inserted} duplicates=${duplicates} filtered=${filtered} failed=${failed}`);
+  } catch (error) {
+    console.error(`[content-ingestion] ${error instanceof Error ? error.message : "active source sync failed"}`);
+  } finally {
+    contentSourceSyncing = false;
+  }
+}
+
+async function updateSourceItemStatus(id, status, extra = "") {
+  await runSql(`UPDATE source_items SET processing_status=${sqlString(status)}, modified_at=UTC_TIMESTAMP(), modified_by=1 ${extra} WHERE id=${sqlNumber(id)};`);
+  const saved = await runJsonSql(adminFindQuery("source-items", id), { data: [] });
+  const item = Array.isArray(saved.data) ? normalizeAdminItems("source-items", saved.data)[0] : null;
+  return { status: 200, payload: successResponse(item ? [item] : [], item ? 1 : 0) };
+}
+
+async function publishSourceItem(id) {
+  const found = await runJsonSql(adminFindQuery("source-items", id), { data: [] });
+  const item = Array.isArray(found.data) ? found.data[0] : null;
+  if (!item) return { status: 404, payload: errorResponse("Source item was not found.") };
+  if (item.processingStatus !== "approved") {
+    return { status: 400, payload: errorResponse("آیتم باید ابتدا تایید شود و سپس منتشر شود.") };
+  }
+
+  const slug = item.slug || normalizeTitle(item.reviewTitle || item.originalTitle).replace(/\s+/g, "-").slice(0, 180) || `news-${id}`;
+  const result = await runJsonSql(
+    `
+      INSERT INTO news (title, slug, summary, body, source_name, source_url, news_date, category_id, seo_title, seo_description, approve, is_published, published_at, published_by, created_by, accuracy)
+      VALUES (${sqlString(item.reviewTitle || item.originalTitle)}, ${sqlString(slug)}, ${sqlString(item.summary || item.originalSummary)}, ${sqlString(item.content || item.originalContent)}, ${sqlString(item.sourceName)}, ${sqlString(item.sourceUrl)}, ${sqlDateValue(item.sourcePublishedAt)}, ${sqlNumber(item.suggestedCategoryId)}, ${sqlString(item.seoTitle || item.originalTitle)}, ${sqlString(item.seoDescription || textFromHtml(item.originalSummary).slice(0, 500))}, 1, 1, UTC_TIMESTAMP(), 1, 1, 1);
+      SELECT JSON_OBJECT('id', LAST_INSERT_ID());
+    `,
+    {}
+  );
+
+  return updateSourceItemStatus(id, "published", `, news_id=${sqlNumber(result.id)}`);
+}
+
 async function handleAdminResource(resource, action, body) {
   if (resource === "api-services" && action === "loadPage") return { status: 200, payload: successResponse(serviceCatalog, serviceCatalog.length) };
   if (!adminResources.has(resource)) return { status: 404, payload: errorResponse("Unknown admin resource.") };
   if (resource === "countries" && action === "cities") return { status: 200, payload: await loadCountryCities(body) };
+  if (resource === "content-sources" && action === "fetch") return fetchContentSource(body.id);
+  if (resource === "content-sources" && action === "fetchAll") {
+    const sources = await runJsonSql(adminListQuery("content-sources", { pageing: { pageNumbber: 1, PageSize: 100 }, filters: { isActive: true, accuracy: 1 } }), { data: [] });
+    const results = [];
+    for (const source of sources.data ?? []) {
+      if (!["rss", "atom"].includes(source.sourceType)) continue;
+      const result = await fetchContentSource(source.id);
+      results.push({ sourceId: source.id, status: result.status, message: result.payload.message ?? null, result: result.payload.response.items[0] ?? null });
+    }
+    return { status: 200, payload: successResponse(results, results.length) };
+  }
+  if (resource === "source-items" && action === "approve") return updateSourceItemStatus(body.id, "approved");
+  if (resource === "source-items" && action === "reject") return updateSourceItemStatus(body.id, "rejected");
+  if (resource === "source-items" && action === "archive") return updateSourceItemStatus(body.id, "archived");
+  if (resource === "source-items" && action === "markDuplicate") return updateSourceItemStatus(body.id, "duplicate", `, duplicate_of_id=${sqlNumber(body.duplicateOfId)}`);
+  if (resource === "source-items" && action === "publish") return publishSourceItem(body.id);
 
   if (action === "loadPage") {
     const result = await runJsonSql(adminListQuery(resource, body), { data: [], total: 0 });
@@ -798,6 +1264,27 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  const publicNewsMatch = url.pathname.match(/^\/api\/(news|circulars)(?:\/(.+))?$/);
+  if (request.method === "GET" && publicNewsMatch) {
+    try {
+      const [, resource, rawSlug] = publicNewsMatch;
+      const slug = rawSlug ? decodeURIComponent(rawSlug.replace(/^\/+|\/+$/g, "")) : "";
+      sendJson(response, 200, await loadPublicNewsCollection(resource === "circulars" ? "circulars" : "news", slug));
+    } catch (error) {
+      sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "Public news load failed"));
+    }
+    return;
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/trade-updates") {
+    try {
+      sendJson(response, 200, await loadPublicNewsCollection("all"));
+    } catch (error) {
+      sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "Trade updates load failed"));
+    }
+    return;
+  }
+
   if (request.method === "POST" && url.pathname === "/api/admin/market-rates/sync") {
     await syncTgju();
     sendJson(response, lastError ? 502 : 200, { ok: !lastError, ...board, message: lastError });
@@ -820,8 +1307,16 @@ server.on("upgrade", (request, socket) => {
 
 server.listen(port, "0.0.0.0", () => {
   console.log(`[tgju-dev] backend listening on http://127.0.0.1:${port}`);
+  void ensureContentIngestionSchema().catch((error) => {
+    console.error(`[content-ingestion] ${error instanceof Error ? error.message : "bootstrap failed"}`);
+  }).then(() => {
+    void fetchActiveContentSources();
+  });
   syncTgju();
   setInterval(syncTgju, syncIntervalMs);
+  setInterval(() => {
+    void fetchActiveContentSources();
+  }, contentSourceSyncIntervalMs);
   setInterval(() => {
     for (const socket of marketRateSockets) {
       if (socket.destroyed) {

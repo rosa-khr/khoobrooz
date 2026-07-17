@@ -7,6 +7,7 @@ import {
   Clock3,
   FileText,
   FolderTree,
+  Inbox,
   LayoutDashboard,
   Link2,
   Newspaper,
@@ -25,21 +26,60 @@ export type AdminSidebarItem = {
   active?: boolean;
 };
 
-export const adminSidebar: AdminSidebarItem[] = [
-  { label: "داشبوردها", href: "/admin", icon: LayoutDashboard, active: true },
-  { label: "منوها", href: "/admin/menus/list", icon: Link2 },
-  { label: "دسته‌بندی‌ها", href: "/admin/categories/list", icon: FolderTree },
-  { label: "صفحات", href: "/admin/pages/list", icon: FileText },
-  { label: "خدمات", href: "/admin/services/list", icon: BriefcaseBusiness },
-  { label: "مقالات", href: "/admin/articles/list", icon: BookOpenText },
-  { label: "خبرها", href: "/admin/news/list", icon: Newspaper },
-  { label: "تگ‌ها", href: "/admin/tags/list", icon: Tags },
-  { label: "کاربران", href: "/admin/users/list", icon: Users },
-  { label: "ساعت جهانی", href: "/admin/world-clocks/list", icon: Clock3 },
-  { label: "سرویس‌های API", href: "/admin/api-services/list", icon: Braces },
-  { label: "گزارش‌ها", href: "/admin/reports/list", icon: ChartColumnIncreasing },
-  { label: "تنظیمات", href: "/admin/settings/list", icon: ShieldCheck }
+export type AdminSidebarGroup = {
+  label: string;
+  items: AdminSidebarItem[];
+};
+
+export const adminSidebarGroups: AdminSidebarGroup[] = [
+  {
+    label: "اصلی",
+    items: [
+      { label: "داشبوردها", href: "/admin", icon: LayoutDashboard, active: true }
+    ]
+  },
+  {
+    label: "محتوا",
+    items: [
+      { label: "صفحات", href: "/admin/pages/list", icon: FileText },
+      { label: "مقالات", href: "/admin/articles/list", icon: BookOpenText },
+      { label: "خبرها", href: "/admin/news/list", icon: Newspaper },
+      { label: "تگ‌ها", href: "/admin/tags/list", icon: Tags }
+    ]
+  },
+  {
+    label: "پایش اخبار",
+    items: [
+      { label: "اخبار ورودی", href: "/admin/source-items/list", icon: Inbox },
+      { label: "منابع خبری", href: "/admin/content-sources/list", icon: Link2 }
+    ]
+  },
+  {
+    label: "ساختار سایت",
+    items: [
+      { label: "منوها", href: "/admin/menus/list", icon: Link2 },
+      { label: "دسته‌بندی‌ها", href: "/admin/categories/list", icon: FolderTree },
+      { label: "خدمات", href: "/admin/services/list", icon: BriefcaseBusiness }
+    ]
+  },
+  {
+    label: "ابزارها",
+    items: [
+      { label: "ساعت جهانی", href: "/admin/world-clocks/list", icon: Clock3 },
+      { label: "سرویس‌های API", href: "/admin/api-services/list", icon: Braces },
+      { label: "گزارش‌ها", href: "/admin/reports/list", icon: ChartColumnIncreasing }
+    ]
+  },
+  {
+    label: "مدیریت",
+    items: [
+      { label: "کاربران", href: "/admin/users/list", icon: Users },
+      { label: "تنظیمات", href: "/admin/settings/list", icon: ShieldCheck }
+    ]
+  }
 ];
+
+export const adminSidebar = adminSidebarGroups.flatMap((group) => group.items);
 
 export const adminStats = [
   { label: "مقاله‌های منتشر شده", value: "۳۸", detail: "محتوای فعال سایت", tone: "navy" },

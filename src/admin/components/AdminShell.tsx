@@ -1,11 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, List, Search, Settings, X } from "lucide-react";
+import { Bell, ChevronDown, List, Search, Settings, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import { adminSidebar } from "@/admin/data/adminMockData";
+import { adminSidebarGroups } from "@/admin/data/adminMockData";
 import { BrandLogoMark } from "@/shared/components/BrandLogo";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,6 +19,8 @@ const breadcrumbLabels: Record<string, string> = {
   tags: "تگ‌ها",
   users: "کاربران",
   "world-clocks": "ساعت جهانی",
+  "content-sources": "منابع خبری",
+  "source-items": "اخبار ورودی",
   "api-services": "سرویس‌های API",
   reports: "گزارش‌ها",
   settings: "تنظیمات",
@@ -31,6 +33,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const saved = window.localStorage.getItem("khoobrooz-admin-sidebar");
@@ -54,6 +57,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
     setMobileOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const nextOpenGroups: Record<string, boolean> = {};
+
+    for (const group of adminSidebarGroups) {
+      const hasActiveItem = group.items.some((item) => {
+        const activePath = item.href.replace("/list", "");
+        return item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(activePath);
+      });
+
+      if (hasActiveItem) {
+        nextOpenGroups[group.label] = true;
+      }
+    }
+
+    setOpenGroups((current) => ({ ...current, ...nextOpenGroups }));
+  }, [pathname]);
+
   const breadcrumbs = pathname
     .split("/")
     .filter(Boolean)
@@ -74,15 +94,39 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
 
         <nav className="admin-sidebar-nav">
-          {adminSidebar.map((item) => {
-            const Icon = item.icon;
-            const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href.replace("/list", ""));
+          {adminSidebarGroups.map((group) => {
+            const groupIsActive = group.items.some((item) => {
+              const activePath = item.href.replace("/list", "");
+              return item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(activePath);
+            });
+            const groupIsOpen = collapsed || openGroups[group.label] || groupIsActive;
 
             return (
-              <a aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined}>
-                <Icon size={17} />
-                <span>{item.label}</span>
-              </a>
+              <section className={groupIsOpen ? "admin-sidebar-group is-open" : "admin-sidebar-group"} key={group.label}>
+                <button
+                  aria-expanded={groupIsOpen}
+                  className={groupIsActive ? "admin-sidebar-group-trigger active" : "admin-sidebar-group-trigger"}
+                  onClick={() => setOpenGroups((value) => ({ ...value, [group.label]: !groupIsOpen }))}
+                  title={collapsed ? group.label : undefined}
+                  type="button"
+                >
+                  <span>{group.label}</span>
+                  <ChevronDown size={14} />
+                </button>
+                <div className="admin-sidebar-group-items">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href.replace("/list", ""));
+
+                    return (
+                      <a aria-label={item.label} className={active ? "active" : undefined} href={item.href} key={item.label} onClick={() => setMobileOpen(false)} title={collapsed ? item.label : undefined}>
+                        <Icon size={17} />
+                        <span>{item.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
         </nav>

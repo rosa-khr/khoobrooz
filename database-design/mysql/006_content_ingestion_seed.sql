@@ -1,0 +1,46 @@
+USE khoobrooz;
+
+INSERT INTO content_sources (
+  name, slug, website_url, feed_url, source_type, source_category, language, country,
+  default_article_type, default_category_id, trust_level, fetch_interval_minutes,
+  backfill_days, max_backfill_items, requires_review, allow_auto_publish, is_active,
+  respect_robots, connection_status, terms_notes, parser_key, accuracy, created_by
+) VALUES
+  ('گمرک جمهوری اسلامی ایران', 'irica-official', 'https://irica.gov.ir', NULL, 'manual', 'official', 'fa', 'IR', 'circular', (SELECT id FROM categories WHERE slug='customs-circulars' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'RSS/API دقیق در این seed حدس زده نشده است؛ قبل از فعال‌سازی باید صفحه عمومی، robots و شرایط استفاده بررسی شود.', 'official-manual', 1, 1),
+  ('وزارت صنعت، معدن و تجارت', 'mimt-official', 'https://mimt.gov.ir', NULL, 'manual', 'official', 'fa', 'IR', 'official_notice', (SELECT id FROM categories WHERE slug='industry-ministry-circulars' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'RSS/API دقیق در این seed حدس زده نشده است؛ قبل از فعال‌سازی باید صفحه عمومی، robots و شرایط استفاده بررسی شود.', 'official-manual', 1, 1),
+  ('سازمان توسعه تجارت ایران', 'tpo-official', 'https://tpo.ir', NULL, 'manual', 'official', 'fa', 'IR', 'official_notice', (SELECT id FROM categories WHERE slug='export-news' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'RSS/API دقیق در این seed حدس زده نشده است؛ قبل از فعال‌سازی باید صفحه عمومی، robots و شرایط استفاده بررسی شود.', 'official-manual', 1, 1),
+  ('بانک مرکزی جمهوری اسلامی ایران', 'cbi-official', 'https://cbi.ir', NULL, 'manual', 'official', 'fa', 'IR', 'circular', (SELECT id FROM categories WHERE slug='currency-circulars' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'در صورت وجود CAPTCHA یا محدودیت ضدربات، هیچ scraping انجام نشود و ورود دستی انجام شود.', 'official-manual', 1, 1),
+  ('سامانه جامع تجارت ایران', 'ntsw-official', 'https://ntsw.ir', NULL, 'manual', 'official', 'fa', 'IR', 'official_notice', (SELECT id FROM categories WHERE slug='import-news' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'در صورت نیاز به login یا CAPTCHA، scraping انجام نشود.', 'official-manual', 1, 1),
+  ('پایگاه ملی اطلاع‌رسانی قوانین و مقررات کشور', 'dotic-official', 'https://dotic.ir', NULL, 'manual', 'official', 'fa', 'IR', 'regulation', (SELECT id FROM categories WHERE slug='customs-circulars' LIMIT 1), 'official', 60, 7, 20, 1, 0, 0, 1, 'manual_required', 'منبع اولویت‌دار مقررات؛ URL دقیق RSS/API در seed حدس زده نشده است.', 'official-manual', 1, 1),
+  ('روزنامه رسمی جمهوری اسلامی ایران', 'rrk-official', 'https://rrk.ir', NULL, 'manual', 'official', 'fa', 'IR', 'regulation', (SELECT id FROM categories WHERE slug='trade-circulars' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'manual_required', 'فقط محتوای عمومی قابل دسترسی دریافت شود؛ URL فید حدس زده نشده است.', 'official-manual', 1, 1),
+  ('خبرگزاری تسنیم', 'tasnim-news', 'https://www.tasnimnews.com', 'https://www.tasnimnews.ir/fa/rss', 'rss', 'news_agency', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'high', 30, 7, 20, 1, 0, 1, 1, 'ready', 'فید رسمی اعلام‌شده در دستور پروژه. فیدهای جزئی‌تر باید از صفحه رسمی RSS استخراج شوند و حدس زده نشوند.', 'rss-generic', 1, 1),
+  ('خبرگزاری ایسنا', 'isna-news', 'https://www.isna.ir', 'https://www.isna.ir/rss-help', 'manual', 'news_agency', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'high', 30, 7, 20, 1, 0, 0, 1, 'needs_configuration', 'این URL صفحه راهنمای RSS است، نه فید نهایی؛ لینک دقیق فید باید از صفحه رسمی انتخاب شود.', 'rss-directory', 1, 1),
+  ('خبرگزاری ایرنا', 'irna-news', 'https://www.irna.ir', NULL, 'manual', 'news_agency', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'high', 30, 7, 20, 1, 0, 0, 1, 'needs_configuration', 'RSS/API دقیق حدس زده نشده است.', 'rss-generic', 1, 1),
+  ('خبرگزاری مهر', 'mehr-news', 'https://www.mehrnews.com', NULL, 'manual', 'news_agency', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'high', 30, 7, 20, 1, 0, 0, 1, 'needs_configuration', 'RSS/API دقیق حدس زده نشده است.', 'rss-generic', 1, 1),
+  ('باشگاه خبرنگاران جوان', 'yjc-news', 'https://www.yjc.ir', 'https://www.yjc.ir/fa/rss', 'rss', 'news_agency', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'medium', 30, 7, 20, 1, 0, 1, 1, 'ready', 'فقط فیدهای مرتبط با اقتصاد، تجارت، صنعت، ارز و گمرک باید فعال بمانند.', 'rss-generic', 1, 1),
+  ('دنیای اقتصاد', 'donya-e-eqtesad', 'https://donya-e-eqtesad.com', NULL, 'manual', 'trade_media', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'medium', 60, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'قبل از دریافت باید RSS رسمی و مجوز نمایش محتوا/تصویر بررسی شود.', 'rss-generic', 1, 1),
+  ('اکوایران', 'ecoiran', 'https://ecoiran.com', NULL, 'manual', 'trade_media', 'fa', 'IR', 'news', (SELECT id FROM categories WHERE slug='trade-news' LIMIT 1), 'medium', 60, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'روش رسمی دریافت محتوا و شرایط استفاده باید بررسی شود.', 'rss-generic', 1, 1),
+  ('وزارت بازرگانی چین', 'mofcom-china', 'https://english.mofcom.gov.cn', NULL, 'manual', 'international', 'en', 'CN', 'news', (SELECT id FROM categories WHERE slug='china-trade' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'متن انگلیسی بدون ترجمه خودکار ذخیره شود و تا تایید مدیر منتشر نشود.', 'rss-generic', 1, 1),
+  ('گمرک چین', 'china-customs', 'https://english.customs.gov.cn', NULL, 'manual', 'international', 'en', 'CN', 'official_notice', (SELECT id FROM categories WHERE slug='china-trade' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'متن انگلیسی بدون ترجمه خودکار ذخیره شود و تا تایید مدیر منتشر نشود.', 'rss-generic', 1, 1),
+  ('شورای توسعه تجارت بین‌المللی چین', 'ccpit-china', 'https://en.ccpit.org', NULL, 'manual', 'international', 'en', 'CN', 'news', (SELECT id FROM categories WHERE slug='china-trade' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'روش رسمی دریافت باید بررسی شود.', 'rss-generic', 1, 1),
+  ('سازمان تجارت جهانی', 'wto', 'https://www.wto.org', NULL, 'manual', 'international', 'en', 'CH', 'news', (SELECT id FROM categories WHERE slug='foreign-trade-news' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'روش رسمی دریافت باید بررسی شود.', 'rss-generic', 1, 1),
+  ('آنکتاد', 'unctad', 'https://unctad.org', NULL, 'manual', 'international', 'en', 'CH', 'news', (SELECT id FROM categories WHERE slug='foreign-trade-news' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'روش رسمی دریافت باید بررسی شود.', 'rss-generic', 1, 1),
+  ('اتاق بازرگانی بین‌المللی', 'iccwbo', 'https://iccwbo.org', NULL, 'manual', 'international', 'en', 'FR', 'news', (SELECT id FROM categories WHERE slug='foreign-trade-news' LIMIT 1), 'official', 120, 7, 15, 1, 0, 0, 1, 'needs_configuration', 'روش رسمی دریافت باید بررسی شود.', 'rss-generic', 1, 1)
+ON DUPLICATE KEY UPDATE
+  website_url = VALUES(website_url),
+  feed_url = VALUES(feed_url),
+  source_type = VALUES(source_type),
+  source_category = VALUES(source_category),
+  default_article_type = VALUES(default_article_type),
+  default_category_id = VALUES(default_category_id),
+  trust_level = VALUES(trust_level),
+  fetch_interval_minutes = VALUES(fetch_interval_minutes),
+  requires_review = 1,
+  allow_auto_publish = 0,
+  respect_robots = 1,
+  connection_status = VALUES(connection_status),
+  terms_notes = VALUES(terms_notes),
+  parser_key = VALUES(parser_key),
+  accuracy = 1,
+  modified_at = UTC_TIMESTAMP(),
+  modified_by = 1;

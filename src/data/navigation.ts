@@ -70,19 +70,13 @@ export const navigation: NavigationItem[] = [
     ]
   },
   {
-    label: "اخبار تجارت",
-    href: "/trade-news",
+    label: "اخبار و بخشنامه‌ها",
+    href: "/trade-updates",
     children: [
-      { label: "اخبار گمرک", href: "/trade-news/customs-news", description: "خبرهای گمرکی و رویه‌های اجرایی" },
-      { label: "اخبار واردات", href: "/trade-news/import-news", description: "خبرهای واردات کالا و ثبت سفارش" },
-      { label: "اخبار صادرات", href: "/trade-news/export-news", description: "خبرهای صادرات کالا و بازارهای هدف" },
-      { label: "تجارت با چین", href: "/trade-news/china-trade", description: "خبرهای تجارت ایران و چین" },
-      { label: "تجارت با اوراسیا", href: "/trade-news/eurasia-trade", description: "خبرهای تجارت با اتحادیه اوراسیا" },
-      { label: "تجارت آسیا", href: "/trade-news/asia-trade", description: "خبرهای تجارت با کشورهای آسیایی" },
-      { label: "حمل و لجستیک", href: "/trade-news/shipping-logistics", description: "خبرهای حمل‌ونقل و زنجیره تامین" }
+      { label: "اخبار تجارت", href: "/trade-news", description: "خبرهای تجارت خارجی، گمرک، واردات، صادرات و ارز" },
+      { label: "بخشنامه‌ها", href: "/trade-circulars", description: "بخشنامه‌ها و مقررات رسمی تجارت، گمرک و ارز" }
     ]
   },
-  { label: "بخشنامه‌های گمرکی", href: "/trade-circulars/customs-circulars" },
   {
     label: "ارتباط با خوبروز",
     href: "/contact",

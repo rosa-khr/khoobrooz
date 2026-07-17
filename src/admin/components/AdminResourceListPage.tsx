@@ -35,6 +35,16 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
     description: "خبرها، تایید محتوایی، انتشار و زمان‌بندی نمایش.",
     label: "News"
   },
+  "content-sources": {
+    title: "مدیریت منابع و ورودی اخبار",
+    description: "منابع RSS، Atom، API، Scraper و دستی برای پایش اخبار تجارت و بخشنامه‌ها.",
+    label: "Content Sources"
+  },
+  "source-items": {
+    title: "اخبار ورودی",
+    description: "صف بررسی اخبار و بخشنامه‌های دریافت‌شده؛ هیچ موردی بدون تایید مدیر منتشر نمی‌شود.",
+    label: "Incoming News"
+  },
   tags: {
     title: "مدیریت تگ‌ها",
     description: "تگ‌های قابل استفاده در مقاله‌ها و خبرها.",
@@ -74,7 +84,7 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
 
 export function AdminResourceListPage({ resource }: AdminResourceListPageProps) {
   const copy = resourceCopy[resource] ?? resourceCopy.reports;
-  const gridResource = ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks"].includes(resource) ? resource as AdminResource : null;
+  const gridResource = ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource) ? resource as AdminResource : null;
   const [rows, setRows] = useState<AdminGridRecord[]>([]);
   const [serviceGroups, setServiceGroups] = useState<AdminApiServiceGroup[]>([]);
   const [isLoading, setIsLoading] = useState(Boolean(gridResource));
@@ -237,7 +247,7 @@ export function AdminResourceListPage({ resource }: AdminResourceListPageProps) 
           </>
         ) : null}
 
-        {!["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "api-services"].includes(resource) ? (
+        {!["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items", "api-services"].includes(resource) ? (
           <section className="admin-empty-state">
             <strong>{copy.title}</strong>
             <p>لیست این بخش در مرحله بعدی به CRUD اختصاصی خودش وصل می‌شود.</p>

@@ -2,7 +2,7 @@
 
 import type { Accuracy } from "@/admin/data/adminMockData";
 
-export type AdminResource = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks";
+export type AdminResource = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks" | "content-sources" | "source-items";
 export type AdminApiServiceAction = {
   id: number;
   name: string;
@@ -128,7 +128,80 @@ export type AdminWorldClockRecord = {
   modifiedAt: string;
 };
 
-export type AdminGridRecord = AdminMenuRecord | AdminCategoryRecord | AdminContentRecord | AdminSimpleRecord | AdminWorldClockRecord;
+export type AdminContentSourceRecord = {
+  id: number;
+  title: string;
+  name: string;
+  slug: string;
+  websiteUrl: string;
+  feedUrl: string;
+  sourceType: "rss" | "atom" | "api" | "scraper" | "manual";
+  sourceCategory: "official" | "news_agency" | "trade_media" | "international";
+  language: string;
+  country: string;
+  defaultArticleType: "news" | "circular" | "regulation" | "official_notice";
+  defaultCategoryId: number | null;
+  defaultCategory: string | null;
+  trustLevel: "official" | "high" | "medium" | "low";
+  fetchIntervalMinutes: number;
+  backfillDays: number;
+  maxBackfillItems: number;
+  requiresReview: boolean;
+  allowAutoPublish: boolean;
+  isActive: boolean;
+  respectRobots: boolean;
+  connectionStatus: "ready" | "needs_configuration" | "manual_required" | "disabled" | "error";
+  termsNotes: string;
+  parserKey: string;
+  lastFetchedAt: string | null;
+  lastSuccessfulFetchAt: string | null;
+  lastErrorAt: string | null;
+  lastErrorMessage: string;
+  accuracy: Accuracy;
+  modifiedAt: string;
+};
+
+export type AdminSourceItemRecord = {
+  id: number;
+  title: string;
+  sourceId: number;
+  sourceName: string;
+  sourceUrl: string;
+  originalTitle: string;
+  originalSummary: string;
+  originalContent: string;
+  originalImageUrl: string;
+  originalAuthor: string;
+  originalLanguage: string;
+  sourcePublishedAt: string | null;
+  fetchedAt: string;
+  detectedContentType: "news" | "circular" | "regulation" | "official_notice";
+  suggestedCategoryId: number | null;
+  suggestedCategory: string | null;
+  relevanceScore: number;
+  processingStatus: "pending_review" | "approved" | "published" | "rejected" | "duplicate" | "archived" | "failed" | "filtered_out";
+  duplicateOfId: number | null;
+  articleId: number | null;
+  newsId: number | null;
+  circularNumber: string;
+  issuer: string;
+  issuedAt: string | null;
+  effectiveAt: string | null;
+  attachmentUrl: string;
+  officialPageUrl: string;
+  validityStatus: string;
+  reviewTitle: string;
+  slug: string;
+  summary: string;
+  content: string;
+  seoTitle: string;
+  seoDescription: string;
+  selectedImageUrl: string;
+  accuracy: Accuracy;
+  modifiedAt: string;
+};
+
+export type AdminGridRecord = AdminMenuRecord | AdminCategoryRecord | AdminContentRecord | AdminSimpleRecord | AdminWorldClockRecord | AdminContentSourceRecord | AdminSourceItemRecord;
 
 type AdminApiResponse<T> = {
   responseStatus: 0 | 1;
@@ -205,4 +278,8 @@ export async function saveAdminRecord(resource: AdminResource, action: "add" | "
 
 export async function deleteAdminRecord(resource: AdminResource, id: number) {
   return adminPost<{ id: number; accuracy: 2 }>(resource, "delete", { id });
+}
+
+export async function runAdminResourceAction(resource: AdminResource, action: string, body: Record<string, unknown>) {
+  return adminPost<AdminGridRecord>(resource, action, body);
 }
