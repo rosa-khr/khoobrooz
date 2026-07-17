@@ -1,4 +1,4 @@
-import type { MarketRate } from "@/core/lib/tgju";
+import type { MarketRate } from "@/core/lib/marketRatesSchema";
 
 export type MarketRatesPayload = {
   rates: MarketRate[];

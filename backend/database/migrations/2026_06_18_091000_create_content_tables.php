@@ -32,7 +32,15 @@ return new class extends Migration
             $table->string('locale', 10)->default('fa');
             $table->string('title', 160);
             $table->string('slug', 180);
+            $table->string('summary', 800)->nullable();
+            $table->longText('content_top')->nullable();
+            $table->longText('content_bottom')->nullable();
+            $table->string('cover_image_url', 600)->nullable();
             $this->seoColumns($table);
+            $table->string('canonical_url', 600)->nullable();
+            $table->json('faq_json')->nullable();
+            $this->publishColumns($table);
+            $table->boolean('is_indexable')->default(true);
             $table->integer('sort_order')->default(0);
             $this->auditColumns($table);
             $table->unique(['locale', 'slug']);

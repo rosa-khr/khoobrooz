@@ -13,7 +13,7 @@ import "ag-grid-community/styles/ag-theme-material.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-type GridKind = "menus" | "services" | "articles" | "news" | "tags" | "world-clocks";
+type GridKind = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks";
 
 const persianGridLocale = {
   page: "صفحه",
@@ -208,12 +208,24 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
       ];
     }
 
-    if (kind === "tags" || kind === "services") {
+    if (kind === "categories") {
+      return [
+        { headerName: "عنوان", field: "title", flex: 1.2, minWidth: 180 },
+        { headerName: "والد", field: "parentTitle", width: 170, valueFormatter: ({ value }) => value || "دسته اصلی" },
+        { headerName: "نوع", field: "type", width: 140 },
+        { headerName: "آدرس انگلیسی", field: "slug", flex: 1, minWidth: 170, dir: "ltr" },
+        { headerName: "ترتیب", field: "sortOrder", width: 96 },
+        { headerName: "عنوان SEO", field: "seoTitle", flex: 1.2, minWidth: 210 },
+        ...baseColumns
+      ];
+    }
+
+    if (kind === "tags" || kind === "services" || kind === "pages") {
       return [
         { headerName: "عنوان", field: "title", flex: 1.3, minWidth: 190 },
         { headerName: "آدرس انگلیسی", field: "slug", flex: 1.2, minWidth: 180, dir: "ltr" },
-        ...(kind === "services" ? [{ headerName: "توضیح کارت", field: "summary", flex: 1.8, minWidth: 260 } as ColDef] : []),
-        ...(kind === "services" ? [{
+        ...(kind === "services" || kind === "pages" ? [{ headerName: kind === "pages" ? "خلاصه صفحه" : "توضیح کارت", field: "summary", flex: 1.8, minWidth: 260 } as ColDef] : []),
+        ...(kind === "services" || kind === "pages" ? [{
           headerName: "انتشار",
           field: "isPublished",
           width: 120,
@@ -274,7 +286,7 @@ export function AdminDataGrid({ title, description, kind, onChanged, rows }: Adm
     <section className="admin-grid-section" id={kind}>
       <div className="admin-section-heading">
         <div>
-          <span>{kind === "menus" ? "Navigation" : kind === "tags" ? "Tags" : kind === "services" ? "Services" : kind === "world-clocks" ? "World Clock" : "Content"}</span>
+          <span>{kind === "menus" ? "Navigation" : kind === "categories" ? "Categories" : kind === "pages" ? "Pages" : kind === "tags" ? "Tags" : kind === "services" ? "Services" : kind === "world-clocks" ? "World Clock" : "Content"}</span>
           <h2>{title}</h2>
           <p>{description}</p>
         </div>

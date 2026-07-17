@@ -2,7 +2,7 @@
 
 import type { Accuracy } from "@/admin/data/adminMockData";
 
-export type AdminResource = "menus" | "services" | "articles" | "news" | "tags" | "world-clocks";
+export type AdminResource = "menus" | "categories" | "pages" | "services" | "articles" | "news" | "tags" | "world-clocks";
 export type AdminApiServiceAction = {
   id: number;
   name: string;
@@ -57,6 +57,27 @@ export type AdminContentRecord = {
   tagTitles?: string[];
 };
 
+export type AdminCategoryRecord = {
+  id: number;
+  title: string;
+  parentId: number | null;
+  parentTitle: string | null;
+  type: "encyclopedia" | "news" | "circular" | string;
+  slug: string;
+  summary: string;
+  contentTop: string;
+  contentBottom: string;
+  seoTitle: string;
+  seoDescription: string;
+  canonicalUrl: string;
+  coverImageUrl: string;
+  sortOrder: number;
+  isPublished: boolean;
+  isIndexable: boolean;
+  accuracy: Accuracy;
+  modifiedAt: string;
+};
+
 export type AdminSimpleRecord = {
   id: number;
   title: string;
@@ -107,7 +128,7 @@ export type AdminWorldClockRecord = {
   modifiedAt: string;
 };
 
-export type AdminGridRecord = AdminMenuRecord | AdminContentRecord | AdminSimpleRecord | AdminWorldClockRecord;
+export type AdminGridRecord = AdminMenuRecord | AdminCategoryRecord | AdminContentRecord | AdminSimpleRecord | AdminWorldClockRecord;
 
 type AdminApiResponse<T> = {
   responseStatus: 0 | 1;

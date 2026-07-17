@@ -1,4 +1,5 @@
 import http from "node:http";
+import crypto from "node:crypto";
 import mysql from "mysql2/promise";
 
 const port = Number(process.env.BACKEND_PORT ?? 8000);
@@ -32,6 +33,11 @@ const definitions = [
   { key: "price_try", title: "لیر", symbol: "TRY", unit: "ریال", group: "market" },
   { key: "price_rub", title: "روبل", symbol: "RUB", unit: "ریال", group: "market" },
   { key: "price_iqd", title: "دینار عراق", symbol: "IQD", unit: "ریال", group: "market" },
+  { key: "ice_transfer_usd_sell", title: "حواله تجاری دلار", symbol: "USD", unit: "ریال", group: "commercialTransfer" },
+  { key: "ice_transfer_eur_sell", title: "حواله تجاری یورو", symbol: "EUR", unit: "ریال", group: "commercialTransfer" },
+  { key: "ice_transfer_aed_sell", title: "حواله تجاری درهم", symbol: "AED", unit: "ریال", group: "commercialTransfer" },
+  { key: "ice_transfer_cny_sell", title: "حواله تجاری یوان", symbol: "CNY", unit: "ریال", group: "commercialTransfer" },
+  { key: "ice_transfer_rub_sell", title: "حواله تجاری روبل", symbol: "RUB", unit: "ریال", group: "commercialTransfer" },
   { key: "geram18", title: "طلای ۱۸ عیار", symbol: "18K", unit: "ریال", group: "metal" },
   { key: "geram24", title: "طلای ۲۴ عیار", symbol: "24K", unit: "ریال", group: "metal" },
   { key: "mesghal", title: "مثقال طلا", symbol: "MITHQAL", unit: "ریال", group: "metal" },
@@ -45,10 +51,139 @@ const definitions = [
 let board = { rates: [], fetchedAt: "نامشخص" };
 let lastError = null;
 let syncing = false;
+const marketRateSockets = new Set();
 
-const adminResources = new Set(["menus", "services", "articles", "news", "tags", "world-clocks", "countries"]);
+function getMarketRatesSocketPayload() {
+  return {
+    ok: !lastError || board.rates.length > 0,
+    ...board,
+    message: lastError
+  };
+}
+
+function createWebSocketFrame(payload, opcode = 0x1) {
+  const data = Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload), "utf8");
+  const headerLength = data.length < 126 ? 2 : data.length <= 65535 ? 4 : 10;
+  const frame = Buffer.allocUnsafe(headerLength + data.length);
+
+  frame[0] = 0x80 | opcode;
+
+  if (data.length < 126) {
+    frame[1] = data.length;
+    data.copy(frame, 2);
+  } else if (data.length <= 65535) {
+    frame[1] = 126;
+    frame.writeUInt16BE(data.length, 2);
+    data.copy(frame, 4);
+  } else {
+    frame[1] = 127;
+    frame.writeBigUInt64BE(BigInt(data.length), 2);
+    data.copy(frame, 10);
+  }
+
+  return frame;
+}
+
+function sendMarketRatesSocketPayload(socket) {
+  if (socket.destroyed) return;
+  socket.write(createWebSocketFrame(JSON.stringify(getMarketRatesSocketPayload())), (error) => {
+    if (error) {
+      socket.destroy();
+      marketRateSockets.delete(socket);
+    }
+  });
+}
+
+function broadcastMarketRates() {
+  for (const socket of marketRateSockets) {
+    sendMarketRatesSocketPayload(socket);
+  }
+}
+
+function handleWebSocketData(socket, buffer) {
+  let offset = 0;
+
+  while (offset + 2 <= buffer.length) {
+    const firstByte = buffer[offset];
+    const secondByte = buffer[offset + 1];
+    const opcode = firstByte & 0x0f;
+    let payloadLength = secondByte & 0x7f;
+    let headerLength = 2;
+
+    if (payloadLength === 126) {
+      if (offset + 4 > buffer.length) return;
+      payloadLength = buffer.readUInt16BE(offset + 2);
+      headerLength = 4;
+    } else if (payloadLength === 127) {
+      if (offset + 10 > buffer.length) return;
+      const largePayloadLength = buffer.readBigUInt64BE(offset + 2);
+      if (largePayloadLength > BigInt(Number.MAX_SAFE_INTEGER)) {
+        socket.destroy();
+        return;
+      }
+      payloadLength = Number(largePayloadLength);
+      headerLength = 10;
+    }
+
+    const masked = Boolean(secondByte & 0x80);
+    const frameLength = headerLength + (masked ? 4 : 0) + payloadLength;
+    if (offset + frameLength > buffer.length) return;
+
+    if (opcode === 0x8) {
+      socket.end(createWebSocketFrame("", 0x8));
+      marketRateSockets.delete(socket);
+      return;
+    }
+
+    if (opcode === 0x9) {
+      socket.write(createWebSocketFrame("", 0xA));
+    }
+
+    offset += frameLength;
+  }
+}
+
+function handleMarketRatesSocket(request, socket) {
+  const websocketKey = request.headers["sec-websocket-key"];
+
+  if (typeof websocketKey !== "string") {
+    socket.destroy();
+    return;
+  }
+
+  const acceptKey = crypto
+    .createHash("sha1")
+    .update(`${websocketKey}258EAFA5-E914-47DA-95CA-C5AB0DC85B11`)
+    .digest("base64");
+
+  socket.write(
+    [
+      "HTTP/1.1 101 Switching Protocols",
+      "Upgrade: websocket",
+      "Connection: Upgrade",
+      `Sec-WebSocket-Accept: ${acceptKey}`,
+      "",
+      ""
+    ].join("\r\n")
+  );
+
+  marketRateSockets.add(socket);
+  socket.on("data", (buffer) => handleWebSocketData(socket, buffer));
+  socket.on("close", () => marketRateSockets.delete(socket));
+  socket.on("error", () => marketRateSockets.delete(socket));
+
+  if (board.rates.length === 0) {
+    void syncTgju().then(() => sendMarketRatesSocketPayload(socket));
+  } else {
+    sendMarketRatesSocketPayload(socket);
+  }
+}
+
+const adminResources = new Set(["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "countries"]);
 const adminResourceTables = {
   menus: "menus",
+  categories: "categories",
+  pages: "pages",
   services: "services",
   articles: "articles",
   news: "news",
@@ -66,6 +201,8 @@ const catalogPageRequest = {
 const catalogResponse = (items, total = "number") => ({ responseStatus: "0|1", response: { items, total } });
 const serviceCatalog = [
   { id: 1, serviceName: "MenuService", title: "Site menus", description: "Navigation menu contract.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 100 + index + 1, name, title: `${name} menu`, method: "POST", path: `/api/admin/menus/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number" } }, response: catalogResponse([{ id: "number", title: "string", url: "string", accuracy: "0|1|2" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
+  { id: 9, serviceName: "CategoryService", title: "Categories", description: "SEO category pages for encyclopedia, news, and circulars.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 900 + index + 1, name, title: `${name} category`, method: "POST", path: `/api/admin/categories/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", parentId: "number|null", type: "encyclopedia|news|circular", seoTitle: "string", seoDescription: "string" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string", type: "string" }], name === "loadPage" ? "number" : 1), status: "active" })) },
+  { id: 10, serviceName: "PageService", title: "Pages", description: "Editable static landing pages and route content.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 1000 + index + 1, name, title: `${name} page`, method: "POST", path: `/api/admin/pages/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", summary: "string", content: "string" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string", summary: "string" }], name === "loadPage" ? "number" : 1), status: "active" })) },
   { id: 2, serviceName: "ArticleService", title: "Articles", description: "Article content, tags, approval, publishing, and SEO.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 200 + index + 1, name, title: `${name} article`, method: "POST", path: `/api/admin/articles/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", tagIds: ["number"] } }, response: catalogResponse([{ id: "number", title: "string", approve: "boolean", tagIds: ["number"] }], name === "loadPage" ? "number" : 1), status: "planned" })) },
   { id: 3, serviceName: "NewsService", title: "News", description: "News content, tags, approval, publishing, and SEO.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 300 + index + 1, name, title: `${name} news`, method: "POST", path: `/api/admin/news/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", tagIds: ["number"] } }, response: catalogResponse([{ id: "number", title: "string", approve: "boolean", tagIds: ["number"] }], name === "loadPage" ? "number" : 1), status: "planned" })) },
   { id: 4, serviceName: "TagService", title: "Tags", description: "Tag lookup and tag landing-page content.", actions: ["loadPage", "find", "add", "update", "delete"].map((name, index) => ({ id: 400 + index + 1, name, title: `${name} tag`, method: "POST", path: `/api/admin/tags/${name}`, scope: "Admin", request: name === "loadPage" ? catalogPageRequest : { body: { id: "number", title: "string", slug: "string", content: "string", seoTitle: "string", seoDescription: "string", accuracy: "0|1|2" } }, response: catalogResponse([{ id: "number", title: "string", slug: "string", content: "string" }], name === "loadPage" ? "number" : 1), status: "planned" })) },
@@ -252,6 +389,19 @@ function adminListQuery(resource, body = {}) {
     );
   }
 
+  if (resource === "categories") {
+    const whereParts = filterConditions(filters, { id: "c.id", accuracy: "c.accuracy", isPublished: "c.is_published", parentId: "c.parent_id", type: "c.type", search: "c.title|c.slug|c.seo_title|c.seo_description" });
+    const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
+    const orderBy = firstSort(sorting, { id: "c.id", title: "c.title", type: "c.type", sortOrder: "c.sort_order", modifiedAt: "COALESCE(c.modified_at, c.created_at)" }, "c.type ASC, COALESCE(p.sort_order, c.sort_order) ASC, c.parent_id IS NOT NULL ASC, c.sort_order ASC, c.id ASC");
+    return jsonArraySelect(
+      `SELECT JSON_OBJECT('id', c.id, 'title', c.title, 'parentId', c.parent_id, 'parentTitle', p.title, 'type', COALESCE(c.type, 'encyclopedia'), 'slug', c.slug, 'summary', COALESCE(c.summary, ''), 'contentTop', COALESCE(c.content_top, ''), 'contentBottom', COALESCE(c.content_bottom, ''), 'seoTitle', COALESCE(c.seo_title, ''), 'seoDescription', COALESCE(c.seo_description, ''), 'canonicalUrl', COALESCE(c.canonical_url, ''), 'coverImageUrl', COALESCE(c.cover_image_url, ''), 'sortOrder', COALESCE(c.sort_order, 0), 'isPublished', IF(c.is_published = 1, TRUE, FALSE), 'isIndexable', IF(c.is_indexable = 1, TRUE, FALSE), 'accuracy', c.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(c.modified_at, c.created_at)")}) AS row_json`,
+      "FROM categories c LEFT JOIN categories p ON p.id = c.parent_id",
+      where,
+      `ORDER BY ${orderBy}`,
+      limitSql
+    );
+  }
+
   if (resource === "articles" || resource === "news") {
     const table = resource === "articles" ? "articles" : "news";
     const relationTable = resource === "articles" ? "article_tag" : "news_tag";
@@ -262,7 +412,7 @@ function adminListQuery(resource, body = {}) {
     const orderBy = firstSort(sorting, { id: "a.id", title: "a.title", modifiedAt: "COALESCE(a.modified_at, a.created_at)", scheduledAt: "a.scheduled_at" }, "COALESCE(a.modified_at, a.created_at) DESC, a.id DESC");
     return jsonArraySelect(
       `SELECT JSON_OBJECT('id', a.id, 'title', a.title, 'headline', COALESCE(${headline}, ''), 'categoryId', a.category_id, 'category', c.title, 'slug', a.slug, 'seoTitle', COALESCE(a.seo_title, ''), 'seoDescription', COALESCE(a.seo_description, ''), 'content', COALESCE(a.body, ''), 'approve', IF(a.approve = 1, TRUE, FALSE), 'isPublished', IF(a.is_published = 1, TRUE, FALSE), 'accuracy', a.accuracy, 'scheduledAt', ${mysqlDate("a.scheduled_at")}, 'modifiedAt', ${mysqlDate("COALESCE(a.modified_at, a.created_at)")}, 'tagIdsCsv', COALESCE((SELECT GROUP_CONCAT(rel.tag_id ORDER BY rel.tag_id SEPARATOR ',') FROM ${relationTable} rel WHERE rel.${parentColumn} = a.id AND rel.accuracy <> 2), ''), 'tagTitlesCsv', COALESCE((SELECT GROUP_CONCAT(t.title ORDER BY t.title SEPARATOR '، ') FROM ${relationTable} rel JOIN tags t ON t.id = rel.tag_id WHERE rel.${parentColumn} = a.id AND rel.accuracy <> 2 AND t.accuracy <> 2), '')) AS row_json`,
-      `FROM ${table} a LEFT JOIN menus c ON c.id = a.category_id`,
+      `FROM ${table} a LEFT JOIN categories c ON c.id = a.category_id`,
       where,
       `ORDER BY ${orderBy}`,
       limitSql
@@ -276,6 +426,19 @@ function adminListQuery(resource, body = {}) {
     return jsonArraySelect(
       `SELECT JSON_OBJECT('id', w.id, 'countryId', w.country_id, 'cityId', w.city_id, 'city', w.city, 'country', w.country, 'countryCode', w.country_code, 'continent', COALESCE(c.continent, ${continentCase("c")}), 'timezone', w.timezone, 'marketLabel', w.market_label, 'flag', COALESCE(w.flag, c.flag, w.country_code), 'sortOrder', w.sort_order, 'isPublished', IF(w.is_published = 1, TRUE, FALSE), 'accuracy', w.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(w.modified_at, w.created_at)")}) AS row_json`,
       "FROM world_clock_items w LEFT JOIN countries c ON c.id = w.country_id",
+      where,
+      `ORDER BY ${orderBy}`,
+      limitSql
+    );
+  }
+
+  if (resource === "pages") {
+    const whereParts = filterConditions(filters, { id: "p.id", accuracy: "p.accuracy", isPublished: "p.is_published", search: "p.title|p.slug|p.summary|p.seo_title|p.seo_description" });
+    const where = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
+    const orderBy = firstSort(sorting, { id: "p.id", title: "p.title", slug: "p.slug", modifiedAt: "COALESCE(p.modified_at, p.created_at)" }, "COALESCE(p.modified_at, p.created_at) DESC, p.id DESC");
+    return jsonArraySelect(
+      `SELECT JSON_OBJECT('id', p.id, 'title', p.title, 'slug', p.slug, 'summary', COALESCE(p.summary, ''), 'description', COALESCE(p.summary, ''), 'content', COALESCE(p.body, ''), 'seoTitle', COALESCE(p.seo_title, ''), 'seoDescription', COALESCE(p.seo_description, ''), 'href', CONCAT('/', p.slug), 'isPublished', IF(p.is_published = 1, TRUE, FALSE), 'accuracy', p.accuracy, 'modifiedAt', ${mysqlDate("COALESCE(p.modified_at, p.created_at)")}) AS row_json`,
+      "FROM pages p",
       where,
       `ORDER BY ${orderBy}`,
       limitSql
@@ -324,6 +487,30 @@ function adminWriteQuery(resource, action, body) {
     return `UPDATE menus SET title=${values[0]}, url=${values[1]}, slug=${values[2]}, parent_id=${values[3]}, level=${values[4]}, seo_title=${values[5]}, seo_description=${values[6]}, is_published=${values[7]}, accuracy=${values[8]}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
   }
 
+  if (resource === "categories") {
+    const values = [
+      sqlString(body.title),
+      sqlString(body.slug),
+      sqlNumber(body.parentId),
+      sqlString(body.type ?? "encyclopedia"),
+      sqlString(body.summary),
+      sqlString(body.contentTop),
+      sqlString(body.contentBottom),
+      sqlString(body.seoTitle),
+      sqlString(body.seoDescription),
+      sqlString(body.canonicalUrl),
+      sqlString(body.coverImageUrl),
+      sqlNumber(body.sortOrder ?? 0),
+      sqlBit(body.isPublished ?? true),
+      sqlBit(body.isIndexable ?? true),
+      accuracy
+    ];
+    if (action === "add") {
+      return `INSERT INTO categories (title, slug, parent_id, type, summary, content_top, content_bottom, seo_title, seo_description, canonical_url, cover_image_url, sort_order, is_published, is_indexable, accuracy, created_by) VALUES (${values.join(", ")}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
+    }
+    return `UPDATE categories SET title=${values[0]}, slug=${values[1]}, parent_id=${values[2]}, type=${values[3]}, summary=${values[4]}, content_top=${values[5]}, content_bottom=${values[6]}, seo_title=${values[7]}, seo_description=${values[8]}, canonical_url=${values[9]}, cover_image_url=${values[10]}, sort_order=${values[11]}, is_published=${values[12]}, is_indexable=${values[13]}, accuracy=${values[14]}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+  }
+
   if (resource === "articles" || resource === "news") {
     const table = resource === "articles" ? "articles" : "news";
     const headlineColumn = resource === "articles" ? "excerpt" : "summary";
@@ -348,6 +535,13 @@ function adminWriteQuery(resource, action, body) {
     return `UPDATE services SET title=${sqlString(body.title)}, slug=${sqlString(body.slug)}, short_title=${sqlString(body.cta ?? body.shortTitle)}, summary=${sqlString(body.summary ?? body.description)}, is_published=${sqlBit(body.isPublished ?? true)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
   }
 
+  if (resource === "pages") {
+    if (action === "add") {
+      return `INSERT INTO pages (title, slug, summary, body, seo_title, seo_description, is_published, accuracy, created_by) VALUES (${sqlString(body.title)}, ${sqlString(body.slug)}, ${sqlString(body.summary ?? body.description)}, ${sqlString(body.content)}, ${sqlString(body.seoTitle)}, ${sqlString(body.seoDescription)}, ${sqlBit(body.isPublished ?? true)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
+    }
+    return `UPDATE pages SET title=${sqlString(body.title)}, slug=${sqlString(body.slug)}, summary=${sqlString(body.summary ?? body.description)}, body=${sqlString(body.content)}, seo_title=${sqlString(body.seoTitle)}, seo_description=${sqlString(body.seoDescription)}, is_published=${sqlBit(body.isPublished ?? true)}, accuracy=${accuracy}, modified_at=UTC_TIMESTAMP(), modified_by=1 WHERE id=${id}; SELECT JSON_OBJECT('id', ${id});`;
+  }
+
   if (action === "add") {
     return `INSERT INTO tags (title, slug, body, seo_title, seo_description, is_published, accuracy, created_by) VALUES (${sqlString(body.title)}, ${sqlString(body.slug)}, ${sqlString(body.content)}, ${sqlString(body.seoTitle)}, ${sqlString(body.seoDescription)}, ${sqlBit(body.isPublished ?? true)}, ${accuracy}, 1); SELECT JSON_OBJECT('id', LAST_INSERT_ID());`;
   }
@@ -369,6 +563,12 @@ async function syncContentTags(resource, id, tagIds = []) {
 async function loadPublicServices() {
   const result = await runJsonSql(adminListQuery("services", { pageing: { pageNumbber: 1, PageSize: 20 }, sorting: [{ field: "id", direction: "asc" }], filters: { accuracy: 1, isPublished: true } }), { data: [], total: 0 });
   return successResponse(normalizeAdminItems("services", result.data ?? []), result.total ?? 0);
+}
+
+async function loadPublicPage(slug) {
+  const result = await runJsonSql(adminListQuery("pages", { pageing: { pageNumbber: 1, PageSize: 1 }, filters: { search: slug, accuracy: 1, isPublished: true } }), { data: [] });
+  const page = (result.data ?? []).find((item) => item.slug === slug);
+  return successResponse(page ? [page] : [], page ? 1 : 0);
 }
 
 async function loadPublicMenus() {
@@ -499,6 +699,7 @@ async function syncTgju() {
     };
     lastError = null;
     console.log(`[tgju-dev] synced ${board.rates.length} rates at ${board.fetchedAt}`);
+    broadcastMarketRates();
   } catch (error) {
     lastError = error instanceof Error ? error.message : "TGJU sync failed";
     console.error(`[tgju-dev] ${lastError}`);
@@ -568,6 +769,17 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  const pageMatch = url.pathname.match(/^\/api\/v1\/pages\/(.+)$/);
+  if (request.method === "GET" && pageMatch) {
+    try {
+      const slug = decodeURIComponent(pageMatch[1].replace(/^\/+|\/+$/g, ""));
+      sendJson(response, 200, await loadPublicPage(slug));
+    } catch (error) {
+      sendJson(response, 500, errorResponse(error instanceof Error ? error.message : "Page load failed"));
+    }
+    return;
+  }
+
   if (request.method === "GET" && url.pathname === "/api/v1/menus") {
     try {
       sendJson(response, 200, await loadPublicMenus());
@@ -595,8 +807,28 @@ const server = http.createServer(async (request, response) => {
   sendJson(response, 404, { ok: false, message: "Not found" });
 });
 
+server.on("upgrade", (request, socket) => {
+  const url = new URL(request.url ?? "/", `http://${request.headers.host}`);
+
+  if (url.pathname === "/ws/market-rates") {
+    handleMarketRatesSocket(request, socket);
+    return;
+  }
+
+  socket.destroy();
+});
+
 server.listen(port, "0.0.0.0", () => {
   console.log(`[tgju-dev] backend listening on http://127.0.0.1:${port}`);
   syncTgju();
   setInterval(syncTgju, syncIntervalMs);
+  setInterval(() => {
+    for (const socket of marketRateSockets) {
+      if (socket.destroyed) {
+        marketRateSockets.delete(socket);
+      } else {
+        socket.write(createWebSocketFrame("", 0x9));
+      }
+    }
+  }, 30000);
 });

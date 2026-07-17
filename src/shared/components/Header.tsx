@@ -59,7 +59,7 @@ type MenuResponse = {
 
 export function Header({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
-  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [now, setNow] = useState(() => new Date());
   const pathname = usePathname();
   const dictionary = getDictionary(locale);
@@ -98,8 +98,66 @@ export function Header({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     setOpen(false);
-    setOpenSection(null);
+    setOpenSections({});
   }, [pathname]);
+
+  const toggleSection = (sectionKey: string) => {
+    setOpenSections((value) => ({
+      ...value,
+      [sectionKey]: !value[sectionKey]
+    }));
+  };
+
+  const renderSubmenuItems = (items: NavigationItem[], parentKey: string, depth = 1) => (
+    <div className="grid gap-1">
+      {items.map((child) => {
+        const childKey = `${parentKey}-${child.href}-${child.label}`;
+        const hasChildren = Boolean(child.children?.length);
+        const isChildOpen = Boolean(openSections[childKey]);
+
+        return (
+          <div key={childKey} className="group/sub relative grid gap-1 lg:block">
+            <div className="flex items-center gap-1">
+              <Link
+                href={child.href}
+                className={`flex min-h-9 flex-1 items-center rounded-khoobrooz px-3 py-2 transition hover:text-accent ${
+                  depth === 1 ? "text-sm font-extrabold text-white" : "text-xs font-bold text-blue-100"
+                }`}
+              >
+                <span className="truncate">{child.label}</span>
+              </Link>
+              {hasChildren ? (
+                <>
+                  <button
+                    type="button"
+                    className="grid size-9 shrink-0 place-items-center rounded-khoobrooz text-blue-100 transition hover:text-accent lg:hidden"
+                    aria-label={`باز کردن زیرمنوی ${child.label}`}
+                    aria-expanded={isChildOpen}
+                    onClick={() => toggleSection(childKey)}
+                  >
+                    <ChevronDown className={`size-4 transition ${isChildOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+                  </button>
+                  <ChevronDown className="hidden size-4 shrink-0 text-blue-100 transition group-hover/sub:rotate-90 group-hover/sub:text-accent lg:block" aria-hidden="true" />
+                </>
+              ) : null}
+            </div>
+
+            {hasChildren ? (
+              <div
+                className={`${
+                  isChildOpen ? "grid" : "hidden"
+                } gap-1 border-r border-line pr-3 lg:invisible lg:absolute lg:right-[calc(100%+0.5rem)] lg:top-0 lg:z-50 lg:grid lg:w-72 lg:border-0 lg:pr-0 lg:opacity-0 lg:shadow-soft lg:transition lg:group-hover/sub:visible lg:group-hover/sub:opacity-100 lg:group-focus-within/sub:visible lg:group-focus-within/sub:opacity-100`}
+              >
+                <div className="grid gap-1 rounded-khoobrooz border border-white/20 bg-[#071a33] p-2 text-white shadow-2xl ring-1 ring-accent/15">
+                  {renderSubmenuItems(child.children ?? [], childKey, depth + 1)}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
 
   return (
     <>
@@ -168,47 +226,43 @@ export function Header({ locale }: { locale: Locale }) {
           <nav
             className={`${
               open ? "grid" : "hidden"
-            } absolute inset-x-0 top-full gap-1 rounded-khoobrooz border border-line bg-white p-3 shadow-soft lg:static lg:flex lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none`}
+            } absolute inset-x-0 top-full gap-1 rounded-khoobrooz border border-white/20 bg-[#071a33] p-3 text-white shadow-2xl ring-1 ring-accent/15 lg:static lg:flex lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-inherit lg:shadow-none lg:ring-0`}
           >
             {nav.map((item) => {
               const sectionKey = `${item.href}-${item.label}`;
-              const isSectionOpen = openSection === sectionKey;
+              const isSectionOpen = Boolean(openSections[sectionKey]);
+              const hasChildren = Boolean(item.children?.length);
 
               return (
               <div key={sectionKey} className="group relative">
                 <div className="flex items-center gap-1">
                   <Link
                     href={item.href}
-                    className="flex min-h-10 flex-1 items-center justify-between gap-1 rounded-khoobrooz px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 lg:min-h-0 lg:flex-none lg:justify-start"
+                    className={`flex min-h-10 flex-1 items-center justify-between gap-1 rounded-khoobrooz px-3 py-2 text-sm font-semibold transition lg:min-h-0 lg:flex-none lg:justify-start lg:group-hover:bg-[#071a33]/10 ${
+                      isSectionOpen ? "bg-white/10 text-accent lg:bg-[#071a33]/10 lg:text-primary" : "text-white hover:text-accent lg:text-slate-700 lg:hover:text-primary"
+                    }`}
                   >
                     {item.label}
                   </Link>
-                  {item.children && (
+                  {hasChildren && (
                     <button
                       type="button"
-                      className="grid size-10 place-items-center rounded-khoobrooz text-muted hover:bg-slate-100 lg:hidden"
+                      className={`grid size-10 place-items-center rounded-khoobrooz transition lg:hidden ${
+                        isSectionOpen ? "bg-white/10 text-accent" : "text-blue-100 hover:text-accent"
+                      }`}
                       aria-label={`باز کردن زیرمنوی ${item.label}`}
                       aria-expanded={isSectionOpen}
-                      onClick={() => setOpenSection((value) => (value === sectionKey ? null : sectionKey))}
+                      onClick={() => toggleSection(sectionKey)}
                     >
                       <ChevronDown className={`size-4 transition ${isSectionOpen ? "rotate-180" : ""}`} aria-hidden="true" />
                     </button>
                   )}
-                  {item.children && <ChevronDown className="hidden size-4 text-muted transition group-hover:rotate-180 lg:block" aria-hidden="true" />}
                 </div>
 
-                {item.children && (
-                  <div className={`${isSectionOpen ? "grid" : "hidden"} gap-1 border-r border-line pr-3 lg:invisible lg:absolute lg:right-0 lg:top-full lg:z-50 lg:grid lg:w-80 lg:translate-y-2 lg:border-0 lg:p-0 lg:opacity-0 lg:shadow-soft lg:transition lg:group-hover:visible lg:group-hover:translate-y-0 lg:group-hover:opacity-100`}>
-                    <div className="grid gap-1 rounded-khoobrooz bg-white lg:border lg:border-line lg:p-2">
-                      {item.children.map((child) => (
-                        <Link
-                          key={`${child.href}-${child.label}`}
-                          href={child.href}
-                          className="rounded-khoobrooz px-3 py-2 text-sm hover:bg-slate-100"
-                        >
-                          <span className="block font-extrabold text-primary">{child.label}</span>
-                        </Link>
-                      ))}
+                {hasChildren && (
+                  <div className={`${isSectionOpen ? "grid" : "hidden"} gap-1 border-r border-line pr-3 lg:invisible lg:absolute lg:right-0 lg:top-full lg:z-50 lg:grid lg:w-80 lg:translate-y-2 lg:border-0 lg:p-0 lg:opacity-0 lg:shadow-soft lg:transition lg:group-hover:visible lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:visible lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100`}>
+                    <div className="grid gap-1 rounded-khoobrooz border border-white/20 bg-[#071a33] p-2 text-white shadow-2xl ring-1 ring-accent/15">
+                      {renderSubmenuItems(item.children ?? [], sectionKey)}
                     </div>
                   </div>
                 )}

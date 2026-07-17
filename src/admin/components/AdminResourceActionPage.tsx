@@ -22,6 +22,7 @@ import {
   loadAdminLookup,
   loadAdminPage,
   saveAdminRecord,
+  type AdminCategoryRecord,
   type AdminCountryRecord,
   type AdminCityOption,
   type AdminContentRecord,
@@ -39,7 +40,8 @@ type AdminResourceActionPageProps = {
 };
 
 type ContentResource = "articles" | "news";
-type SimpleResource = "tags" | "services";
+type SimpleResource = "tags" | "services" | "pages";
+type CategoryType = "encyclopedia" | "news" | "circular";
 
 const actionLabels = {
   add: "ایجاد",
@@ -61,6 +63,12 @@ const publishOptions = [
 const approveOptions = [
   { label: "در انتظار تایید", value: "false" },
   { label: "تایید شده", value: "true" }
+];
+
+const categoryTypeOptions: { label: string; value: CategoryType }[] = [
+  { label: "دانشنامه تجاری", value: "encyclopedia" },
+  { label: "اخبار تجارت", value: "news" },
+  { label: "بخشنامه‌ها", value: "circular" }
 ];
 
 type AdminDropdownOption = {
@@ -643,17 +651,134 @@ function MenuForm({ action, id }: { action: "add" | "view" | "edit"; id?: string
   );
 }
 
+function CategoryForm({ action, id }: { action: "add" | "view" | "edit"; id?: string }) {
+  const disabled = action === "view";
+  const { error, isLoading, record } = useAdminRecord("categories", action, id);
+  const row = record as AdminCategoryRecord | null;
+  const [categoryOptions, setCategoryOptions] = useState<AdminCategoryRecord[]>([]);
+
+  useEffect(() => {
+    loadAdminLookup("categories")
+      .then(({ response: { items } }) => setCategoryOptions((items as AdminCategoryRecord[]).filter((item) => item.accuracy !== 2)))
+      .catch(() => setCategoryOptions([]));
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const form = new FormData(event.currentTarget);
+
+    try {
+      await saveAdminRecord("categories", action === "edit" ? "update" : "add", {
+        id: row?.id,
+        title: form.get("title"),
+        slug: form.get("slug"),
+        parentId: toNumberOrNull(form.get("parentId")),
+        type: form.get("type"),
+        summary: form.get("summary"),
+        contentTop: form.get("contentTop"),
+        contentBottom: form.get("contentBottom"),
+        seoTitle: form.get("seoTitle"),
+        seoDescription: form.get("seoDescription"),
+        canonicalUrl: form.get("canonicalUrl"),
+        coverImageUrl: form.get("coverImageUrl"),
+        sortOrder: Number(form.get("sortOrder") ?? 0),
+        accuracy: Number(form.get("accuracy") ?? 0),
+        isPublished: toBoolean(form.get("isPublished")),
+        isIndexable: toBoolean(form.get("isIndexable"))
+      });
+      toast.success("دسته‌بندی با موفقیت ذخیره شد.");
+    } catch (reason) {
+      toast.error(reason instanceof Error ? reason.message : "ذخیره دسته‌بندی ناموفق بود.");
+      throw reason;
+    }
+  }
+
+  if (isLoading) return <section className="admin-empty-state"><strong>در حال دریافت داده...</strong></section>;
+  if (error) return <section className="admin-empty-state"><strong>خطا</strong><p>{error}</p></section>;
+
+  return (
+    <AdminFormFrame action={action} id={row?.id} onSubmit={handleSubmit} resource="categories" title={action === "add" ? "ایجاد دسته‌بندی" : row?.title ?? "دسته‌بندی"}>
+      <div className="admin-form-grid two">
+        <FieldShell label="عنوان دسته‌بندی">
+          <TextInput disabled={disabled} defaultValue={row?.title} name="title" placeholder="مثلا گمرک" />
+        </FieldShell>
+        <FieldShell label="آدرس انگلیسی">
+          <TextInput disabled={disabled} defaultValue={row?.slug} dir="ltr" name="slug" placeholder="customs" />
+        </FieldShell>
+        <FieldShell label="دسته والد">
+          <AdminDropdown
+            defaultValue={row?.parentId ?? ""}
+            disabled={disabled}
+            emptyLabel="دسته‌ای پیدا نشد"
+            name="parentId"
+            options={[
+              { label: "دسته اصلی", value: "" },
+              ...categoryOptions.filter((item) => item.id !== row?.id).map((item) => ({
+                group: item.parentTitle || "دسته‌های اصلی",
+                label: item.title,
+                value: item.id
+              }))
+            ]}
+            placeholder="انتخاب دسته والد"
+            searchable
+          />
+        </FieldShell>
+        <FieldShell label="نوع دسته">
+          <ChoiceInput disabled={disabled} defaultValue={row?.type ?? "encyclopedia"} name="type" options={categoryTypeOptions} />
+        </FieldShell>
+        <FieldShell label="ترتیب نمایش">
+          <TextInput disabled={disabled} defaultValue={row?.sortOrder ?? 0} dir="ltr" name="sortOrder" placeholder="10" />
+        </FieldShell>
+        <FieldShell label="Canonical URL">
+          <TextInput disabled={disabled} defaultValue={row?.canonicalUrl ?? ""} dir="ltr" name="canonicalUrl" placeholder="/trade-encyclopedia/customs" />
+        </FieldShell>
+      </div>
+      <div className="admin-form-balanced-grid">
+        <FieldShell label="توضیح کوتاه">
+          <TextAreaInput className="admin-textarea-balanced" disabled={disabled} defaultValue={row?.summary ?? ""} maxLength={500} name="summary" placeholder="توضیح کوتاه صفحه دسته‌بندی" rows={4} />
+        </FieldShell>
+        <div className="admin-form-field-stack">
+          <FieldShell label="عنوان SEO">
+            <TextInput disabled={disabled} defaultValue={row?.seoTitle ?? ""} name="seoTitle" />
+          </FieldShell>
+          <FieldShell label="تصویر شاخص">
+            <TextInput disabled={disabled} defaultValue={row?.coverImageUrl ?? ""} dir="ltr" name="coverImageUrl" placeholder="/images/categories/customs.jpg" />
+          </FieldShell>
+        </div>
+      </div>
+      <div className="admin-form-grid">
+        <FieldShell label="توضیح SEO">
+          <TextAreaInput className="admin-textarea-balanced" disabled={disabled} defaultValue={row?.seoDescription ?? ""} maxLength={160} name="seoDescription" placeholder="توضیح کوتاه برای نتایج جستجو" rows={4} />
+        </FieldShell>
+      </div>
+      <div className="admin-form-grid two">
+        <FieldShell label="محتوای بالای صفحه">
+          <TextAreaInput disabled={disabled} defaultValue={row?.contentTop ?? ""} name="contentTop" placeholder="متن معرفی بالای آرشیو مقاله‌ها" rows={6} />
+        </FieldShell>
+        <FieldShell label="محتوای پایین صفحه">
+          <TextAreaInput disabled={disabled} defaultValue={row?.contentBottom ?? ""} name="contentBottom" placeholder="متن تکمیلی پایین صفحه دسته‌بندی" rows={6} />
+        </FieldShell>
+      </div>
+      <div className="admin-form-grid two">
+        <StatusFields accuracy={row?.accuracy ?? 0} disabled={disabled} isPublished={row?.isPublished ?? true} />
+        <FieldShell label="وضعیت ایندکس">
+          {disabled ? <PublishBadge value={Boolean(row?.isIndexable)} /> : <ChoiceInput disabled={false} defaultValue={String(row?.isIndexable ?? true)} name="isIndexable" options={[{ label: "Noindex", value: "false" }, { label: "قابل ایندکس", value: "true" }]} />}
+        </FieldShell>
+      </div>
+    </AdminFormFrame>
+  );
+}
+
 function ContentForm({ action, id, resource }: { action: "add" | "view" | "edit"; id?: string; resource: ContentResource }) {
   const disabled = action === "view";
   const { error, isLoading, record } = useAdminRecord(resource, action, id);
   const row = record as AdminContentRecord | null;
   const title = resource === "articles" ? "مقاله" : "خبر";
-  const [menuOptions, setMenuOptions] = useState<AdminMenuRecord[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<AdminCategoryRecord[]>([]);
 
   useEffect(() => {
-    loadAdminLookup("menus")
-      .then(({ response: { items } }) => setMenuOptions((items as AdminMenuRecord[]).filter((item) => item.accuracy !== 2)))
-      .catch(() => setMenuOptions([]));
+    loadAdminLookup("categories")
+      .then(({ response: { items } }) => setCategoryOptions((items as AdminCategoryRecord[]).filter((item) => item.accuracy !== 2)))
+      .catch(() => setCategoryOptions([]));
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -714,8 +839,8 @@ function ContentForm({ action, id, resource }: { action: "add" | "view" | "edit"
               name="categoryId"
               options={[
                 { label: "بدون دسته‌بندی", value: "" },
-                ...menuOptions.map((item) => ({
-                  group: item.parentTitle || "منوهای اصلی",
+                ...categoryOptions.map((item) => ({
+                  group: item.parentTitle || "دسته‌های اصلی",
                   label: item.title,
                   value: item.id
                 }))
@@ -750,7 +875,7 @@ function SimpleForm({ action, id, resource }: { action: "add" | "view" | "edit";
   const disabled = action === "view";
   const { error, isLoading, record } = useAdminRecord(resource, action, id);
   const row = record as AdminSimpleRecord | null;
-  const title = resource === "services" ? "خدمت" : "تگ";
+  const title = resource === "services" ? "خدمت" : resource === "pages" ? "صفحه" : "تگ";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const form = new FormData(event.currentTarget);
@@ -782,11 +907,11 @@ function SimpleForm({ action, id, resource }: { action: "add" | "view" | "edit";
     <AdminFormFrame action={action} id={row?.id} onSubmit={handleSubmit} resource={resource} title={action === "add" ? `ایجاد ${title}` : row?.title ?? title}>
       <div className="admin-form-grid two">
         <FieldShell label="عنوان">
-          <TextInput disabled={disabled} defaultValue={row?.title} name="title" placeholder={resource === "services" ? "مثلا ترخیص کالا" : "مثلا حمل دریایی"} />
+          <TextInput disabled={disabled} defaultValue={row?.title} name="title" placeholder={resource === "services" ? "مثلا ترخیص کالا" : resource === "pages" ? "مثلا خرید از چین" : "مثلا حمل دریایی"} />
         </FieldShell>
-        {resource === "services" ? (
+        {resource === "services" || resource === "pages" ? (
           <FieldShell label="آدرس انگلیسی">
-            <TextInput disabled={disabled} defaultValue={row?.slug} dir="ltr" name="slug" placeholder="customs-clearance" />
+            <TextInput disabled={disabled} defaultValue={row?.slug} dir="ltr" name="slug" placeholder={resource === "pages" ? "buy-from-china" : "customs-clearance"} />
           </FieldShell>
         ) : null}
         {resource === "services" ? (
@@ -800,6 +925,27 @@ function SimpleForm({ action, id, resource }: { action: "add" | "view" | "edit";
           </>
         ) : null}
       </div>
+      {resource === "pages" ? (
+        <>
+          <div className="admin-form-balanced-grid">
+            <FieldShell label="خلاصه صفحه">
+              <TextAreaInput className="admin-textarea-balanced" disabled={disabled} defaultValue={row?.summary ?? row?.description ?? ""} maxLength={800} name="summary" placeholder="خلاصه کوتاه صفحه برای نمایش در hero و سئو" rows={4} />
+            </FieldShell>
+            <div className="admin-form-field-stack">
+              <FieldShell label="عنوان SEO">
+                <TextInput disabled={disabled} defaultValue={row?.seoTitle ?? ""} name="seoTitle" />
+              </FieldShell>
+              <FieldShell label="توضیح SEO">
+                <TextAreaInput disabled={disabled} defaultValue={row?.seoDescription ?? ""} maxLength={160} name="seoDescription" placeholder="توضیح کوتاه برای نتایج جستجو" rows={3} />
+              </FieldShell>
+            </div>
+          </div>
+          <section className="admin-form-section">
+            <h2>محتوای صفحه</h2>
+            <EditorField disabled={disabled} defaultValue={row?.content ?? ""} />
+          </section>
+        </>
+      ) : null}
       {resource === "tags" ? (
         <>
           <div className="admin-form-grid two">
@@ -821,7 +967,7 @@ function SimpleForm({ action, id, resource }: { action: "add" | "view" | "edit";
           </section>
         </>
       ) : null}
-      <StatusFields accuracy={row?.accuracy ?? 0} disabled={disabled} isPublished={row?.isPublished ?? true} withPublish={resource === "services" || resource === "tags"} />
+      <StatusFields accuracy={row?.accuracy ?? 0} disabled={disabled} isPublished={row?.isPublished ?? true} withPublish={resource === "services" || resource === "tags" || resource === "pages"} />
     </AdminFormFrame>
   );
 }
@@ -999,7 +1145,7 @@ function WorldClockForm({ action, id }: { action: "add" | "view" | "edit"; id?: 
 }
 
 export function AdminResourceActionPage({ action, id, resource }: AdminResourceActionPageProps) {
-  const supported = useMemo(() => ["menus", "services", "articles", "news", "tags", "world-clocks"].includes(resource), [resource]);
+  const supported = useMemo(() => ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks"].includes(resource), [resource]);
 
   return (
     <AdminShell>
@@ -1011,8 +1157,9 @@ export function AdminResourceActionPage({ action, id, resource }: AdminResourceA
         </section>
 
         {resource === "menus" ? <MenuForm action={action} id={id} /> : null}
+        {resource === "categories" ? <CategoryForm action={action} id={id} /> : null}
         {resource === "articles" || resource === "news" ? <ContentForm action={action} id={id} resource={resource} /> : null}
-        {resource === "tags" || resource === "services" ? <SimpleForm action={action} id={id} resource={resource} /> : null}
+        {resource === "tags" || resource === "services" || resource === "pages" ? <SimpleForm action={action} id={id} resource={resource} /> : null}
         {resource === "world-clocks" ? <WorldClockForm action={action} id={id} /> : null}
         {!supported ? (
           <section className="admin-empty-state">

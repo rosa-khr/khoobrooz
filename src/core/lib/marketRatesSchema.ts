@@ -59,9 +59,9 @@ export const marketRateDefinitions: MarketRateDefinition[] = [
 
 export const marketRateGroupLabels: Record<MarketRateGroup, string> = {
   official: "نرخ رسمی بانک مرکزی",
-  commercialTransfer: "نرخ حواله مرکز مبادله",
+  commercialTransfer: "نرخ حواله تجاری",
   commodityTransfer: "حواله کالای اساسی و دارو",
-  market: "نرخ ارز",
+  market: "نرخ بازار آزاد",
   metal: "طلا و فلزات",
   coin: "سکه",
   board: "برد بازار"
@@ -69,9 +69,9 @@ export const marketRateGroupLabels: Record<MarketRateGroup, string> = {
 
 export const marketRateGroupDescriptions: Record<MarketRateGroup, string> = {
   official: "نرخ رسمی ارز.",
-  commercialTransfer: "حواله‌های تجاری.",
+  commercialTransfer: "نرخ حواله‌های تجاری مورد استفاده در مسیر واردات، صادرات و محاسبات گمرکی.",
   commodityTransfer: "حواله کالاهای اساسی و دارو.",
-  market: "نرخ روز ارزهای پرکاربرد بازار.",
+  market: "نرخ روز ارزهای پرکاربرد بازار آزاد.",
   metal: "طلا و فلزات پرکاربرد بازار.",
   coin: "سکه‌های رایج بازار.",
   board: "نمای کوتاه نرخ‌های مهم بازار."

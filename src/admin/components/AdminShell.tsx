@@ -12,6 +12,8 @@ import "react-toastify/dist/ReactToastify.css";
 const breadcrumbLabels: Record<string, string> = {
   admin: "داشبوردها",
   menus: "منوها",
+  categories: "دسته‌بندی‌ها",
+  pages: "صفحات",
   articles: "مقالات",
   news: "خبرها",
   tags: "تگ‌ها",

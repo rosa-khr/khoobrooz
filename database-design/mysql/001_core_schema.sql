@@ -29,11 +29,25 @@ CREATE TABLE IF NOT EXISTS categories (
   title VARCHAR(220) NOT NULL,
   slug VARCHAR(180) NOT NULL,
   parent_id BIGINT UNSIGNED NULL,
+  type VARCHAR(60) NOT NULL DEFAULT 'encyclopedia',
+  locale VARCHAR(10) NOT NULL DEFAULT 'fa',
+  summary VARCHAR(800) NULL,
+  content_top LONGTEXT NULL,
+  content_bottom LONGTEXT NULL,
+  cover_image_url VARCHAR(600) NULL,
+  seo_title VARCHAR(255) NULL,
+  seo_description VARCHAR(500) NULL,
+  canonical_url VARCHAR(600) NULL,
+  faq_json JSON NULL,
+  is_published TINYINT(1) NOT NULL DEFAULT 0,
+  is_indexable TINYINT(1) NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by BIGINT UNSIGNED NULL,
   modified_at TIMESTAMP NULL,
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  UNIQUE KEY uq_categories_locale_slug (locale, slug),
   CONSTRAINT chk_categories_accuracy CHECK (accuracy IN (0, 1, 2)),
   CONSTRAINT fk_categories_parent FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
@@ -102,7 +116,7 @@ CREATE TABLE IF NOT EXISTS articles (
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
   UNIQUE KEY uq_articles_locale_slug (locale, slug),
-  CONSTRAINT fk_articles_category FOREIGN KEY (category_id) REFERENCES menus(id),
+  CONSTRAINT fk_articles_category FOREIGN KEY (category_id) REFERENCES categories(id),
   CONSTRAINT chk_articles_accuracy CHECK (accuracy IN (0, 1, 2))
 );
 
@@ -142,7 +156,7 @@ CREATE TABLE IF NOT EXISTS news (
   modified_by BIGINT UNSIGNED NULL,
   accuracy TINYINT UNSIGNED NOT NULL DEFAULT 0,
   UNIQUE KEY uq_news_locale_slug (locale, slug),
-  CONSTRAINT fk_news_category FOREIGN KEY (category_id) REFERENCES menus(id),
+  CONSTRAINT fk_news_category FOREIGN KEY (category_id) REFERENCES categories(id),
   CONSTRAINT chk_news_accuracy CHECK (accuracy IN (0, 1, 2))
 );
 

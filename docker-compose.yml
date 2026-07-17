@@ -19,7 +19,7 @@ services:
       DB_USERNAME: ${MYSQL_USER:?MYSQL_USER must be set}
       DB_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD must be set}
       TGJU_API_URL: ${TGJU_API_URL:-https://call2.tgju.org/ajax.json?rev=E0Wf6KUzcINqAprSkiDbnhZHdM4XGIMImkivgesQwwcAXNQ2RlfNvH4d29bM}
-      TGJU_SYNC_INTERVAL_MS: ${TGJU_SYNC_INTERVAL_MS:-7200000}
+      TGJU_SYNC_INTERVAL_MS: ${TGJU_SYNC_INTERVAL_MS:-900000}
     ports:
       - "${BACKEND_BIND_ADDRESS:-127.0.0.1}:${BACKEND_PORT:-8000}:8000"
     networks:

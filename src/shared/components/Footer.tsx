@@ -169,27 +169,6 @@ export async function Footer({ locale }: { locale: Locale }) {
             })}
           </div>
         </div>
-
-        <div className="mt-4 border-t border-white/10 pt-4">
-          <span className="mb-3 block text-xs font-bold text-blue-200">
-            نماد اعتماد الکترونیکی
-          </span>
-
-          <a
-            referrerPolicy="origin"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://trustseal.enamad.ir/?id=439097&Code=lJFy9sF8wPgQSWLShwrCgJ6GW8wurwYQ"
-            className="inline-flex rounded-md bg-white p-2"
-          >
-            <img
-              referrerPolicy="origin"
-              src="https://trustseal.enamad.ir/logo.aspx?id=439097&Code=lJFy9sF8wPgQSWLShwrCgJ6GW8wurwYQ"
-              alt="نماد اعتماد الکترونیکی خوبروز"
-              style={{ cursor: "pointer", width: "82px", height: "auto" }}
-            />
-          </a>
-        </div>
       </div>
     </div>
 

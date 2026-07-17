@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import type { MarketRate } from "@/core/lib/tgju";
+import type { MarketRate } from "@/core/lib/marketRatesSchema";
 import { Locale, localizedPath } from "@/core/lib/site";
-import { getCachedMarketRates, getMarketRatesWithCache } from "@/core/lib/marketRateClientCache";
+import { getMarketRatesWithCache, subscribeToMarketRates } from "@/core/lib/marketRateClientCache";
 import { marketRatesCacheTtlMs } from "@/core/lib/marketRateConfig";
 
 const homeMarketRateItems = [
@@ -54,16 +54,26 @@ export function MarketRatesMarquee({
   useEffect(() => {
     let mounted = true;
 
+    const applyMarketRates = (payload: { rates: MarketRate[] }) => {
+      if (!mounted) {
+        return;
+      }
+
+      setCurrentRates(selectHomeMarketRates(payload.rates));
+      setRefreshError(false);
+    };
+
+    const unsubscribe = subscribeToMarketRates(applyMarketRates, {
+      onError: () => {
+        if (mounted) {
+          setRefreshError(true);
+        }
+      }
+    });
+
     const refreshMarketRates = async () => {
       try {
-        const payload = await getMarketRatesWithCache();
-
-        if (!mounted) {
-          return;
-        }
-
-        setCurrentRates(selectHomeMarketRates(payload.rates));
-        setRefreshError(false);
+        applyMarketRates(await getMarketRatesWithCache({ force: true }));
       } catch {
         if (mounted) {
           setRefreshError(true);
@@ -71,18 +81,12 @@ export function MarketRatesMarquee({
       }
     };
 
-    const cached = getCachedMarketRates();
-
-    if (cached) {
-      setCurrentRates(selectHomeMarketRates(cached.rates));
-      setRefreshError(false);
-    }
-
     refreshMarketRates();
     const timer = window.setInterval(refreshMarketRates, marketRatesCacheTtlMs);
 
     return () => {
       mounted = false;
+      unsubscribe();
       window.clearInterval(timer);
     };
   }, []);

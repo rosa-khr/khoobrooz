@@ -6,6 +6,7 @@ import {
   Braces,
   Clock3,
   FileText,
+  FolderTree,
   LayoutDashboard,
   Link2,
   Newspaper,
@@ -27,6 +28,8 @@ export type AdminSidebarItem = {
 export const adminSidebar: AdminSidebarItem[] = [
   { label: "داشبوردها", href: "/admin", icon: LayoutDashboard, active: true },
   { label: "منوها", href: "/admin/menus/list", icon: Link2 },
+  { label: "دسته‌بندی‌ها", href: "/admin/categories/list", icon: FolderTree },
+  { label: "صفحات", href: "/admin/pages/list", icon: FileText },
   { label: "خدمات", href: "/admin/services/list", icon: BriefcaseBusiness },
   { label: "مقالات", href: "/admin/articles/list", icon: BookOpenText },
   { label: "خبرها", href: "/admin/news/list", icon: Newspaper },

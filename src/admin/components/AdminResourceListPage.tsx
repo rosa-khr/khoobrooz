@@ -15,6 +15,16 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
     description: "لیست منوها، زیرمنوها، URL، عنوان SEO و وضعیت انتشار.",
     label: "Navigation"
   },
+  categories: {
+    title: "مدیریت دسته‌بندی‌ها",
+    description: "دسته‌بندی‌های دانشنامه، اخبار و بخشنامه‌ها با ساختار والد و فرزند.",
+    label: "Categories"
+  },
+  pages: {
+    title: "مدیریت صفحات",
+    description: "صفحات اصلی، لندینگ‌ها و routeهایی که محتوایشان بعداً از پنل تکمیل می‌شود.",
+    label: "Pages"
+  },
   articles: {
     title: "مدیریت مقالات",
     description: "مقالات، زمان‌بندی، تایید، انتشار و فیلدهای SEO.",
@@ -64,7 +74,7 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
 
 export function AdminResourceListPage({ resource }: AdminResourceListPageProps) {
   const copy = resourceCopy[resource] ?? resourceCopy.reports;
-  const gridResource = ["menus", "services", "articles", "news", "tags", "world-clocks"].includes(resource) ? resource as AdminResource : null;
+  const gridResource = ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks"].includes(resource) ? resource as AdminResource : null;
   const [rows, setRows] = useState<AdminGridRecord[]>([]);
   const [serviceGroups, setServiceGroups] = useState<AdminApiServiceGroup[]>([]);
   const [isLoading, setIsLoading] = useState(Boolean(gridResource));
@@ -227,7 +237,7 @@ export function AdminResourceListPage({ resource }: AdminResourceListPageProps) 
           </>
         ) : null}
 
-        {!["menus", "services", "articles", "news", "tags", "world-clocks", "api-services"].includes(resource) ? (
+        {!["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "api-services"].includes(resource) ? (
           <section className="admin-empty-state">
             <strong>{copy.title}</strong>
             <p>لیست این بخش در مرحله بعدی به CRUD اختصاصی خودش وصل می‌شود.</p>
