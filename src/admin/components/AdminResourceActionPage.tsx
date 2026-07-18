@@ -43,7 +43,7 @@ type AdminResourceActionPageProps = {
 
 type ContentResource = "articles" | "news";
 type SimpleResource = "tags" | "services" | "pages";
-type CategoryType = "encyclopedia" | "news" | "circular";
+type CategoryType = "navigation" | "service" | "encyclopedia" | "news" | "circular";
 
 const actionLabels = {
   add: "ایجاد",
@@ -68,6 +68,8 @@ const approveOptions = [
 ];
 
 const categoryTypeOptions: { label: string; value: CategoryType }[] = [
+  { label: "ساختار سایت", value: "navigation" },
+  { label: "خدمات", value: "service" },
   { label: "دانشنامه تجاری", value: "encyclopedia" },
   { label: "اخبار تجارت", value: "news" },
   { label: "بخشنامه‌ها", value: "circular" }
@@ -1427,7 +1429,7 @@ function SourceItemForm({ action, id }: { action: "add" | "view" | "edit"; id?: 
 }
 
 export function AdminResourceActionPage({ action, id, resource }: AdminResourceActionPageProps) {
-  const supported = useMemo(() => ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource), [resource]);
+  const supported = useMemo(() => ["categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource), [resource]);
 
   return (
     <AdminShell>
@@ -1438,7 +1440,6 @@ export function AdminResourceActionPage({ action, id, resource }: AdminResourceA
           <p>فرم مدیریت این بخش به سرویس بک‌اند متصل است و داده فیک نمایش نمی‌دهد.</p>
         </section>
 
-        {resource === "menus" ? <MenuForm action={action} id={id} /> : null}
         {resource === "categories" ? <CategoryForm action={action} id={id} /> : null}
         {resource === "articles" || resource === "news" ? <ContentForm action={action} id={id} resource={resource} /> : null}
         {resource === "tags" || resource === "services" || resource === "pages" ? <SimpleForm action={action} id={id} resource={resource} /> : null}

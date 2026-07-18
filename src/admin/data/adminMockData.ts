@@ -57,7 +57,6 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
   {
     label: "ساختار سایت",
     items: [
-      { label: "منوها", href: "/admin/menus/list", icon: Link2 },
       { label: "دسته‌بندی‌ها", href: "/admin/categories/list", icon: FolderTree },
       { label: "خدمات", href: "/admin/services/list", icon: BriefcaseBusiness }
     ]

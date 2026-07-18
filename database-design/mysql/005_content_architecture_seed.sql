@@ -196,6 +196,23 @@ CREATE TEMPORARY TABLE tmp_content_categories (
 );
 
 INSERT INTO tmp_content_categories (title, slug, parent_slug, type, sort_order, summary, seo_title, seo_description, canonical_url) VALUES
+  ('خدمات', 'services', NULL, 'navigation', 10, 'دسته اصلی خدمات خوبروز شامل خرید از چین، ترخیص، حواله، ثبت سفارش، حمل و صادرات.', 'خدمات خوبروز | دسته‌بندی‌ها', 'دسته خدمات خوبروز برای مدیریت ساختار خدماتی سایت.', '/services'),
+  ('خرید از چین', 'buy-from-china', 'services', 'service', 11, 'خرید، تامین و پیگیری سفارش از چین.', 'خرید از چین | خوبروز', 'دسته خدمت خرید از چین برای مدیریت مسیرهای مرتبط.', '/buy-from-china'),
+  ('ترخیص کالا', 'services-customs-clearance', 'services', 'service', 12, 'بررسی مسیر ترخیص، اسناد و امور گمرکی.', 'ترخیص کالا | خوبروز', 'دسته خدمت ترخیص کالا برای ساختار سایت و محتوای مرتبط.', '/services/customs-clearance'),
+  ('حواله‌های ارزی', 'services-currency-transfer', 'services', 'service', 13, 'هماهنگی حواله برای پرداخت‌های تجاری.', 'خدمات حواله ارزی | خوبروز', 'دسته خدمت حواله ارزی در ساختار سایت.', '/services/currency-transfer'),
+  ('ثبت سفارش واردات', 'services-import-registration', 'services', 'service', 14, 'پیگیری مسیر ثبت سفارش واردات.', 'ثبت سفارش واردات | خوبروز', 'دسته خدمت ثبت سفارش واردات.', '/services/import-registration'),
+  ('حمل بین‌المللی', 'services-international-shipping', 'services', 'service', 15, 'هماهنگی حمل و لجستیک بین‌المللی.', 'حمل بین‌المللی | خوبروز', 'دسته خدمت حمل بین‌المللی.', '/services/international-shipping'),
+  ('خدمات صادرات', 'services-export-services', 'services', 'service', 16, 'مسیر خدماتی صادرات کالا.', 'خدمات صادرات | خوبروز', 'دسته خدمت صادرات کالا.', '/services/export-services'),
+  ('واردات از چین', 'import-from-china', NULL, 'navigation', 30, 'مسیر واردات کالا از چین، مدارک، حمل و ثبت سفارش.', 'واردات از چین | خوبروز', 'دسته اصلی واردات از چین و مسیرهای مرتبط.', '/import-from-china'),
+  ('مراحل واردات از چین', 'import-from-china-steps', 'import-from-china', 'navigation', 31, 'مسیر واردات، مدارک و هماهنگی سفارش.', 'مراحل واردات از چین | خوبروز', 'دسته مراحل واردات از چین.', '/import-from-china/steps'),
+  ('حمل کالا از چین', 'import-from-china-shipping', 'import-from-china', 'navigation', 32, 'مسیر حمل و لجستیک از چین.', 'حمل کالا از چین | خوبروز', 'دسته حمل کالا از چین.', '/import-from-china/shipping'),
+  ('ثبت سفارش واردات', 'import-from-china-order-registration', 'import-from-china', 'navigation', 33, 'پیش‌نیازها و مدارک ثبت سفارش.', 'ثبت سفارش واردات از چین | خوبروز', 'دسته ثبت سفارش واردات از چین.', '/import-from-china/order-registration'),
+  ('حواله‌های ارزی', 'currency-transfer', NULL, 'navigation', 40, 'مسیر خدمات حواله تتر، دلار، یوان، لیر و درهم.', 'حواله‌های ارزی | خوبروز', 'دسته اصلی حواله‌های ارزی تجاری.', '/currency-transfer'),
+  ('حواله تتر', 'currency-transfer-tether', 'currency-transfer', 'service', 41, 'انتقال تتر برای پرداخت‌های تجاری.', 'حواله تتر | خوبروز', 'دسته حواله تتر.', '/currency-transfer/tether'),
+  ('حواله دلار', 'currency-transfer-dollar', 'currency-transfer', 'service', 42, 'حواله دلار برای پرداخت‌های تجاری.', 'حواله دلار | خوبروز', 'دسته حواله دلار.', '/currency-transfer/dollar'),
+  ('حواله یوان', 'currency-transfer-yuan', 'currency-transfer', 'service', 43, 'پرداخت RMB برای خرید و واردات از چین.', 'حواله یوان | خوبروز', 'دسته حواله یوان.', '/currency-transfer/yuan'),
+  ('حواله لیر', 'currency-transfer-lira', 'currency-transfer', 'service', 44, 'حواله لیر برای پرداخت‌های تجاری.', 'حواله لیر | خوبروز', 'دسته حواله لیر.', '/currency-transfer/lira'),
+  ('حواله درهم', 'currency-transfer-aed', 'currency-transfer', 'service', 45, 'حواله درهم برای پرداخت‌های تجاری.', 'حواله درهم | خوبروز', 'دسته حواله درهم.', '/currency-transfer/aed'),
   ('دانشنامه تجاری', 'trade-encyclopedia', NULL, 'encyclopedia', 10, 'مرجع آموزشی خوبروز برای مفاهیم تجارت خارجی، اسناد، حمل، ارز و اصطلاحات بازرگانی.', 'دانشنامه تجاری | خوبروز', 'دانشنامه تجاری خوبروز برای یادگیری مفاهیم واردات، صادرات، گمرک، اسناد تجاری و حمل بین‌المللی.', '/trade-encyclopedia'),
   ('گمرک', 'customs', 'trade-encyclopedia', 'encyclopedia', 11, 'محتوای آموزشی درباره مفاهیم گمرکی، تعرفه، اظهارنامه، حقوق ورودی و مسیرهای گمرکی.', 'گمرک | دانشنامه تجاری خوبروز', 'آموزش مفاهیم گمرکی مانند تعرفه، HS Code، ارزش گمرکی، حقوق ورودی، اظهارنامه و کوتاژ.', '/trade-encyclopedia/customs'),
   ('اسناد تجاری', 'commercial-documents', 'trade-encyclopedia', 'encyclopedia', 12, 'آشنایی با اسناد رایج خرید خارجی، واردات، صادرات و حمل بین‌المللی.', 'اسناد تجاری | دانشنامه خوبروز', 'معرفی اسناد تجاری مانند پروفرما، اینویس، پکینگ لیست، بارنامه و مدارک واردات و صادرات.', '/trade-encyclopedia/commercial-documents'),

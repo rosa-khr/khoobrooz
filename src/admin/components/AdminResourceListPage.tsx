@@ -10,14 +10,9 @@ type AdminResourceListPageProps = {
 };
 
 const resourceCopy: Record<string, { title: string; description: string; label: string }> = {
-  menus: {
-    title: "مدیریت منوها",
-    description: "لیست منوها، زیرمنوها، URL، عنوان SEO و وضعیت انتشار.",
-    label: "Navigation"
-  },
   categories: {
     title: "مدیریت دسته‌بندی‌ها",
-    description: "دسته‌بندی‌های دانشنامه، اخبار و بخشنامه‌ها با ساختار والد و فرزند.",
+    description: "دسته‌بندی‌های ساختار سایت، خدمات، دانشنامه، اخبار و بخشنامه‌ها با ساختار والد و فرزند.",
     label: "Categories"
   },
   pages: {
@@ -84,7 +79,7 @@ const resourceCopy: Record<string, { title: string; description: string; label: 
 
 export function AdminResourceListPage({ resource }: AdminResourceListPageProps) {
   const copy = resourceCopy[resource] ?? resourceCopy.reports;
-  const gridResource = ["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource) ? resource as AdminResource : null;
+  const gridResource = ["categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items"].includes(resource) ? resource as AdminResource : null;
   const [rows, setRows] = useState<AdminGridRecord[]>([]);
   const [serviceGroups, setServiceGroups] = useState<AdminApiServiceGroup[]>([]);
   const [isLoading, setIsLoading] = useState(Boolean(gridResource));
@@ -247,7 +242,7 @@ export function AdminResourceListPage({ resource }: AdminResourceListPageProps) 
           </>
         ) : null}
 
-        {!["menus", "categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items", "api-services"].includes(resource) ? (
+        {!["categories", "pages", "services", "articles", "news", "tags", "world-clocks", "content-sources", "source-items", "api-services"].includes(resource) ? (
           <section className="admin-empty-state">
             <strong>{copy.title}</strong>
             <p>لیست این بخش در مرحله بعدی به CRUD اختصاصی خودش وصل می‌شود.</p>
