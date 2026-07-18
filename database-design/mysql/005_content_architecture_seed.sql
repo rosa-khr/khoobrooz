@@ -104,6 +104,7 @@ WHERE slug IN (
   'china-cargo-menu', 'export-services-menu', 'education', 'knowledge-base', 'trade-circulars-menu', 'trade-updates-menu',
   'trade-news-customs-menu', 'trade-news-import-menu', 'trade-news-export-menu', 'trade-news-china-trade-menu',
   'trade-news-eurasia-trade-menu', 'trade-news-asia-trade-menu', 'trade-news-shipping-logistics-menu', 'customs-circulars-menu',
+  'about-us',
   'currency-transfer-request'
 );
 
